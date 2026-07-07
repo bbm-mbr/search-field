@@ -33,9 +33,51 @@ const FIELDS = [
   { id: "sustainability", name: "Sustainability", subs: ["Battery 2nd Life & Recycling", "Carbon Credits", "Right to Repair", "Residual Value"] },
   { id: "evtol", name: "EVTOL", subs: ["Urban Air Mobility", "Rural Applications"] },
   { id: "robotics", name: "Robotics", subs: ["AMR", "Campus Shuttles", "Humanoids", "Robotics × SDV"] },
-  { id: "defence", name: "Defence", subs: ["Contract Manufacturing", "Component Sales"] },
   { id: "health", name: "Health Care", subs: ["E-Call", "Assisted Motion", "DEI Mobility Design"] },
 ];
+
+/* ═══ India Macro Context — shared PESTEL baseline, verified as of Jul 2026 ═══
+   Answers the framework's India-wide questions once for ALL search fields.   */
+const MACRO = {
+  asOf: "July 2026",
+  Political: [
+    { k: "Policy certainty", v: "Stable central government; reform continuity (GST 2.0 Sept-2025, India–UK FTA 2025, PLI programmes)", src: "PIB / policy trackers" },
+    { k: "PM E-DRIVE", v: "₹10,900 Cr scheme EXTENDED to Mar-2028 — but e-2W/e-3W demand incentives ended Mar-2026; remaining outlay targets charging infra (₹2,000 Cr), 14,028 e-buses, e-trucks (scrappage-linked), e-ambulances", src: "MHI notification, Aug-2025" },
+    { k: "PLI / localisation", v: "Auto & ACC PLI disbursing; India Semiconductor Mission fabs & OSATs progressing; Make-in-India value-addition pressure on all sourcing", src: "MHI / MeitY" },
+    { k: "Trade & geopolitics", v: "India–UK FTA opens auto trade; China+1 sourcing inflows continue; West Asia conflict elevates freight & energy risk", src: "Commerce Ministry / RBI Jun-26" },
+  ],
+  Economic: [
+    { k: "GDP growth", v: "FY26 ~7.4–7.6% (strong); FY27 forecast cut to 6.6% by RBI (Jun-26) on West Asia conflict, crude prices, monsoon uncertainty", src: "RBI MPC, Jun-2026" },
+    { k: "Inflation & rates", v: "CPI FY27 projected ~5.1%; repo held at 5.25%, neutral stance — cost of capital stable but no longer falling", src: "RBI MPC, Jun-2026" },
+    { k: "Currency", v: "INR under weakening pressure (bond yields up) — imported-component cost risk (semiconductors, cells, displays)", src: "RBI / market data, Jun-2026" },
+    { k: "Demand stimulus", v: "GST 2.0: small cars & ≤350cc 2W cut 28%→18%; most auto components →18%; EVs stay 5% — structural affordability boost to mass mobility", src: "GST Council 56th meeting, Sept-2025" },
+    { k: "Infrastructure capex", v: "Record highway pipeline, mature 5G coverage, national charging-corridor buildout under PM E-DRIVE", src: "Budget / MoRTH" },
+  ],
+  Social: [
+    { k: "Demographics", v: "Median age ~29; demographic dividend drives first-time vehicle & tech adoption; 65%+ population rural — 'Digital Bharat' is the growth engine", src: "Census projections / SoCheers 2026" },
+    { k: "Digital literacy", v: "~660M smartphone users (~46.5% penetration); UPI at 23.2B transactions/month (May-26), ~49% of GLOBAL real-time payment volume — digital-first behaviour is the default", src: "NPCI / SoCheers Annual Report 2026" },
+    { k: "Urbanization & congestion", v: "Indian metros rank among the world's most congested — acute pain point that mobility tech (ITS, connected services) monetises", src: "Congestion indices" },
+    { k: "Workforce", v: "World's largest engineering talent pool; 1,600+ GCCs make India the global automotive-software delivery hub — but talent-war attrition economics", src: "NASSCOM / GCC trackers" },
+  ],
+  Technological: [
+    { k: "Digital public infrastructure", v: "UPI, ONDC, Bhashini (22-language AI), Account Aggregator — state-built rails private products can compose on; unique globally", src: "MeitY / NPCI" },
+    { k: "Spectrum enablers", v: "5.9 GHz de-licensed for C-V2X OBUs + 77–81 GHz for automotive radar (Jun-2026) — regulatory ENABLERS for V2X/ADAS, aligned with US/EU", src: "WPC notifications, Jun-2026" },
+    { k: "Innovation ecosystem", v: "3rd-largest startup ecosystem; deep-tech & EV startup funding active; IITs/academia partnerships maturing", src: "DPIIT / funding trackers" },
+    { k: "Standards", v: "CCS2 dominant for charging; AIS harmonising toward UNECE; interoperability gaps remain in V2X roadside & battery-swap", src: "BIS / AIS committees" },
+  ],
+  Environmental: [
+    { k: "Climate policy", v: "Net Zero 2070 commitment; 500 GW renewables target; BS-VI in force with BS-VII discussions begun", src: "MoEFCC / CPCB" },
+    { k: "CAFE-III", v: "BEE draft: fleet fuel consumption 3.73→3.01 L/100km over Apr-2027–Mar-2032; small-car (≤909 kg) 3 g/km CO₂ concession contested (Maruti pro, Tata contra)", src: "BEE draft, SIAM debate, 2025-26" },
+    { k: "Circular economy", v: "End-of-Life Vehicles Rules 2025 impose steel-linked EPR on producers; Battery Waste Rules EPR live; vehicle-scrapping market $12.8B (2026)→$31.7B (2033)", src: "MoEFCC / NITI Aayog Jan-2026 / CMI" },
+    { k: "Physical climate risk", v: "Extreme heat, monsoon flooding, high dust — components need India-hardened thermal/ingress design; a real engineering differentiator", src: "IMD / OEM DVP norms" },
+  ],
+  Legal: [
+    { k: "Homologation", v: "CMVR + AIS standards; ARAI/ICAT type-approval is the gate — timelines and test capacity are a planning constraint for every product", src: "MoRTH / ARAI" },
+    { k: "Data protection", v: "DPDP Act 2023 with Rules notified late-2025, phased compliance through ~2027 — consent, purpose-limitation & breach duties on all vehicle/user data", src: "MeitY DPDP Rules" },
+    { k: "Tax & investment", v: "GST 2.0 auto rates (18% small / 40% large / 5% EV / 18% components); 100% FDI automatic route in auto; India–UK FTA tariff schedules", src: "GST Council / DPIIT" },
+    { k: "Cyber regulation", v: "CERT-In 6-hour incident-reporting directions; AIS-189/190 (CSMS/SUMS) bringing UNECE-style vehicle cyber compliance", src: "CERT-In / AIS drafts" },
+  ],
+};
 
 /* ════════════════════════ SCORING — fixed for every field ═══════════════ */
 const WEIGHTS = [
@@ -89,88 +131,34 @@ const DATA = {
 
   pestel: {
     Political: [
-      {
-        p: "PM E-DRIVE (₹10,900 Cr, 2024–26) subsidises e-2W/3W demand and funds public charging capex",
-        why: "Notified central scheme with explicit allocations for demand incentives and charging stations on highways/cities — it directly pulls forward EV volumes and charging-infrastructure orders [1]",
-        sowhat: "Time market entry to the scheme window; charging capex creates a B2G/B2B opening for Bosch charging-management software, not just hardware",
-        i: "high", c: [1],
-      },
-      {
-        p: "PLI-ACC (50 GWh) plus state EV policies drive localisation of the battery value chain",
-        why: "PLI disbursements are tied to domestic value addition; states (TN, Maharashtra, UP) layer fleet-electrification mandates and capital subsidies on top [2]",
-        sowhat: "Cell making will localise around a few winners — partnering early with ACC awardees positions Bosch as the pack/BMS integrator of choice",
-        i: "high", c: [2],
-      },
+      { cat: "Government Schemes & Incentives", p: "PM E-DRIVE pivoted: e-2W/e-3W demand incentives ENDED Mar-2026; the extended scheme (to Mar-2028, same ₹10,900 Cr) now funds charging infrastructure (₹2,000 Cr), 14,028 e-buses, scrappage-linked e-trucks and e-ambulances", why: "MHI extended the scheme's tenure but held the 2W/3W subsidy terminal date — the policy centre of gravity moved from demand subsidy to infrastructure and commercial-fleet electrification [20]", sowhat: "The subsidised-demand era for 2W/3W is over: BMS/component demand must now stand on unsubsidised economics, while charging-management and fleet/bus opportunities get a funded runway to 2028 — reweight the sub-field portfolio toward V2G & Charging accordingly", i: "high", subs: ["V2G & Charging", "Battery & BMS"], c: [20] },
+      { cat: "Government Schemes & Incentives", p: "PLI-ACC (50 GWh) localisation continues; GST 2.0 keeps EVs at 5% while cutting ICE small vehicles to 18% — narrowing the EV price advantage at the entry level", why: "The 10-point GST gap (5% vs 18%) is much thinner than the old 5%-vs-28% gap; EV TCO superiority now does more of the persuasion work [21]", sowhat: "Value shifts to TCO-proof points: battery health, warranty analytics, charging cost optimisation — all software/data plays Bosch owns assets for", i: "high", subs: ["Battery & BMS", "V2G & Charging"], c: [21] },
+      { cat: "Trade Policies & Geopolitics", p: "Cell and battery-material import dependence on China remains the sector's strategic vulnerability; PLI capacity and FTA diversification are the policy response", why: "LFP cells, precursors and processing remain China-centric; West Asia conflict adds freight/energy risk on top [2]", sowhat: "Chemistry-agnostic, multi-source BMS and pack designs are a resilience sell to OEMs — and the ACC-partner strategy hedges the cell dependence", i: "medium", subs: ["Battery & BMS"], c: [2] },
     ],
     Economic: [
-      {
-        p: "India's EV growth is 2W/3W-led; electric 2W penetration has crossed double digits and is rising",
-        why: "Vahan registration data shows 2W dominates EV unit volumes; PV EV share remains low single digits — the volume economics of this field are scooter economics [3]",
-        sowhat: "India-cost engineering is decisive: a BMS bill-of-materials tuned for ₹1L scooters, not €40k cars. Premium EU cost bases are a structural handicap here",
-        i: "high", c: [3],
-      },
-      {
-        p: "Falling cell prices (~$100/kWh territory) compress pack-hardware margins",
-        why: "Global LFP oversupply plus PLI capacity coming online keeps pushing pack prices down; hardware-only suppliers face margin erosion [4]",
-        sowhat: "Value migrates to software & services — BMS intelligence, battery health, V2G orchestration. This matches Bosch's mapped BBM streams (SW for OEMs, Workshop & Fleet)",
-        i: "medium", c: [4],
-      },
+      { cat: "Economic Growth & Consumer Spending", p: "FY27 growth trimmed to 6.6% (RBI Jun-26) with crude-price risk — a reminder that India's oil-import bill remains the macro case for electrification even as subsidies retire", why: "Elevated crude worsens the current account and pump prices, keeping EV TCO attractive for high-utilisation users regardless of subsidy [23]", sowhat: "Fleet and commercial segments (3W logistics, buses, e-trucks) are the structurally-driven adopters — align battery/charging offers to fleet duty cycles", i: "high", subs: ["V2G & Charging", "Battery & BMS"], c: [23] },
+      { cat: "Inflation & Interest Rates", p: "Repo at 5.25% (neutral): EV financing costs stable; battery-as-a-service and leasing models remain rate-sensitive innovations to watch", why: "Financing structures that separate battery cost from vehicle cost depend on stable credit conditions to price residual risk [23]", sowhat: "Battery-health data (Bosch's asset) is the risk-pricing input these financing models need — a data-product opportunity independent of rate cycles", i: "medium", subs: ["Battery & BMS"], c: [23] },
+      { cat: "Infrastructure Investment", p: "PM E-DRIVE's ₹2,000 Cr public-charging outlay plus highway charging corridors create funded, near-term demand for charging management software and power electronics", why: "EVPCS deployment across high-penetration cities and national highways is milestone-funded through 2028 [20]", sowhat: "Charging-management SW, load orchestration and DC fast-charging modules have a policy-guaranteed demand floor — the strongest near-term entry lane in this field", i: "high", subs: ["V2G & Charging"], c: [20] },
     ],
     Social: [
-      {
-        p: "Charging & range anxiety remains the #1 adoption barrier outside metros",
-        why: "Consumer surveys consistently rank charging access above price in tier-2/3 purchase hesitation; public charger density drops sharply beyond the top 20 cities [5]",
-        sowhat: "Battery-health transparency and accurate range prediction are willingness-to-pay features; Bosch's 10,000+ workshop network is a trust channel competitors lack",
-        i: "medium", c: [5],
-      },
-      {
-        p: "Gig & fleet electrification (3W logistics, e-rickshaw, last-mile) is the real adoption engine",
-        why: "TCO-driven commercial buyers electrify fastest — e-3W is already majority-electric in several states; fleets buy on uptime and per-km cost, not badge [6]",
-        sowhat: "Bundle fleet telematics + battery analytics + depot-charging orchestration; fleets are also the natural V2G aggregation point",
-        i: "high", c: [6],
-      },
+      { cat: "Consumer Behavior & Values", p: "Post-subsidy EV buying is TCO- and trust-led: charging anxiety and battery-degradation fear are the top residual barriers outside metros", why: "With purchase incentives gone for 2W/3W, adoption hinges on running-cost proof and battery confidence — surveys consistently rank charging access above price now [5]", sowhat: "Battery-health transparency, certified state-of-health reports and accurate range prediction are willingness-to-pay features — and the 10,000-workshop network is the trust channel to deliver them", i: "high", subs: ["Battery & BMS"], c: [5] },
+      { cat: "Lifestyle & Consumer Behavior", p: "Gig-economy and last-mile logistics electrification (e-3W, e-LCV) is the volume adoption engine — TCO-rational buyers who monetise uptime", why: "Commercial users electrify on arithmetic, not sentiment; e-3W is already majority-electric in several states [6]", sowhat: "Fleet telematics + battery analytics + depot-charging bundles serve the fastest-growing buyer — and fleets are the natural V2G aggregation point", i: "high", subs: ["V2G & Charging", "Battery & BMS"], c: [6] },
+      { cat: "Digital Literacy & Connectivity", p: "UPI-default payment behaviour (23B+ transactions/month) makes app-based charging payment, P2P energy settlement and energy-wallet concepts frictionless to adopt", why: "Charging and energy-trading UX can assume universal digital-payment fluency — unique among major auto markets [24]", sowhat: "Build charging/V2G products UPI-native from day one; links to the Fintech field's in-vehicle payment thesis", i: "medium", subs: ["V2G & Charging", "New Energy Tech"], c: [24] },
     ],
     Technological: [
-      {
-        p: "LFP dominates Indian packs; sodium-ion pilots are starting for entry segments",
-        why: "LFP suits Indian heat and cost constraints; Na-ion's raw-material independence makes it strategically attractive for India despite lower energy density [7]",
-        sowhat: "A chemistry-agnostic BMS platform (LFP today, Na-ion ready) is a genuine differentiator versus single-chemistry startups",
-        i: "high", c: [7],
-      },
-      {
-        p: "Smart-charging / V2G standards (ISO 15118, OCPP 2.x) are maturing, with discom pilots live",
-        why: "Standardisation collapses the integration cost that previously made V2G uneconomic; Delhi/Mumbai discom pilots prove regulatory willingness [8]",
-        sowhat: "Bosch charging-management SW can ride open standards instead of bespoke per-discom integrations — faster scale-out, lower NRE",
-        i: "medium", c: [8],
-      },
+      { cat: "Emerging Technologies", p: "LFP dominates Indian packs; sodium-ion pilots progress for entry segments and stationary storage — chemistry optionality is becoming a design requirement", why: "Na-ion's raw-material independence and thermal robustness suit India strategically despite lower energy density [7]", sowhat: "A chemistry-agnostic BMS platform (LFP today, Na-ion ready) is a genuine differentiator versus single-chemistry startups — H3 positioning with H1 revenue", i: "high", subs: ["Battery & BMS", "New Energy Tech"], c: [7] },
+      { cat: "Interoperability & Standards", p: "CCS2 anchors DC charging while ISO 15118 / OCPP 2.x mature for smart charging and V2G; battery-swap interoperability standards remain unsettled", why: "Standardisation collapses integration costs for charging management; the swap segment's fragmentation is both risk and consolidation opportunity [8]", sowhat: "Ride open standards for charging-management scale-out; treat swap-standard participation as low-cost optionality", i: "high", subs: ["V2G & Charging"], c: [8] },
+      { cat: "Data-Driven Insights", p: "Battery lifecycle data (SoH, usage, thermal history) is becoming the sector's most monetisable asset — feeding financing, insurance, resale and second-life markets", why: "Every downstream market (UBI, residual value, recycling routing) prices on battery-state data quality [16]", sowhat: "Bosch BMS data + workshop certification can anchor a battery-data product line spanning the Fintech and Sustainability fields — portfolio-level synergy", i: "high", subs: ["Battery & BMS"], c: [16] },
     ],
     Environmental: [
-      {
-        p: "Battery Waste Management Rules (EPR) put recycling obligations on pack makers & OEMs",
-        why: "MoEFCC rules mandate Extended Producer Responsibility with audited collection/recycling targets — compliance is now a cost line for every pack sold [9]",
-        sowhat: "Creates a paid second-life/recycling services market — the entry point for the mapped Circular Economy / Workshop streams",
-        i: "medium", c: [9],
-      },
-      {
-        p: "Renewable targets make solar-paired charging and V2G valuable to discoms",
-        why: "Midday solar surplus + evening peak is exactly the arbitrage EV batteries can serve; discoms need flexible load more each year [10]",
-        sowhat: "Position charging-management as a grid-services platform, opening discom revenue beyond automotive customers",
-        i: "medium", c: [10],
-      },
+      { cat: "Climate Policy & Emission Regulations", p: "Net Zero 2070 + 500 GW renewables reshape the grid the EV fleet plugs into — midday solar surplus makes managed charging and V2G grid-valuable, not just user-valuable", why: "Solar-heavy generation needs flexible load; EV batteries are the largest distributed flexibility resource being added to the system [10]", sowhat: "Position charging-management as grid-services infrastructure — discom revenue stream beyond automotive customers", i: "high", subs: ["V2G & Charging", "New Energy Tech"], c: [10] },
+      { cat: "Circular Economy & E-Waste", p: "Battery Waste Rules EPR plus ELV Rules 2025 formalise end-of-life obligations — traceability, grading and second-life routing become compliance necessities, not options", why: "Producers must evidence collection and recycling; the vehicle-scrapping market's growth ($12.8B→$31.7B by 2033) industrialises the reverse chain [9][22]", sowhat: "Battery diagnostics + the workshop network position Bosch as the data-and-certification layer of battery circularity — the Sustainability field's LEAD play, seeded here", i: "high", subs: ["Battery & BMS"], c: [9, 22] },
+      { cat: "Physical Climate Risk", p: "Extreme-heat operation is India's defining battery-engineering constraint — thermal management and heat-adapted chemistry strategies decide real-world durability", why: "Sustained 45°C+ ambient accelerates degradation and drove AIS-156 tightening after thermal incidents [11]", sowhat: "India-validated thermal design and safety credentials are decisive sales arguments — a Bosch engineering strength monetised", i: "high", subs: ["Battery & BMS"], c: [11] },
     ],
     Legal: [
-      {
-        p: "AIS-156 amendments raised battery safety norms after fire incidents",
-        why: "Mandatory cell-level protections, thermal-propagation tests and audit trails significantly raise the engineering bar for certification [11]",
-        sowhat: "Advantage proven Tier-1 safety credentials — Bosch's functional-safety pedigree becomes a sales argument, and a barrier against low-cost entrants",
-        i: "high", c: [11],
-      },
-      {
-        p: "DPDP Act 2023 governs telematics & battery-cloud data",
-        why: "Consent, purpose-limitation and breach duties apply to connected-battery services; enforcement architecture is now operational [12]",
-        sowhat: "Battery cloud must be India-hosted with consent flows by design — a compliance moat for organised players over informal ones",
-        i: "medium", c: [12],
-      },
+      { cat: "Automotive Industry Regulations", p: "AIS-156 (amended) battery-safety norms set a high certification bar — cell-level protections, thermal-propagation tests, audit trails", why: "Post-fire-incident tightening raised engineering and documentation requirements substantially [11]", sowhat: "Proven Tier-1 functional-safety pedigree is both a sales argument and a barrier against low-cost entrants — price it into positioning", i: "high", subs: ["Battery & BMS"], c: [11] },
+      { cat: "Data Privacy & Security Law", p: "DPDP Rules (notified late-2025, phased to ~2027) govern battery-cloud and charging-session data — consent, purpose-limitation and India-residency expectations apply", why: "Battery telemetry and charging behaviour are personal data once linked to owners; compliance architecture must be designed-in [12]", sowhat: "India-hosted, consent-native battery cloud is a compliance moat versus informal players — reuse the Connectivity field's DPDP stack", i: "medium", subs: ["Battery & BMS", "V2G & Charging"], c: [12] },
+      { cat: "Taxation & Corporate Law", p: "GST asymmetry (EVs 5%, charging services and components at higher rates) creates structuring complexity for bundled vehicle+energy offerings", why: "Battery-as-a-service, charging subscriptions and V2G settlements each face distinct GST treatments still being clarified [21]", sowhat: "Deal-level tax structuring is a real cost; engage early on energy-service classification — and watch for rationalisation as the sector formalises", i: "low", subs: ["V2G & Charging"], c: [21] },
     ],
   },
 
@@ -329,6 +317,7 @@ const DATA = {
     "CEA renewable integration reports", "AIS-156 amendment circulars", "DPDP Act 2023 & rules",
     "NITI Aayog EV forecasts", "Component teardown benchmarks", "Charger rollout economics",
     "Analyst reports, India EV components", "Startup funding trackers (BMS/charging)", "2W OEM market-share data", "Battery swapping market studies",
+    "MHI PM E-DRIVE extension notification (Aug-2025)", "GST Council 56th meeting (Sept-2025)", "NITI Aayog ELV circular-economy report (Jan-2026)", "RBI MPC Jun-2026", "NPCI UPI statistics (May-2026)",
   ],
 },
 
@@ -342,12 +331,36 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.4, conf: 0.83, why: "Lighting is becoming software (adaptive, personalised, communicative) — the SW layer is where growth concentrates. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "BNCAP and road-safety programmes push advanced visibility features down-segment", why: "Star-rating competition makes OEMs adopt LED/adaptive lighting earlier than regulation forces them to; MoRTH continues tightening visibility/conspicuity norms [1]", sowhat: "Safety-led lighting features (auto high-beam, adaptive front light) become spec-sheet items — an opening for Bosch's camera-linked lighting control SW rather than the lamps themselves", i: "medium", c: [1] }],
-      Economic: [{ p: "Premiumisation in PV & 125cc+ 2W pulls LED and ambient lighting into volume segments", why: "Mid-SUVs now ship ambient lighting and LED projectors as differentiators; 2W moved to full-LED after AHO norms; content per vehicle is rising steadily [2]", sowhat: "Value growth is in electronics + software content per lamp, not lamp units — favourable for an electronics/SW entrant, unfavourable for building an optics business", i: "high", c: [2] }],
-      Social: [{ p: "Lighting is becoming a personalisation & brand-identity feature for Indian buyers", why: "Signature DRLs, welcome animations and ambient themes are now showroom talking points in the compact-SUV war [3]", sowhat: "Personalisation SW (themes, scenarios, app control) is a monetisable layer that matches the mapped 'Application SW' sub-field", i: "medium", c: [3] }],
-      Technological: [{ p: "Matrix LED / pixel lighting needs camera-fusion and domain-controller integration", why: "Adaptive beam shaping is a perception + control problem: it consumes ADAS camera data and runs on zonal/domain ECUs — competencies outside classic lamp makers [4]", sowhat: "The control/SW layer of matrix lighting is a natural Bosch entry: it sits exactly where Bosch ADAS and SdV assets already are", i: "high", c: [4] }],
-      Environmental: [{ p: "LED transition is complete-ish; energy efficiency now drives smart dimming & lifetime", why: "With LED penetration high, the efficiency frontier moves to intelligent control (auto-dimming, selective pixels) and serviceability [5]", sowhat: "Reinforces the software/controller thesis — the remaining efficiency gains are algorithmic", i: "low", c: [5] }],
-      Legal: [{ p: "AIS lighting norms and homologation cycles favour established certification players", why: "Each lighting function needs type approval; incumbents have homologation muscle memory and test infrastructure [6]", sowhat: "Partner with a certified lamp maker rather than certifying luminaires from scratch — shapes the entry mode", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "GST 2.0 (Sept-2025) cut small cars & ≤350cc 2W from 28% to 18% and most auto components to 18% — a structural demand stimulus for exactly the volume segments where LED/adaptive lighting content is expanding", why: "The 56th GST Council restructuring made mass-segment vehicles materially cheaper (₹50–60k on compact cars), pulling forward first-time purchases; components at 18% also eases lighting-electronics BOM tax cascade [9]", sowhat: "Volume-segment tailwind lands precisely where lighting content-per-vehicle is rising — time controller/SW entry to the demand upcycle rather than premium niches", i: "high", subs: ["Controllers", "Application SW"], c: [9] },
+        { cat: "Government Stability & Policy Certainty", p: "Stable policy trajectory on vehicle safety (BNCAP maturing, MoRTH visibility norms tightening) gives multi-year certainty to safety-lighting investment", why: "BNCAP star-rating competition plus continuing AIS visibility/conspicuity updates create a predictable, ratcheting safety agenda rather than stop-go regulation [1]", sowhat: "Adaptive front-lighting and auto-high-beam investments can be business-cased on regulatory direction, not just OEM whim — lowers entry risk for the control layer", i: "medium", subs: ["Exterior Lighting", "Application SW"], c: [1] },
+        { cat: "Trade Policies & Geopolitics", p: "High effective import duties on finished lighting modules (GST + customs can exceed 50%) plus Make-in-India pressure force localisation — protecting incumbents but also any locally-manufacturing entrant", why: "Tariff walls discourage finished-module imports; OEM sourcing clauses increasingly weight domestic value-addition [2]", sowhat: "Bosch's Indian electronics manufacturing footprint qualifies as 'local' — a levelling advantage against import-dependent global rivals in controllers", i: "medium", subs: ["Controllers"], c: [2] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "FY26 GDP at ~7.4–7.6% with FY27 forecast 6.6% (RBI, Jun-26) keeps PV/2W volume growth positive but decelerating — content-per-vehicle, not units, is the growth engine for lighting", why: "RBI trimmed FY27 growth on West Asia conflict and crude risk; discretionary auto demand stays resilient but not exuberant [11]", sowhat: "Revenue thesis must rest on rising electronics/SW content per lamp (premiumisation) rather than unit-volume heroics — consistent with the control/SW entry", i: "high", subs: ["Application SW", "Controllers"], c: [11] },
+        { cat: "Inflation & Interest Rates", p: "Repo held at 5.25% (neutral) with FY27 CPI ~5.1% — vehicle-loan EMIs stable, but no further rate-cut tailwind for big-ticket purchases", why: "RBI paused its easing cycle in Jun-26 balancing rupee weakness and imported inflation [11]", sowhat: "Neutral financing environment: neither headwind nor accelerant — plan mid-cycle demand, not a credit boom", i: "low", subs: [], c: [11] },
+        { cat: "Currency & Exchange Rate", p: "INR weakening bias raises imported LED-chip, driver-IC and MCU costs — a margin risk for lighting electronics with import-heavy BOMs", why: "Lighting-electronics BOMs are dominated by imported semiconductors; rupee depreciation flows straight into BOM cost [11]", sowhat: "Localised electronics manufacturing plus ISM-qualified silicon (as it matures) becomes a genuine cost hedge — link sourcing strategy to the ECA field's ISM play", i: "medium", subs: ["Controllers"], c: [11] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Signature DRLs, welcome animations and ambient themes are now showroom decision factors in the compact-SUV war — lighting has become identity, not just illumination", why: "OEM marketing leads with light signatures; social-media reviews benchmark lighting experience like phone screens [3]", sowhat: "Personalisation/experience SW (themes, scenarios, app control) is a monetisable layer with genuine willingness-to-pay — the Application SW sub-field's core thesis", i: "high", subs: ["Interior Lighting", "Application SW"], c: [3] },
+        { cat: "Demographics & Urbanization", p: "A median-age-29 buyer base treats vehicle tech features as status and self-expression — accelerating uptake of visible tech like adaptive and ambient lighting down-segment", why: "Young first-time buyers over-index on visible differentiation versus mechanical specs; urbanisation concentrates night-driving use cases [3]", sowhat: "Feature democratisation happens faster in India than mature markets — plan adaptive-lighting SW for ₹10–15L cars, not just premium", i: "medium", subs: ["Exterior Lighting"], c: [3] },
+        { cat: "Technology Adoption Behavior", p: "App-controlled and OTA-updatable features are now expected behaviours (phone-conditioned users) — lighting scenarios delivered via OTA fit established habits", why: "660M smartphone users and app-first product expectations transfer directly to vehicle feature expectations [3]", sowhat: "Ship lighting personalisation as OTA content on the SdV stack — recurring-engagement feature, potential FOD (feature-on-demand) revenue", i: "medium", subs: ["Application SW"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Matrix/pixel LED beam shaping is a perception + control problem — it consumes ADAS camera data and runs on domain/zonal ECUs, competencies outside classic lamp makers", why: "Adaptive beams require real-time fusion of camera, vehicle dynamics and mapping data — a software discipline, not an optics one [4]", sowhat: "The control/SW layer of matrix lighting sits exactly on Bosch's ADAS + SdV assets — the structural entry logic of this whole field", i: "high", subs: ["Exterior Lighting", "Controllers", "Application SW"], c: [4] },
+        { cat: "Interoperability & Standards", p: "Lighting joining zonal E/E architectures forces lamp functions onto standardised vehicle networks, OTA frameworks and cybersecurity regimes lamp Tier-1s don't own", why: "Zonal consolidation moves lighting control off dedicated lamp ECUs onto shared computers with AUTOSAR/SOA interfaces [4]", sowhat: "Integration and SDV-plumbing partnership demand from lighting incumbents — the coopetition channel", i: "medium", subs: ["Controllers"], c: [4] },
+        { cat: "Pace of Change", p: "Lighting tech cycles have compressed: halogen→LED took a decade, LED→adaptive/pixel is compressing into platform cycles — spec decisions made now lock 5–7 year sockets", why: "OEM platform refreshes now carry lighting-architecture upgrades by default; late entry means waiting a full platform cycle [4]", sowhat: "The 12–18 month partner-window logic in this field's SWOT is driven by this cadence — timing risk is real", i: "medium", subs: ["Exterior Lighting"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "CAFE-III (draft: Apr-2027–Mar-2032, fleet 3.73→3.01 L/100km) makes every watt count — intelligent lighting control contributes measurable efficiency", why: "Selective-pixel operation and smart dimming reduce electrical load; under CAFE accounting, lighting efficiency is a small but real credit [10]", sowhat: "Position lighting-control SW partly as an efficiency feature — an additional purchase argument as OEMs chase CAFE-III compliance", i: "medium", subs: ["Application SW", "Controllers"], c: [10] },
+        { cat: "Physical Climate Risk", p: "Indian conditions — extreme heat, monsoon ingress, dust — are brutal on LED thermal management and optics lifespan; India-hardened design is a differentiator", why: "LED lumen depreciation accelerates with heat; ingress and dust demand higher IP ratings than temperate-market designs [5]", sowhat: "India-validated reliability engineering (a Bosch strength) is a sales argument for controllers and a partnership asset toward lamp makers", i: "medium", subs: ["Exterior Lighting", "Controllers"], c: [5] },
+        { cat: "Circular Economy & E-Waste", p: "ELV Rules 2025 EPR obligations extend to electronic lamp modules — repairability and material recovery enter lighting design requirements", why: "Steel-linked EPR targets and e-waste rules pull lighting electronics into producer-responsibility scope [10]", sowhat: "Design-for-serviceability in lighting ECUs aligns with the Sustainability field's right-to-repair thesis — cross-field coherence", i: "low", subs: ["Controllers"], c: [10] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Every lighting function needs AIS type-approval via ARAI/ICAT — homologation muscle-memory and test capacity are a genuine moat for incumbents and a partner-selection criterion", why: "Photometric certification is specialised, slot-constrained and experience-dependent; new entrants underestimate its timeline [6]", sowhat: "The partner-not-build decision for optics is legally reinforced — pick a partner with proven homologation throughput", i: "high", subs: ["Exterior Lighting"], c: [6] },
+        { cat: "Taxation & Corporate Law", p: "GST 2.0 put most auto components at 18%, simplifying the lighting-electronics tax structure and reducing cascade in multi-tier supply chains", why: "Uniform 18% on components removes classification disputes that plagued lighting assemblies (lamp vs electronics vs SW licence) [9]", sowhat: "Cleaner cost modelling for controller + SW bundles; SW licencing GST treatment still needs deal-level structuring", i: "low", subs: ["Controllers", "Application SW"], c: [9] },
+        { cat: "Data Privacy & Security Law", p: "Camera-linked adaptive lighting processes road-scene data — DPDP-compliant handling and AIS-189 cyber requirements apply to the lighting-control chain", why: "Once lighting consumes perception data and accepts OTA updates, it inherits vehicle data-protection and CSMS obligations [6]", sowhat: "Bosch's cyber/DPDP compliance stack (Connectivity field) becomes a bundled differentiator even in lighting deals", i: "medium", subs: ["Application SW"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -460,7 +473,7 @@ const DATA = {
       { input: "Optics / lens & reflector tooling", supply_risk: 6, profit_impact: 7, quadrant: "bottleneck", reasoning: "Specialised tooling concentrated with lamp Tier-1s — the reason to partner rather than build optics." },
       { input: "Thermal-management parts", supply_risk: 3, profit_impact: 4, quadrant: "non-critical", reasoning: "Commoditised; low risk and impact." },
     ],
-    sources: ["MoRTH/BNCAP visibility norms", "Lighting content-per-vehicle benchmarks", "OEM feature marketing analysis", "Matrix LED architecture briefings", "LED efficiency studies", "AIS homologation requirements", "India lighting market reports", "Tier-1 annual reports & platform awards"],
+    sources: ["MoRTH/BNCAP visibility norms", "Lighting content-per-vehicle benchmarks", "OEM feature marketing analysis", "Matrix LED architecture briefings", "LED efficiency studies", "AIS homologation requirements", "India lighting market reports", "Tier-1 annual reports & platform awards", "GST Council 56th meeting decisions (Sept-2025)", "BEE CAFE-III draft & SIAM debate", "RBI MPC Jun-2026"],
   },
 
   cockpit: {
@@ -473,12 +486,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 8.4, conf: 0.86, why: "AI cockpit, local-language voice and in-car ecosystems give dense H1–H3 pipeline with clear India triggers. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "Bhashini & India-stack push make local-language voice a quasi-policy expectation", why: "Government-backed language AI (Bhashini APIs, 22 scheduled languages) lowers the cost of vernacular voice and raises buyer expectations of it [1]", sowhat: "A 10+ language AI cockpit voice assistant is both differentiator and policy-aligned — build it on open Indian language stacks", i: "medium", c: [1] }],
-      Economic: [{ p: "Cockpit content per vehicle is the fastest-growing line in Indian PV BOMs", why: "Twin 10–12 inch displays reached ₹10L cars; HUDs and rear screens are entering ₹20L — content per vehicle tripled in five years [2]", sowhat: "Even flat unit volumes deliver strong revenue growth — the field grows on mix, not just units", i: "high", c: [2] }],
-      Social: [{ p: "Indian buyers treat the screen experience as a primary purchase criterion", why: "Reviews and social media benchmark UI smoothness, voice quality and app ecosystems like phones; OEM NPS correlates with infotainment satisfaction [3]", sowhat: "Consumer-grade UX is the bar — Tier-1 'good enough' HMI loses; invest in UX talent or partner with design studios", i: "high", c: [3] }],
-      Technological: [{ p: "Cockpit + ADAS fusion onto single HPC silicon is underway", why: "Qualcomm/MediaTek cockpit SoCs now carry NPU headroom for driver monitoring and AI assistants; one-box cockpit-ADAS cuts cost — decisive in India [4]", sowhat: "Bosch's cross-domain HPC strategy matches exactly; the 'Strategic SoC' M&A hook is the leverage point", i: "high", c: [4] }],
-      Environmental: [{ p: "Energy budgets in EVs constrain always-on cockpit compute", why: "Cockpit power draw measurably affects EV range; OEMs now spec power envelopes for infotainment [5]", sowhat: "Power-efficient SW architecture is a sellable engineering competency, not a footnote", i: "low", c: [5] }],
-      Legal: [{ p: "DPDP Act applies to in-cabin data (voice, video, behaviour)", why: "Voice assistants and occupant cameras process personal data; consent and purpose-limitation duties apply with India data-residency pressure [6]", sowhat: "Privacy-by-design cockpit (on-device inference, consent UX) is a compliance moat versus consumer-tech entrants accustomed to data harvesting", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "GST 2.0's 28%→18% cut on small cars pulls screen-rich trims into reach of first-time buyers — the volume stimulus lands exactly where cockpit content is climbing", why: "The Sept-2025 restructuring made mass-segment PVs materially cheaper; buyers upgrade trims rather than pocket the difference, and mid trims now carry twin displays [9]", sowhat: "Time the pre-integrated cockpit bundle for volume-segment platforms, not just premium — the demand pull is at ₹8–15L price points", i: "high", subs: ["Hardware", "System Integrator"], c: [9] },
+        { cat: "Government Schemes & Incentives", p: "Bhashini & India-stack make local-language voice a quasi-policy expectation — vernacular AI is both differentiator and policy-aligned", why: "Government-backed language AI (Bhashini APIs, 22 scheduled languages) lowers the cost of vernacular voice and raises buyer expectations of it [1]", sowhat: "A 10+ language AI cockpit voice assistant built on open Indian language stacks — the single most India-specific cockpit feature", i: "medium", subs: ["SW"], c: [1] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Cockpit content per vehicle is the fastest-growing line in Indian PV BOMs — the field grows on mix even in a 6.6%-GDP year", why: "Twin 10–12 inch displays reached ₹10L cars; HUDs and rear screens are entering ₹20L — content per vehicle tripled in five years [2]", sowhat: "Even flat unit volumes deliver strong revenue growth — the field grows on mix, not just units", i: "high", subs: ["Hardware", "SW"], c: [2] },
+        { cat: "Currency & Exchange Rate", p: "INR weakening directly inflates cockpit BOMs — SoCs and display panels are near-100% imported, making cockpit the most currency-exposed content line in the vehicle", why: "Cockpit silicon and panels are dollar-denominated; rupee depreciation flows straight to OEM cost sheets and sourcing decisions [10]", sowhat: "India-cost software value-add and local integration become the hedge OEMs buy — strengthens the System Integrator positioning against import-heavy point vendors", i: "medium", subs: ["Hardware", "System Integrator"], c: [10] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Indian buyers treat the screen experience as a primary purchase criterion — consumer-grade UX is the bar, and Tier-1 'good enough' HMI loses", why: "Reviews and social media benchmark UI smoothness, voice quality and app ecosystems like phones; OEM NPS correlates with infotainment satisfaction [3]", sowhat: "Invest in UX talent or partner with design studios — the UX gap is the field's decisive execution risk", i: "high", subs: ["SW"], c: [3] },
+        { cat: "Digital Literacy & Connectivity", p: "A 660M-smartphone, vernacular-first user base sets the cockpit benchmark: phone-grade fluency in the user's own language, not English-first menus", why: "Digital adoption is deepest in non-English cohorts; voice in the user's language beats touch menus for safety and accessibility [3]", sowhat: "Vernacular voice is not a nice-to-have layer — it is the primary interface for the next 100M buyers; prioritise it above visual-HMI polish", i: "high", subs: ["SW"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Technology Adoption & Maturity", p: "Cockpit + ADAS fusion onto single HPC silicon is underway — one-box architectures cut cost, decisive in India", why: "Qualcomm/MediaTek cockpit SoCs now carry NPU headroom for driver monitoring and AI assistants; one-box cockpit-ADAS cuts cost [4]", sowhat: "Bosch's cross-domain HPC strategy matches exactly; the 'Strategic SoC' M&A hook is the leverage point", i: "high", subs: ["Hardware", "System Integrator"], c: [4] },
+        { cat: "Emerging Technologies", p: "India's DPI rails (Bhashini, UPI, ONDC) are composable building blocks for in-car experiences no other market can replicate", why: "State-built APIs let the cockpit compose language AI, payments and commerce without bilateral deals — a structural cost and speed advantage for India-first products [1]", sowhat: "Architect the cockpit stack DPI-native: Bhashini for voice, UPI hooks for commerce — exportable later to DPI-adopting markets", i: "medium", subs: ["SW", "System Integrator"], c: [1] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "CAFE-III makes cockpit watts count — always-on displays and compute now sit inside a regulated energy budget", why: "Cockpit power draw measurably affects EV range and CAFE accounting; OEMs now spec power envelopes for infotainment [5]", sowhat: "Power-efficient SW architecture is a sellable engineering competency, not a footnote — quantify it in CAFE terms in every pitch", i: "medium", subs: ["SW", "Hardware"], c: [5, 11] },
+        { cat: "Physical Climate Risk", p: "Dashboard-top displays in Indian heat face 80°C+ soak temperatures — thermal design separates products that survive from those that fail in year two", why: "Cabin soak in Indian summers exceeds temperate-market design envelopes; display delamination and SoC throttling are documented field failures [5]", sowhat: "India-hardened thermal validation is a durability differentiator OEMs increasingly specify after warranty pain", i: "medium", subs: ["Hardware"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Data Privacy & Security Law", p: "DPDP (Rules phased to ~2027) applies to in-cabin voice, video and behaviour data — privacy-by-design is a compliance moat versus consumer-tech entrants", why: "Voice assistants and occupant cameras process personal data; consent and purpose-limitation duties apply with India data-residency pressure [6]", sowhat: "On-device inference and consent UX beat data-harvesting architectures legally and commercially — lead with it", i: "medium", subs: ["SW"], c: [6] },
+        { cat: "Cybersecurity & Digital Regulations", p: "AIS-189/190 pull OTA-updatable cockpits into formal CSMS/SUMS scope — every app store and update pipeline needs certified processes", why: "A cockpit that accepts OTA updates and third-party apps is a regulated software-update system under the incoming vehicle-cyber regime [6]", sowhat: "Bundle the Connectivity field's compliance stack into cockpit platform deals — one certified pipeline serving two fields", i: "medium", subs: ["SW", "System Integrator"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -548,7 +579,7 @@ const DATA = {
         { item: "Cockpit-ADAS fusion on single SoC", why: "Silicon available; OEM architecture cycles put volume adoption 2–4 years out", trigger: "Two Indian OEM platforms sourcing one-box cockpit-ADAS" },
       ],
       h3: [{ item: "Agentic in-car AI + app/commerce ecosystem", why: "Requires mature payments, content partnerships and trust frameworks beyond current cockpit scope — 5+ years to material revenue", trigger: "In-car commerce GMV crossing meaningful scale on UPI rails" }],
-      rationale: "Score 8.4: dense H1 (immediate revenue), two well-evidenced H2 themes with observable triggers, and a credible H3 tied to India's payment rails. One of the strongest growth profiles across the 16 fields.",
+      rationale: "Score 8.4: dense H1 (immediate revenue), two well-evidenced H2 themes with observable triggers, and a credible H3 tied to India's payment rails. One of the strongest growth profiles across the search fields.",
     },
     verdict: {
       entry: "Lead with the integrated cockpit platform (HPC + pre-integrated AAOS bundle + vernacular AI assistant); execute the Strategic-SoC alliance and a UX-capability acquisition; use Video Perception assets for occupant-aware experiences.",
@@ -590,7 +621,7 @@ const DATA = {
       { input: "Language AI APIs (Bhashini, cloud LLMs)", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Open-source and government APIs reduce dependency; differentiation is in integration, not model access." },
       { input: "UX design studios", supply_risk: 5, profit_impact: 7, quadrant: "bottleneck", reasoning: "Consumer-grade UX talent is concentrated; key bottleneck to close the phone-grade gap." },
     ],
-    sources: ["Bhashini / language-AI ecosystem", "Cockpit content-per-vehicle teardowns", "Buyer-experience surveys & NPS studies", "Cockpit SoC roadmaps", "EV power-budget engineering notes", "DPDP Act application to in-cabin data", "PV/2W production forecasts", "Cockpit competitive award trackers"],
+    sources: ["Bhashini / language-AI ecosystem", "Cockpit content-per-vehicle teardowns", "Buyer-experience surveys & NPS studies", "Cockpit SoC roadmaps", "EV power-budget engineering notes", "DPDP Act application to in-cabin data", "PV/2W production forecasts", "Cockpit competitive award trackers", "GST Council 56th meeting (Sept-2025)", "RBI MPC Jun-2026", "BEE CAFE-III draft"],
   },
 
   interior: {
@@ -603,12 +634,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.2, conf: 0.82, why: "DMS regulation, AQI-driven air purity and biometric access give a strong India-specific H1–H2 pipeline. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "Driver-monitoring is moving from NCAP incentive to expected regulation", why: "BNCAP protocols and global UNECE DDAW precedent point to Indian DMS requirements; commercial-fleet fatigue rules already nudge adoption [1]", sowhat: "Occupant/driver monitoring becomes a regulation-pulled volume market — the strongest entry wedge, matching the 'Interior Sensing' M&A hook", i: "high", c: [1] }],
-      Economic: [{ p: "Comfort-feature premiumisation (ventilated seats, ambient features) reaches mid segments", why: "Ventilated seats now appear in ₹12L cars — comfort content per vehicle rises with income and heat reality [2]", sowhat: "Actuator and control-electronics demand grows — fits the 'Comfort Actuators (EM)' hook without needing a seat franchise", i: "medium", c: [2] }],
-      Social: [{ p: "India's air-quality crisis makes cabin air purity a health feature, not a luxury", why: "AQI episodes drive measurable spikes in cabin-filter and purifier sales; buyers in NCR treat PM2.5 readouts as safety information [3]", sowhat: "In-cabin air quality (sensing + purification + display) is a uniquely India-resonant feature Bosch sensors can anchor", i: "high", c: [3] }],
-      Technological: [{ p: "In-cabin radar + camera fusion enables child-presence & occupant detection", why: "60GHz radar sensing matured; child-presence detection is entering global NCAP roadmaps and works through seat covers — robust for Indian conditions [4]", sowhat: "Bosch MEMS/radar portfolio extends naturally into cabin sensing — same supply chain, new socket", i: "high", c: [4] }],
-      Environmental: [{ p: "Materials & energy: low-power comfort systems favoured in EVs", why: "Seat ventilation/heating and purifiers draw range-relevant power; OEMs spec efficiency [5]", sowhat: "Efficient actuator + smart-control SW is a sellable angle", i: "low", c: [5] }],
-      Legal: [{ p: "DPDP applies to in-cabin cameras and biometrics", why: "Face/iris vehicle access and occupant cameras process sensitive personal data; consent and on-device processing duties bite [6]", sowhat: "Privacy-preserving (on-device) sensing architecture is a differentiator and a certification asset", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Stability & Policy Certainty", p: "Driver-monitoring is moving from NCAP incentive to expected regulation — a predictable trajectory, not a policy gamble", why: "BNCAP protocols and global UNECE DDAW precedent point to Indian DMS requirements; commercial-fleet fatigue rules already nudge adoption [1]", sowhat: "Occupant/driver monitoring becomes a regulation-pulled volume market — the strongest entry wedge, matching the 'Interior Sensing' M&A hook", i: "high", subs: ["Occupant Monitoring"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "GST 2.0's mass-segment stimulus lifts exactly the trims where comfort and monitoring features are optioned — feature democratisation gets a tax tailwind", why: "Cheaper base vehicles leave headroom in buyer budgets for feature-rich trims; OEMs respond by pushing comfort content down-segment [2]", sowhat: "Plan comfort-actuator and sensing volumes on mid-segment adoption curves, not premium-only assumptions", i: "medium", subs: ["Seating", "Occupant Monitoring"], c: [2] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Comfort premiumisation (ventilated seats, ambient features) reaches mid segments and stays resilient even in a 6.6%-growth year", why: "Ventilated seats now appear in ₹12L cars — comfort content per vehicle rises with income and heat reality; premiumisation has outrun GDP in every recent cycle [2][9]", sowhat: "Actuator and control-electronics demand grows — fits the 'Comfort Actuators (EM)' hook without needing a seat franchise", i: "medium", subs: ["Seating"], c: [2, 9] },
+        { cat: "Consumer Spending Patterns", p: "Fleet and commercial buyers monetise driver-fatigue monitoring through insurance and uptime — a TCO-driven demand pool independent of consumer sentiment", why: "Commercial fatigue rules plus insurer pressure make DMS retrofits a payback calculation, not a feature preference [8]", sowhat: "The fleet retrofit channel monetises monitoring before the OEM-line mandate arrives — sequence market entry accordingly", i: "medium", subs: ["Occupant Monitoring"], c: [8] },
+      ],
+      Social: [
+        { cat: "Lifestyle & Consumer Behavior", p: "India's air-quality crisis makes cabin air purity a health feature, not a luxury — a uniquely India-resonant purchase driver", why: "AQI episodes drive measurable spikes in cabin-filter and purifier sales; buyers in NCR treat PM2.5 readouts as safety information [3]", sowhat: "In-cabin air quality (sensing + purification + display) is a feature Bosch sensors can anchor — and export to similar markets later", i: "high", subs: ["Air Purity"], c: [3] },
+        { cat: "Demographics & Urbanization", p: "Family-centric vehicle use (multi-generation occupancy, child passengers) raises the value of occupant detection and rear-seat monitoring beyond global norms", why: "Indian vehicle occupancy patterns differ structurally from single-occupant Western commutes; child-presence detection addresses a real, local risk profile [4]", sowhat: "Position CPD and occupancy sensing on Indian usage evidence, not just NCAP checklists — a more persuasive OEM story", i: "medium", subs: ["Occupant Monitoring"], c: [4] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "In-cabin 60GHz radar + camera fusion enables child-presence & occupant detection that works through seat covers — robust for Indian conditions", why: "60GHz radar sensing matured; child-presence detection is entering global NCAP roadmaps [4]", sowhat: "Bosch MEMS/radar portfolio extends naturally into cabin sensing — same supply chain, new socket", i: "high", subs: ["Occupant Monitoring", "Vehicle Access"], c: [4] },
+        { cat: "Data-Driven Insights", p: "On-device AI for occupant-state analysis reconciles rich sensing with privacy law — the architecture decision is also the compliance decision", why: "Edge inference keeps sensitive cabin data in the vehicle, satisfying DPDP purpose-limitation while enabling drowsiness/distraction analytics [6]", sowhat: "Design the sensing stack edge-first; it is simultaneously the DPDP answer and a cost answer (no cloud round-trip)", i: "medium", subs: ["Occupant Monitoring"], c: [6] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "EV energy budgets favour low-power comfort systems — efficiency is now a spec line for seat ventilation and purifiers", why: "Seat ventilation/heating and purifiers draw range-relevant power; OEMs spec efficiency [5]", sowhat: "Efficient actuator + smart-control SW is a sellable angle", i: "low", subs: ["Seating", "Air Purity"], c: [5] },
+        { cat: "Physical Climate Risk", p: "45°C+ cabin soak and dust define Indian duty cycles for actuators and sensors — heat-hardened design is a reliability moat", why: "Comfort actuators and cabin sensors face thermal and ingress stress well beyond temperate-market validation envelopes [5]", sowhat: "India-validated durability engineering justifies premium pricing over grey-market components — make it explicit in RFQs", i: "medium", subs: ["Seating", "Occupant Monitoring"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Data Privacy & Security Law", p: "DPDP applies to in-cabin cameras and biometrics — face/iris access and occupant cameras process sensitive personal data", why: "Consent and on-device processing duties bite; biometric data carries the highest protection class [6]", sowhat: "Privacy-preserving (on-device) sensing architecture is a differentiator and a certification asset", i: "medium", subs: ["Vehicle Access", "Occupant Monitoring"], c: [6] },
+        { cat: "Automotive Industry Regulations", p: "DMS/CPD certification will run through AIS/ARAI type-approval when mandated — early engagement with the certification pipeline is a timing advantage", why: "Regulation-pulled features create sourcing windows 18–24 months before mandates; certified-ready suppliers win them [1]", sowhat: "Build India-condition datasets and pre-certify now — the SWOT's 'regulation-timed entry' depends on being ready before the AIS consultation closes", i: "medium", subs: ["Occupant Monitoring"], c: [1] },
+      ],
     },
     swot: {
       S: [
@@ -723,7 +772,7 @@ const DATA = {
       { input: "AQI / PM2.5 sensors", supply_risk: 4, profit_impact: 5, quadrant: "leverage", reasoning: "Several MEMS sensor vendors; manageable." },
       { input: "Seat actuators & motors", supply_risk: 5, profit_impact: 6, quadrant: "leverage", reasoning: "Adjacent to Bosch EM portfolio; moderate supply risk." },
     ],
-    sources: ["BNCAP/UNECE DDAW trajectories", "Comfort-feature penetration data", "Cabin air-quality consumer studies", "60GHz in-cabin radar briefings", "EV power-budget notes", "DPDP biometric guidance", "Interior-systems market reports", "DMS competitive landscape"],
+    sources: ["BNCAP/UNECE DDAW trajectories", "Comfort-feature penetration data", "Cabin air-quality consumer studies", "60GHz in-cabin radar briefings", "EV power-budget notes", "DPDP biometric guidance", "Interior-systems market reports", "DMS competitive landscape", "RBI MPC Jun-2026"],
   },
 
   suspension: {
@@ -736,12 +785,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 6.0, conf: 0.78, why: "Cross-domain ride control (ADAS-linked) is a real H2/H3 theme, but India volume triggers are distant. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "No regulatory driver for active suspension; road-investment paradox", why: "Highway quality improves (less need) while urban roads stay rough (more need) — but no rule mandates ride tech [1]", sowhat: "Demand is purely market-pulled premiumisation — plan for slow adoption, no mandate windfall", i: "low", c: [1] }],
-      Economic: [{ p: "Indian buyers pay for ride comfort, but at Indian price points", why: "Soft-ride tuning is a known India requirement; semi-active dampers appear only above ~₹25L — cost sensitivity is decisive [2]", sowhat: "Only cost-engineered semi-active (not full-active) has near-term India volume potential", i: "high", c: [2] }],
-      Social: [{ p: "Rough roads + chauffeur-driven premium segment value rear-seat comfort", why: "Premium buyers benchmark rear comfort; motion-sickness mitigation resonates with family-use SUVs [3]", sowhat: "Comfort-software features (preview, motion-sickness reduction) are marketable stories in premium SUVs", i: "medium", c: [3] }],
-      Technological: [{ p: "Suspension control is converging with ADAS into vehicle-motion management", why: "Camera-preview damping and roll mitigation consume ADAS perception; control migrates to domain computers — Bosch's VMM thesis exactly [4]", sowhat: "The software/compute layer of suspension is the Bosch entry; dampers remain partner territory", i: "high", c: [4] }],
-      Environmental: [{ p: "EV mass + range pressure favour efficient semi-active over full-active", why: "Heavy EVs need body control; hydraulic full-active draws too much energy [5]", sowhat: "Semi-active + smart control SW is the technically and economically right India bet", i: "medium", c: [5] }],
-      Legal: [{ p: "Homologation is straightforward; liability shifts with software control", why: "As ride control becomes software-defined, functional-safety scrutiny (ISO 26262) increases [6]", sowhat: "Bosch's safety pedigree is the credential for SW-defined chassis control", i: "low", c: [6] }],
+      Political: [
+        { cat: "Government Stability & Policy Certainty", p: "No regulatory driver exists for active suspension — the absence of a mandate is itself the strategic finding", why: "Highway quality improves (less need) while urban roads stay rough (more need) — but no rule mandates ride tech, and none is on the AIS agenda [1]", sowhat: "Demand is purely market-pulled premiumisation — plan for slow adoption, no mandate windfall", i: "low", subs: ["Active & Semi-Active"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "GST 2.0's 40% slab on large/premium vehicles is a headwind for exactly the segment that buys active suspension", why: "The Sept-2025 restructuring raised the effective burden on the premium end while relieving small cars — dampening the addressable trim mix at the margin [9]", sowhat: "The already-small niche gets a tax squeeze; reinforces the software-scoped, no-hardware-bet posture of this field's verdict", i: "medium", subs: ["Active & Semi-Active"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Indian buyers pay for ride comfort — but at Indian price points; only cost-engineered semi-active has volume potential", why: "Soft-ride tuning is a known India requirement; semi-active dampers appear only above ~₹25L — cost sensitivity is decisive [2]", sowhat: "Only cost-engineered semi-active (not full-active) has near-term India volume potential", i: "high", subs: ["Active & Semi-Active", "Control Units"], c: [2] },
+        { cat: "Inflation & Interest Rates", p: "Rate-neutral financing (repo 5.25%) keeps premium-SUV EMIs stable — the segment's growth continues on mix, not credit expansion", why: "Premium purchases are financing-sensitive; a neutral rate stance sustains but doesn't accelerate the ₹25L+ segment that carries this field [7]", sowhat: "Base the niche-growth case on the premium-SUV mix trend, not on a financing boom", i: "low", subs: ["Active & Semi-Active"], c: [7] },
+      ],
+      Social: [
+        { cat: "Lifestyle & Consumer Behavior", p: "Chauffeur-driven premium culture makes rear-seat comfort the benchmark — a distinctly Indian purchase logic for ride tech", why: "Premium buyers benchmark rear comfort; motion-sickness mitigation resonates with family-use SUVs [3]", sowhat: "Comfort-software features (preview, motion-sickness reduction) are marketable stories in premium SUVs", i: "medium", subs: ["Cross-Domain Function", "Control Algorithms"], c: [3] },
+        { cat: "Consumer Behavior & Values", p: "Ride quality is a reviewed, socially-benchmarked attribute — 'glides over bad roads' is a headline compliment in Indian car reviews", why: "Road-condition reality makes ride comfort a top-three review criterion across segments, unusually high versus global markets [3]", sowhat: "Preview-comfort features have earned-media value beyond their spec-sheet line — worth pricing into the OEM business case", i: "low", subs: ["Control Algorithms"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Suspension control is converging with ADAS into vehicle-motion management — the software/compute layer is the Bosch entry", why: "Camera-preview damping and roll mitigation consume ADAS perception; control migrates to domain computers — Bosch's VMM thesis exactly [4]", sowhat: "The software/compute layer of suspension is the Bosch entry; dampers remain partner territory", i: "high", subs: ["Control Algorithms", "Cross-Domain Function"], c: [4] },
+        { cat: "Technology Adoption & Maturity", p: "Zonal E/E migration moves chassis control onto central computers — reopening suspension-control sourcing that damper incumbents historically owned", why: "As OEMs consolidate ECUs, corner-module bundling breaks apart; control software gets sourced at the architecture level [4]", sowhat: "Win suspension control through OEM-side architecture (central-compute) wins, not corner-module fights — the field strategy's core mechanism", i: "medium", subs: ["Control Units", "Control Algorithms"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "EV mass + range pressure favour efficient semi-active over energy-hungry full-active — the technically and economically right India bet", why: "Heavy EVs need body control; hydraulic full-active draws too much energy [5]", sowhat: "Semi-active + smart control SW is the technically and economically right India bet", i: "medium", subs: ["Active & Semi-Active", "Control Algorithms"], c: [5] },
+        { cat: "Physical Climate Risk", p: "Indian road and monsoon conditions punish damper hardware — durability requirements exceed global norms, favouring robust semi-active designs", why: "Potholes, flooding and dust create duty cycles that fail temperate-market designs early; warranty data drives OEM caution on complex hardware [1]", sowhat: "Software-led comfort on proven hardware beats fragile complexity — another argument for the SW-scoped entry", i: "low", subs: ["Active & Semi-Active"], c: [1] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Homologation for suspension is straightforward — but software-defined chassis control raises ISO 26262 functional-safety scrutiny", why: "As ride control becomes software-defined, functional-safety scrutiny increases [6]", sowhat: "Bosch's safety pedigree is the credential for SW-defined chassis control", i: "low", subs: ["Control Algorithms", "Control Units"], c: [6] },
+        { cat: "IP Law", p: "Control-algorithm IP is the defensible asset in a field where hardware is commoditising — India's strengthening IP enforcement makes SW licensing viable", why: "Preview-damping and motion-management algorithms embody years of vehicle-dynamics data; licensing models depend on enforceable IP [6]", sowhat: "License VMM-derived ride-control IP to damper Tier-1s and OEM captives — monetisation without hardware exposure", i: "low", subs: ["Control Algorithms"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -783,7 +850,7 @@ const DATA = {
         { s: "Damper Tier-1s", buy: "Control electronics & SW licensing", note: "Coopetition channel" },
         { s: "EV platform teams", buy: "Body-control for heavy EVs", note: "Mass management is their pain point" },
       ],
-      scoreRationale: "Score 4.2: smallest SAM among the 16 fields ($0.22B) and growth depends on premium trickle-down. Confidence 0.70: premium-segment forecasts vary widely; content estimates ours.",
+      scoreRationale: "Score 4.2: smallest SAM among the search fields ($0.22B) and growth depends on premium trickle-down. Confidence 0.70: premium-segment forecasts vary widely; content estimates ours.",
     },
     porter: [
       { force: "Rivalry", v: 6.0, why: "A handful of global specialists compete for few Indian awards; rivalry is concentrated but not price-destructive given low volumes.", drivers: ["ZF/Tenneco/BWI/Marelli", "Few annual awards"], c: [8] },
@@ -813,7 +880,7 @@ const DATA = {
     verdict: {
       entry: "Software-and-compute scope inside VMM/SdV platform deals; no damper hardware; revisit in 12 months against the premium-SUV penetration trigger.",
       reasoning: [
-        "Market 4.2 is the decisive drag — the smallest addressable pool of all 16 fields makes standalone investment unjustifiable",
+        "Market 4.2 is the decisive drag — the smallest addressable pool of all search fields makes standalone investment unjustifiable",
         "Competency 6.4 and Horizons 6.0 show a credible software path, which is why this is WATCH-with-a-play rather than NO-GO",
         "Porter 5.0 (buyer power + passive substitution) confirms thin standalone economics — hence bundling into already-funded ADAS/SdV programmes",
       ],
@@ -848,7 +915,7 @@ const DATA = {
       { input: "ADAS camera/radar data feed", supply_risk: 3, profit_impact: 8, quadrant: "strategic", reasoning: "Internal Bosch supply — the core input that makes preview-comfort possible; low risk, high impact." },
       { input: "Automotive MCUs (chassis domain)", supply_risk: 6, profit_impact: 7, quadrant: "strategic", reasoning: "High-performance MCU supply for cross-domain compute is allocation-sensitive." },
     ],
-    sources: ["Road-investment & quality data", "Semi-active penetration by price band", "Premium-buyer comfort studies", "VMM/cross-domain architecture briefings", "EV mass & energy analyses", "ISO 26262 chassis trends", "Premium PV segment forecasts", "Active-suspension market reports"],
+    sources: ["Road-investment & quality data", "Semi-active penetration by price band", "Premium-buyer comfort studies", "VMM/cross-domain architecture briefings", "EV mass & energy analyses", "ISO 26262 chassis trends", "Premium PV segment forecasts", "Active-suspension market reports", "GST Council 56th meeting (Sept-2025)"],
   },
 
   connectivity: {
@@ -862,14 +929,27 @@ const DATA = {
     ],
     pestel: {
       Political: [
-        { p: "AIS-189/190 bring UNECE-style cybersecurity & software-update management to India", why: "CSMS/SUMS requirements make certified security processes a homologation precondition for connected vehicles [1]", sowhat: "Cybersecurity engineering becomes mandatory spend by every OEM — a compliance-pulled services and product market Bosch is built for", i: "high", c: [1] },
-        { p: "Govt de-licensed the 5.9 GHz band (5875–5905 MHz) for C-V2X OBUs — a regulatory ENABLER, not a demand driver", why: "In June 2026 the WPC exempted C-V2X On-Board Units (PC5 direct/V2V mode) from spectrum licensing, issued alongside the 77–81 GHz radar exemption — bringing India in line with US/EU. Customers don't buy connectivity because of it; it removes a barrier and de-risks deployment [9]", sowhat: "Improves the attractiveness and feasibility of future V2X-related opportunities (vehicle-side stacks, RSUs, safety corridors) rather than creating immediate revenue — strengthens the Infrastructure-field V2X thesis and Bosch's both-sides-of-the-air-gap position", i: "high", enabler: true, c: [9] },
+        { cat: "Government Stability & Policy Certainty", p: "AIS-189/190 bring UNECE-style cybersecurity & software-update management to India — a predictable, ratcheting compliance agenda", why: "CSMS/SUMS requirements make certified security processes a homologation precondition for connected vehicles [1]", sowhat: "Cybersecurity engineering becomes mandatory spend by every OEM — a compliance-pulled services and product market Bosch is built for", i: "high", subs: ["Cyber Security"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "Govt de-licensed the 5.9 GHz band (5875–5905 MHz) for C-V2X OBUs — a regulatory ENABLER, not a demand driver", why: "In June 2026 the WPC exempted C-V2X On-Board Units (PC5 direct/V2V mode) from spectrum licensing, issued alongside the 77–81 GHz radar exemption — bringing India in line with US/EU. Customers don't buy connectivity because of it; it removes a barrier and de-risks deployment [9]", sowhat: "Improves the attractiveness and feasibility of future V2X-related opportunities (vehicle-side stacks, RSUs, safety corridors) rather than creating immediate revenue — strengthens the Infrastructure-field V2X thesis and Bosch's both-sides-of-the-air-gap position", i: "high", enabler: true, subs: ["Connectivity", "Architectures"], c: [9] },
       ],
-      Economic: [{ p: "Connected features shift from premium option to default expectation", why: "Embedded SIM penetration in new PVs has climbed steeply; OEMs monetise subscriptions and need data infrastructure to do it [2]", sowhat: "Recurring-revenue offboard services (the mapped M&A hook) scale with the connected parc, not just new sales", i: "high", c: [2] }],
-      Social: [{ p: "Indian consumers adopt connected services fast but churn on price", why: "High app engagement, low willingness to pay post-trial — monetisation needs bundling with insurance, charging, service [3]", sowhat: "Design service bundles (workshop, battery, insurance integration) rather than standalone subscriptions — plays to Bosch's workshop stream", i: "medium", c: [3] }],
-      Technological: [{ p: "SDV data architectures + federated mobility data are the build-out frontier", why: "OEMs need vehicle data platforms; India DPI thinking (Beckn-style open networks) extends to mobility data exchanges [4]", sowhat: "The mapped 'Data Management' and 'Architectures' sub-fields align with where Indian digital infrastructure is uniquely ambitious", i: "high", c: [4] }],
-      Environmental: [{ p: "Data-centre energy scrutiny meets vehicle-data growth", why: "Vehicle fleets generate vast telemetry; efficient edge filtering reduces cloud cost and footprint [5]", sowhat: "Edge-preprocessing architectures are both a cost and sustainability sell", i: "low", c: [5] }],
-      Legal: [{ p: "DPDP Act + CERT-In directives govern vehicle data end-to-end", why: "Breach reporting windows, consent management and data-residency expectations apply to telematics platforms [6]", sowhat: "India-hosted, consent-native vehicle cloud is a compliance moat — expensive for late movers to retrofit", i: "high", c: [6] }],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Connected features have shifted from premium option to default expectation — recurring revenue scales with the parc, not just new sales", why: "Embedded SIM penetration in new PVs has climbed steeply; OEMs monetise subscriptions and need data infrastructure to do it [2]", sowhat: "Recurring-revenue offboard services (the mapped M&A hook) scale with the connected parc, not just new sales", i: "high", subs: ["Connectivity", "Cloud"], c: [2] },
+        { cat: "Infrastructure Investment", p: "Mature nationwide 5G coverage plus an India data-centre construction boom give vehicle-cloud services production-grade infrastructure with in-country residency", why: "5G is now table stakes in metros and highways; hyperscaler and domestic data-centre capex means India-resident vehicle clouds are commercially available at scale [10]", sowhat: "The infrastructure excuse for delaying connected-service launches is gone — and DPDP-driven data-residency needs can be met without architecture compromises", i: "medium", subs: ["Cloud", "Connectivity"], c: [10] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Indian consumers adopt connected services fast but churn hard on price — bundling, not standalone subscriptions, is the monetisation model", why: "High app engagement, low willingness to pay post-trial — monetisation needs bundling with insurance, charging, service [3]", sowhat: "Design service bundles (workshop, battery, insurance integration) rather than standalone subscriptions — plays to Bosch's workshop stream", i: "medium", subs: ["Cloud", "Data Management"], c: [3] },
+        { cat: "Digital Literacy & Connectivity", p: "UPI-default digital behaviour (23B+ transactions/month) normalises in-app payments and micro-subscriptions — the friction barrier to connected-service commerce is culturally gone", why: "A user base fluent in digital payment and app-first services adopts vehicle companion apps and pay-per-use features without an education curve [11]", sowhat: "Price connected services as UPI-native micro-transactions (per-trip, per-feature) rather than annual contracts — match the payment culture, lift attach rates", i: "medium", subs: ["Cloud", "Connectivity"], c: [11] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "SDV data architectures + federated mobility data are the build-out frontier — and India's DPI ambition makes it a uniquely favourable market to build them in", why: "OEMs need vehicle data platforms; India DPI thinking (Beckn-style open networks) extends to mobility data exchanges [4]", sowhat: "The mapped 'Data Management' and 'Architectures' sub-fields align with where Indian digital infrastructure is uniquely ambitious", i: "high", subs: ["Data Management", "Architectures"], c: [4] },
+        { cat: "Cybersecurity & Digital Trust", p: "CERT-In's 6-hour incident-reporting window forces automotive SOCs to be real-time operations, not audit functions — raising the bar for what a compliant vehicle-security service looks like", why: "The reporting direction applies to connected-vehicle platforms; meeting a 6-hour window requires 24×7 monitoring, automated detection and rehearsed response — capabilities most OEMs don't have in-house [6]", sowhat: "Design the managed vehicle-SOC offer around the 6-hour clock — it converts a compliance burden into a recurring managed-services contract Bosch can anchor", i: "high", subs: ["Cyber Security", "Cloud"], c: [6] },
+      ],
+      Environmental: [
+        { cat: "Natural Resources", p: "Data-centre energy scrutiny meets vehicle-data growth — edge filtering is both a cost and a sustainability play", why: "Vehicle fleets generate vast telemetry; efficient edge filtering reduces cloud cost and footprint [5]", sowhat: "Edge-preprocessing architectures are both a cost and sustainability sell", i: "low", subs: ["Cloud", "Architectures"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Data Privacy & Security Law", p: "DPDP Act (Rules phased to ~2027) + CERT-In directives govern vehicle data end-to-end — compliance is an architecture decision, not a legal afterthought", why: "Breach reporting windows, consent management and data-residency expectations apply to telematics platforms [6]", sowhat: "India-hosted, consent-native vehicle cloud is a compliance moat — expensive for late movers to retrofit", i: "high", subs: ["Data Management", "Cyber Security"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -928,7 +1008,7 @@ const DATA = {
       { name: "Hyperscale cloud infrastructure", bosch: 3, req: 6, whyReq: "Scaled, India-resident infra underneath everything (6)", whyBosch: "Deliberately not owned (3)", gap: "partner", gapWhy: "Multi-cloud partnerships; differentiate above the line" },
       { name: "Open-network / DPI-style architectures", bosch: 6, req: 7, whyReq: "Federated mobility data needs Beckn-class open-protocol fluency (7)", whyBosch: "Architecture talent exists; India DPI-specific experience thin (6)", gap: "build / hire", gapWhy: "Hire from India DPI ecosystem; co-build with network founders" },
     ],
-    competencyRationale: "Score 8.2: matches or exceeds on four of five competencies including both decisive ones (cyber, data platforms); the infra gap is a deliberate partner line. Highest competency score across the 16 fields alongside Software. Confidence 0.88.",
+    competencyRationale: "Score 8.2: matches or exceeds on four of five competencies including both decisive ones (cyber, data platforms); the infra gap is a deliberate partner line. Highest competency score across the search fields alongside Software. Confidence 0.88.",
     horizons: {
       h1: [
         { item: "CSMS/SUMS compliance products & secure OTA", why: "Regulatory deadlines create urgent, budgeted demand today" },
@@ -963,7 +1043,7 @@ const DATA = {
       { d: "May 20, 2026", t: "Open mobility-data network pilot expands to vehicle telematics in two states", s: "Mint" },
       { d: "May 09, 2026", t: "CERT-In advisory on connected-vehicle vulnerabilities prompts OEM security audits", s: "Economic Times" },
     ],
-    sources: ["AIS-189/190 drafts & UNECE R155/156", "Embedded connectivity penetration data", "Connected-services churn studies", "Beckn/DPI mobility extensions", "Vehicle data volume analyses", "DPDP + CERT-In directives", "Connected-car market reports", "Competitive landscape trackers", "WPC 5.9 GHz C-V2X OBU de-licensing notification, June 2026 (G.S.R. notification under Indian Telegraph Act 1885 / Wireless Telegraphy Act 1933)"],
+    sources: ["AIS-189/190 drafts & UNECE R155/156", "Embedded connectivity penetration data", "Connected-services churn studies", "Beckn/DPI mobility extensions", "Vehicle data volume analyses", "DPDP + CERT-In directives", "Connected-car market reports", "Competitive landscape trackers", "WPC 5.9 GHz C-V2X OBU de-licensing notification, June 2026 (G.S.R. notification under Indian Telegraph Act 1885 / Wireless Telegraphy Act 1933)", "5G coverage & India data-centre capex trackers", "NPCI UPI statistics (May-2026)"],
   },
 
   eca: {
@@ -976,12 +1056,31 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.6, conf: 0.84, why: "Zonal now, AI-compute and chiplets next, RISC-V and quantum sensing later — deep pipeline with ISM tailwind. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "India Semiconductor Mission (ISM) funds fabs, OSAT and design-linked incentives", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem for the first time [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", c: [1] }],
-      Economic: [{ p: "E/E content per vehicle rising steeply even in budget segments", why: "Safety mandates (6 airbags-class features, ESC), EVs and connectivity multiply ECUs and semiconductors per vehicle [2]", sowhat: "Volume-driven demand for cost-optimised ECUs and zonal consolidation — both Bosch home turf", i: "high", c: [2] }],
-      Social: [{ p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs", why: "2021–23 shortages cost Indian OEMs real volume; localisation of semiconductors is now strategic, not just cost-driven [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction", i: "medium", c: [3] }],
-      Technological: [{ p: "Architecture shift: distributed ECUs → zonal + central compute, with RISC-V emerging", why: "Global zonal transition reaches Indian platforms via global OEMs first; DIR-V programme (Shakti/Vega cores) pushes sovereign RISC-V [4]", sowhat: "Zonal controllers and vehicle-computer sockets are being re-sourced — the once-a-decade entry window; RISC-V watchlist for sovereignty-sensitive programmes", i: "high", c: [4] }],
-      Environmental: [{ p: "Power efficiency (SiC/GaN) is the EV electronics battleground", why: "Wide-bandgap devices cut inverter losses meaningfully; ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Power-semiconductor positioning spans Energy and ECA fields — coordinate the play", i: "medium", c: [5] }],
-      Legal: [{ p: "Functional-safety and cybersecurity certification deepen at silicon level", why: "ISO 26262 + AIS-189 push security/safety requirements into chips and ECUs [6]", sowhat: "Certification depth is a barrier favouring established Tier-1s — Bosch's pedigree compounds", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission funds fabs, OSAT and design-linked incentives — a domestic silicon ecosystem is forming for the first time", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", subs: ["Semiconductor Tech"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "5.9 GHz C-V2X and 77–81 GHz radar de-licensing (Jun-2026) are regulatory ENABLERS for sensing and communication content per vehicle", why: "The WPC exemptions remove spectrum-licensing barriers for V2X OBUs and imaging radar, aligning India with US/EU and de-risking sensing-heavy architectures [9]", sowhat: "Vehicle-as-Sensor and Comm. Tech sub-fields gain a cleared runway — content roadmaps can assume these bands without regulatory contingency", i: "medium", enabler: true, subs: ["Vehicle as Sensor", "Comm. Tech"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "E/E content per vehicle rises steeply even in budget segments — safety mandates, EVs and connectivity multiply ECUs regardless of GDP cycle", why: "Safety mandates (6 airbags-class features, ESC), EVs and connectivity multiply ECUs and semiconductors per vehicle [2]", sowhat: "Volume-driven demand for cost-optimised ECUs and zonal consolidation — both Bosch home turf", i: "high", subs: ["Distributed Compute", "Edge Compute"], c: [2] },
+        { cat: "Currency & Exchange Rate", p: "INR weakness is a structural cost risk for advanced-node silicon — every zonal computer's BOM is dollar-denominated at the chip level", why: "Leading-edge SoCs and memory are imported; rupee depreciation flows directly into vehicle-computer costs [10]", sowhat: "ISM-qualified local silicon (as it matures) plus ASIC partnerships become genuine cost hedges — another reason to anchor the ISM qualification role", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [10] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs — localisation is strategic, not just cost-driven", why: "2021–23 shortages cost Indian OEMs real volume; semiconductor localisation is now a CXO agenda item [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction", i: "medium", subs: ["Semiconductor Tech", "Distributed Compute"], c: [3] },
+        { cat: "Workforce & Labor", p: "India hosts the world's largest concentration of silicon-design talent inside vendor GCCs — the constraint is organising it, not finding it", why: "Qualcomm/NVIDIA/Intel-class GCCs employ tens of thousands of Indian chip designers; DLI incentives make targeted team-builds economical [1]", sowhat: "Acqui-hire or DLI-backed design-team builds close Bosch's India silicon-design gap faster than organic growth — the competency tab's named route", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [1] },
+      ],
+      Technological: [
+        { cat: "Pace of Change", p: "The distributed-ECU → zonal + central-compute shift is the once-a-decade re-sourcing window — every socket reopens", why: "Global zonal transition reaches Indian platforms via global OEMs first; architecture transitions reset incumbency [4]", sowhat: "Zonal controllers and vehicle-computer sockets are being re-sourced now — win the blueprint, the sockets follow", i: "high", subs: ["Edge Compute", "Distributed Compute"], c: [4] },
+        { cat: "Interoperability & Standards", p: "DIR-V (Shakti/Vega cores) pushes sovereign RISC-V toward automotive — a standards bet worth funded optionality, not commitment", why: "Government-backed RISC-V may become a procurement criterion in sovereignty-sensitive programmes; automotive toolchains are still maturing [4]", sowhat: "One evaluation programme now buys the option; scale only on a real procurement trigger — as the competency tab prices it", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [4] },
+        { cat: "Emerging Technologies", p: "Chiplet-based custom compute (UCIe) offers a route to differentiated vehicle computers without owning leading-edge fabs", why: "Chiplet standards let system houses compose custom silicon from best-of-breed dies — exactly the position of a fab-less Tier-1 with ASIC competence [4]", sowhat: "ASIC/chiplet alliances are the partner-down half of the silicon strategy — pursue alongside the ISM qualification white space", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "CAFE-III turns electronics efficiency into a compliance line — every ECU's power draw now has regulatory value", why: "Fleet fuel-consumption targets (3.73→3.01 L/100km, Apr-2027–Mar-2032) make electrical-load reduction a CAFE credit; consolidation from many ECUs to few computers cuts standby drain [11]", sowhat: "Sell zonal consolidation partly as a CAFE-compliance measure — an OEM finance argument on top of the architecture one", i: "medium", subs: ["Edge Compute", "Distributed Compute"], c: [11] },
+        { cat: "Natural Resources", p: "Power efficiency (SiC/GaN) is the EV electronics battleground — wide-bandgap devices cut inverter losses meaningfully", why: "ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Power-semiconductor positioning spans Energy and ECA fields — coordinate the play", i: "medium", subs: ["Semiconductor Tech"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Cybersecurity & Digital Regulations", p: "Functional-safety and cybersecurity certification deepen to silicon level — ISO 26262 + AIS-189 push requirements into chips and ECUs", why: "Security/safety requirements now flow down to silicon; certification depth becomes a structural barrier [6]", sowhat: "Certification depth favours established Tier-1s — Bosch's pedigree compounds with every regulation cycle", i: "medium", subs: ["Semiconductor Tech", "Edge Compute"], c: [6] },
+        { cat: "IP Law", p: "ASIC and chiplet partnerships hinge on enforceable semiconductor IP — India's strengthening IP regime makes co-design commercially safe", why: "Custom-silicon collaborations expose core design IP; partnership structures depend on legal enforceability in the jurisdiction of execution [6]", sowhat: "Structure ISM design partnerships with layered IP protection — a legal-readiness item before the qualification play scales", i: "low", subs: ["Semiconductor Tech"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -1037,7 +1136,7 @@ const DATA = {
       { name: "ECU design & manufacturing", bosch: 9, req: 8, whyReq: "Cost-optimised, safety-certified controllers at Indian volumes (8)", whyBosch: "Among world's largest; India plants operating (9)", gap: "none — exceed", gapWhy: "The base to defend and migrate" },
       { name: "Zonal/central-compute architecture", bosch: 9, req: 9, whyReq: "The transition is the entry window; blueprint owners win sockets (9)", whyBosch: "Global vehicle-computer programmes shipping (9)", gap: "none — match", gapWhy: "Lead asset for the decade" },
       { name: "Advanced silicon (SoC/chiplet) access", bosch: 5, req: 8, whyReq: "Central compute performance defined at silicon level (8)", whyBosch: "ASIC capability + partnerships, no leading-edge ownership (5)", gap: "partner", gapWhy: "Chiplet/ASIC alliances; qualify ISM silicon" },
-      { name: "MEMS & power semiconductors", bosch: 9, req: 7, whyReq: "Sensing + efficient power conversion across EVs (7)", whyBosch: "Franchise businesses with hooks mapped (9)", gap: "none — exceed", gapWhy: "Cash-generative defence; Energy-field synergy" },
+      { name: "MEMS & power semiconductors", bosch: 9, req: 7, whyReq: "Sensing + efficient power conversion across EVs (7)", whyBosch: "Franchise businesses with hooks mapped (9)", gap: "none — exceed", gapWhy: "Cash-generative defensive base; Energy-field synergy" },
       { name: "RISC-V / sovereign compute", bosch: 4, req: 6, whyReq: "DIR-V momentum may make RISC-V a procurement criterion in sovereignty-sensitive programmes (6)", whyBosch: "Limited RISC-V automotive investment to date (4)", gap: "build (watch)", gapWhy: "Low-cost optionality: one evaluation programme, scale on trigger" },
     ],
     competencyRationale: "Score 7.4: franchise-level on three competencies including the decisive architecture one; gaps are at silicon ownership (managed by partnership) and RISC-V (optionality). Confidence 0.86: levels verifiable against shipping product lines.",
@@ -1098,7 +1197,7 @@ const DATA = {
       { input: "SiC/GaN power semiconductors", supply_risk: 7, profit_impact: 8, quadrant: "strategic", reasoning: "EV power electronics; supply constrained and performance-critical — coordinate with Energy field." },
       { input: "PCB / OSAT (OSATs in India)", supply_risk: 5, profit_impact: 5, quadrant: "leverage", reasoning: "India OSAT ecosystem growing; lower risk than offshore assembly." },
     ],
-    sources: ["ISM project approvals & DLI scheme", "E/E content-per-vehicle curves", "Chip-shortage impact retrospectives", "Zonal architecture & DIR-V briefings", "SiC/GaN efficiency studies", "ISO 26262/AIS-189 silicon implications", "Production & semiconductor consumption forecasts", "Tier-1 competitive award trackers"],
+    sources: ["ISM project approvals & DLI scheme", "E/E content-per-vehicle curves", "Chip-shortage impact retrospectives", "Zonal architecture & DIR-V briefings", "SiC/GaN efficiency studies", "ISO 26262/AIS-189 silicon implications", "Production & semiconductor consumption forecasts", "Tier-1 competitive award trackers", "WPC 5.9 GHz & 77–81 GHz de-licensing notifications (Jun-2026)", "RBI MPC Jun-2026", "BEE CAFE-III draft"],
   },
 
   software: {
@@ -1111,12 +1210,31 @@ const DATA = {
       { ...WEIGHTS[4], s: 9.0, conf: 0.90, why: "Middleware/SDV now, AI-defined vehicle and digital twins next, agentic/WASM later — the deepest pipeline of all fields. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "GCC policy & SDV skilling push make India the world's automotive-software factory", why: "State GCC policies, engineering-export momentum and skilling missions concentrate global SDV development in India [1]", sowhat: "The field's global talent pool is in Bosch's backyard — scale advantage compounds for whoever organises it best", i: "high", c: [1] }],
-      Economic: [{ p: "Every major OEM is funding SDV programmes despite margin pressure", why: "Software-defined platforms are existential investments; Indian OEMs budget SDV even in down-cycles [2]", sowhat: "Counter-cyclical demand for middleware, tooling and integration — rare resilience among the 16 fields", i: "high", c: [2] }],
-      Social: [{ p: "Talent war for automotive-software engineers in India", why: "OEM captives, GCCs, IT majors and startups compete for the same SDV talent pool; attrition economics matter [3]", sowhat: "Bosch's brand + scale in India is a recruiting asset; productised IP reduces headcount sensitivity", i: "medium", c: [3] }],
-      Technological: [{ p: "Middleware consolidation + AI/ML moving into the vehicle loop", why: "AUTOSAR Adaptive, vehicle OS plays and on-board AI runtimes converge; digital twins shift validation left [4]", sowhat: "The mapped sub-fields (middleware/OS, AI/ML, simulation, digital twin) are exactly the consolidation battlegrounds — fight with products, not bodies", i: "high", c: [4] }],
-      Environmental: [{ p: "Virtual validation cuts physical prototyping & test fleets", why: "Simulation/digital-twin maturity measurably reduces prototype builds and test kilometres [5]", sowhat: "Sustainability is a quantifiable selling point for the simulation/twin offer", i: "low", c: [5] }],
-      Legal: [{ p: "Safety + cybersecurity certification of software (26262, AIS-189) raises the compliance bar", why: "Certified toolchains and update-management processes become mandatory across the parc [6]", sowhat: "ETAS-class certified tooling becomes more valuable as regulation deepens — moat widens over time", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "GCC policy & SDV skilling missions make India the world's automotive-software factory — the field's global talent pool sits in Bosch's backyard", why: "State GCC policies, engineering-export momentum and skilling missions concentrate global SDV development in India; 1,600+ GCCs operate today [1]", sowhat: "Scale advantage compounds for whoever organises the talent best — Bosch's existing India SW organisation is the head start", i: "high", subs: ["Middleware/OS", "AI/ML"], c: [1] },
+        { cat: "Government Stability & Policy Certainty", p: "Engineering-export continuity is bipartisan policy — the regulatory risk to India-delivered global SW work is structurally low", why: "Services exports are a current-account pillar; successive governments have protected and promoted the GCC model [1]", sowhat: "Long-cycle SDV platform commitments can be made from India delivery without policy-risk discounting", i: "medium", subs: ["Middleware/OS"], c: [1] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Every major OEM funds SDV programmes despite margin pressure — counter-cyclical demand that holds even in a 6.6%-GDP year", why: "Software-defined platforms are existential investments; Indian OEMs budget SDV even in down-cycles [2][9]", sowhat: "Counter-cyclical demand for middleware, tooling and integration — rare resilience among the search fields", i: "high", subs: ["Middleware/OS", "Simulations"], c: [2, 9] },
+        { cat: "Inflation & Interest Rates", p: "Talent-cost inflation is this field's real inflation exposure — SDV wage growth outruns CPI, squeezing services margins", why: "Attrition-driven wage spirals in automotive SW outpace general inflation; T&M models absorb it, product models don't [3]", sowhat: "Product-led pricing (middleware, tools, GenAI products) inflation-proofs the business in a way headcount-billing never can — reinforces the field strategy", i: "medium", subs: ["Middleware/OS", "AI/ML"], c: [3] },
+      ],
+      Social: [
+        { cat: "Workforce & Labor", p: "The talent war for automotive-software engineers is the field's defining social dynamic — attrition economics decide delivery models", why: "OEM captives, GCCs, IT majors and startups compete for the same SDV talent pool [3]", sowhat: "Bosch's brand + scale in India is a recruiting asset; productised IP reduces headcount sensitivity", i: "medium", subs: ["Middleware/OS", "AI/ML"], c: [3] },
+        { cat: "Technology Adoption Behavior", p: "India's developer-community culture (largest GitHub base outside the US) makes developer-ecosystem GTM a native motion — if Bosch builds the DevRel muscle", why: "SDV platforms win by developer adoption; India's open-source and hackathon culture is fertile ground for platform evangelism [4]", sowhat: "The competency tab's DevRel gap is cheap to close in India specifically — community investment here has outsized platform-adoption returns", i: "medium", subs: ["Middleware/OS", "WASM"], c: [4] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Middleware consolidation + AI/ML moving into the vehicle loop — the mapped sub-fields are exactly the consolidation battlegrounds", why: "AUTOSAR Adaptive, vehicle OS plays and on-board AI runtimes converge; digital twins shift validation left [4]", sowhat: "Fight with products, not bodies — middleware/OS, AI/ML, simulation and digital twin are where the value consolidates", i: "high", subs: ["Middleware/OS", "AI/ML", "Simulations", "Digital Twin"], c: [4] },
+        { cat: "Pace of Change", p: "GenAI-assisted engineering is compressing SDV development cycles — productivity tooling is becoming a product category, not an internal secret", why: "AI coding/validation assistants trained on automotive constraints multiply engineering throughput; OEMs now ask for the tooling, not just the output [4]", sowhat: "Productise internal GenAI engineering gains as the mapped 'GenAI Products & Services' BBM stream — domain-corpus advantage is the moat", i: "high", subs: ["AI/ML", "Simulations"], c: [4] },
+        { cat: "Interoperability & Standards", p: "Eclipse SDV open-source gravity commoditises middleware layers — shape the agenda and monetise around it, or be disrupted by it", why: "Open-source vehicle-OS components (some Bosch-backed) reduce paid middleware scope over time [4]", sowhat: "Lead the open-source roadmap and monetise certified tooling, integration and support around it — the classic open-core play", i: "medium", subs: ["Middleware/OS", "Interoperable Functions"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "ESG Pressure", p: "Virtual validation cuts physical prototyping & test fleets — sustainability is a quantifiable selling point for the simulation/twin offer", why: "Simulation/digital-twin maturity measurably reduces prototype builds and test kilometres [5]", sowhat: "Quantify avoided prototypes and test-km in every simulation pitch — it reads directly into OEM scope-3 reporting", i: "low", subs: ["Simulations", "Digital Twin"], c: [5] },
+        { cat: "Natural Resources", p: "AI-training and simulation compute carry an energy footprint OEM buyers increasingly audit — efficient toolchains are becoming a procurement criterion", why: "BRSR-style disclosure pressure extends to suppliers' compute intensity; efficient simulation pipelines cost less and score better [5]", sowhat: "Engineer and market toolchain efficiency (compute per validated km) as both a cost and an ESG differentiator", i: "low", subs: ["Simulations", "AI/ML"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Safety + cybersecurity certification of software (ISO 26262, AIS-189) raises the compliance bar — certified toolchains become mandatory across the parc", why: "Certified toolchains and update-management processes become mandatory as regulation deepens [6]", sowhat: "ETAS-class certified tooling becomes more valuable with every regulation cycle — the moat widens over time", i: "high", subs: ["Middleware/OS", "Simulations"], c: [6] },
+        { cat: "Taxation & Corporate Law", p: "GST 2.0 clarified most goods classifications but SW-licence vs SaaS vs embedded-royalty treatment still needs deal-level structuring", why: "Automotive software deals blend licences, services and royalties — each with distinct GST and transfer-pricing treatment [10]", sowhat: "Standardise deal templates with tax counsel once — then reuse across OEM platform deals to avoid per-deal friction", i: "low", subs: ["Middleware/OS"], c: [10] },
+      ],
     },
     swot: {
       S: [
@@ -1175,7 +1293,7 @@ const DATA = {
       { name: "Simulation & digital twin", bosch: 8, req: 8, whyReq: "Left-shifted validation is how SDV programmes hold timelines (8)", whyBosch: "Simulation assets + vehicle physics depth (8)", gap: "none — match", gapWhy: "Bundle with tooling" },
       { name: "Developer-ecosystem GTM", bosch: 5, req: 8, whyReq: "SDV platforms win by developer adoption, not RFQs alone (8)", whyBosch: "Classic B2B GTM; developer-relations muscle thin (5)", gap: "hire / build", gapWhy: "DevRel team + India developer community investment — cheap, high-leverage" },
     ],
-    competencyRationale: "Score 8.6: the strongest competency sheet of all 16 fields — franchise positions on three of five, with the two gaps (GenAI productisation, DevRel) being execution items, not structural absences. Confidence 0.90: every level verifiable against shipping products.",
+    competencyRationale: "Score 8.6: the strongest competency sheet of all search fields — franchise positions on three of five, with the two gaps (GenAI productisation, DevRel) being execution items, not structural absences. Confidence 0.90: every level verifiable against shipping products.",
     horizons: {
       h1: [
         { item: "Middleware + ETAS tooling on current SDV programmes", why: "Funded OEM programmes buying today; regulation compounds demand" },
@@ -1188,7 +1306,7 @@ const DATA = {
       h3: [
         { item: "Agentic vehicle software & app ecosystems (WASM-sandboxed)", why: "WASM in-vehicle runtimes and agentic features need architecture + trust maturity — 5+ years to volume", trigger: "Production vehicle shipping third-party WASM apps in India" },
       ],
-      rationale: "Score 9.0: the deepest pipeline in the portfolio — funded H1, a referenceability-window H2 with named triggers, and a credible H3 where Bosch already holds technical positions (WASM, middleware). Highest horizon score of the 16 fields.",
+      rationale: "Score 9.0: the deepest pipeline in the portfolio — funded H1, a referenceability-window H2 with named triggers, and a credible H3 where Bosch already holds technical positions (WASM, middleware). Highest horizon score of the search fields.",
     },
     verdict: {
       entry: "Enter at full commitment: product-led (middleware + ETAS + GenAI engineering products) with lighthouse Indian-OEM SDV platform deals; sell into OEM captives; shape open-source; build DevRel.",
@@ -1233,7 +1351,7 @@ const DATA = {
       { input: "Open-source SDV middleware (Eclipse)", supply_risk: 3, profit_impact: 5, quadrant: "non-critical", reasoning: "Community-maintained; low supply risk, but commoditises some Bosch middleware value." },
       { input: "Automotive-domain LLM training data", supply_risk: 6, profit_impact: 8, quadrant: "strategic", reasoning: "Bosch's own vehicle/engineering data corpus is the scarce input; protect and leverage it." },
     ],
-    sources: ["GCC policies & engineering-export data", "OEM SDV budget disclosures", "Automotive talent-market studies", "AUTOSAR/Eclipse SDV roadmaps", "Virtual-validation impact studies", "ISO 26262/AIS-189 toolchain requirements", "Automotive SW market forecasts", "Competitive deal trackers"],
+    sources: ["GCC policies & engineering-export data", "OEM SDV budget disclosures", "Automotive talent-market studies", "AUTOSAR/Eclipse SDV roadmaps", "Virtual-validation impact studies", "ISO 26262/AIS-189 toolchain requirements", "Automotive SW market forecasts", "Competitive deal trackers", "RBI MPC Jun-2026", "GST Council 56th meeting (Sept-2025)"],
   },
 
   manufacturing: {
@@ -1246,12 +1364,31 @@ const DATA = {
       { ...WEIGHTS[4], s: 6.6, conf: 0.80, why: "MaaS and I5.0 are real growth vectors; dark factories distant for India's labour economics. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "PLI schemes + China+1 sourcing push electronics manufacturing to India at scale", why: "Electronics/auto-component PLI disbursements and global supply-chain de-risking redirect manufacturing investment into India [1]", sowhat: "A rising tide for contract manufacturing — the question is whether Bosch participates as a service provider or only as a buyer", i: "high", c: [1] }],
-      Economic: [{ p: "EMS is a 3–5% margin business — structurally below Bosch portfolio thresholds", why: "Listed Indian EMS players run thin operating margins compensated by asset turns and scale [2]", sowhat: "Pure-play EMS competes on a financial model Bosch isn't built for; only differentiated automotive-grade, high-mix niches fit", i: "high", c: [2] }],
-      Social: [{ p: "Manufacturing employment is politically prized; automation messaging is sensitive", why: "Job creation drives state incentives; lights-out narratives can cost goodwill [3]", sowhat: "Frame I5.0 as human-machine collaboration and skilling, not headcount removal — affects positioning and incentive access", i: "medium", c: [3] }],
-      Technological: [{ p: "Industry 4.0→5.0 maturity becomes a sellable service, not just internal practice", why: "Indian factories demand digitalisation; proven practitioners can productise their know-how [4]", sowhat: "Bosch's own plant digitalisation is monetisable as solutions + consulting without entering EMS economics", i: "high", c: [4] }],
-      Environmental: [{ p: "Green-manufacturing compliance (energy, ZLD, BRSR carbon reporting) tightens", why: "Customer scope-3 demands push factories toward audited sustainability [5]", sowhat: "Certified-green capacity commands preference with global customers — a Bosch-plant credential", i: "medium", c: [5] }],
-      Legal: [{ p: "Quality/liability standards for safety-critical manufacturing favour certified operators", why: "IATF 16949-class discipline gates who can build safety parts [6]", sowhat: "Automotive-grade contract manufacturing is a defensible niche where certification is the moat", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "PLI schemes + China+1 sourcing push electronics manufacturing to India at scale — a rising tide for contract manufacturing", why: "Electronics/auto-component PLI disbursements and global supply-chain de-risking redirect manufacturing investment into India [1]", sowhat: "The question is whether Bosch participates as a service provider or only as a buyer — the MaaS thesis answers it", i: "high", subs: ["Contract Mfg (MaaS)", "EMS"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "PM E-DRIVE's scrappage-linked e-truck incentives (extended to Mar-2028) create new commercial-vehicle build demand — fresh volume for certified contract capacity", why: "The scheme's post-pivot outlay funds e-trucks, 14,028 e-buses and e-ambulances — categories that need automotive-grade electronics builds [9]", sowhat: "Target e-CV and e-bus electronics builds as MaaS anchor contracts — policy-funded demand with multi-year visibility", i: "medium", subs: ["Contract Mfg (MaaS)"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "EMS is a 3–5% margin business — structurally below Bosch portfolio thresholds; only differentiated automotive-grade niches fit", why: "Listed Indian EMS players run thin operating margins compensated by asset turns and scale [2]", sowhat: "Pure-play EMS competes on a financial model Bosch isn't built for — the scope discipline IS the strategy", i: "high", subs: ["EMS", "Contract Mfg (MaaS)"], c: [2] },
+        { cat: "Inflation & Interest Rates", p: "At a 5.25% repo, EMS asset-turn economics stay brutal — capital-intensive capacity races only work for players who accept commodity returns", why: "EMS margins barely clear the cost of capital; the business model rewards extreme utilisation, not engineering depth [2][10]", sowhat: "Monetise EXISTING certified capacity (sunk capital) rather than building new — the capacity-utilisation play is the only one that clears Bosch's hurdle rate", i: "medium", subs: ["Contract Mfg (MaaS)"], c: [2, 10] },
+        { cat: "Taxation & Corporate Law", p: "GST 2.0's uniform 18% on components simplifies contract-build pricing — fewer classification disputes in multi-party manufacturing chains", why: "Uniform component rates remove tax-cascade ambiguity between the brand owner, contract manufacturer and component suppliers [11]", sowhat: "Cleaner MaaS contract structures and cost transparency — a small but real friction reduction for the commercial unit", i: "low", subs: ["Contract Mfg (MaaS)", "EMS"], c: [11] },
+      ],
+      Social: [
+        { cat: "Workforce & Labor", p: "Manufacturing employment is politically prized — automation messaging is sensitive and shapes incentive access", why: "Job creation drives state incentives; lights-out narratives can cost goodwill [3]", sowhat: "Frame I5.0 as human-machine collaboration and skilling, not headcount removal — affects positioning and incentive access", i: "medium", subs: ["Industry 5.0", "Dark Factories"], c: [3] },
+        { cat: "Demographics & Urbanization", p: "India's young workforce makes skilling-led digitalisation the socially-preferred automation path — I5.0's augmentation story fits the demographic moment", why: "A median-age-29 labour force rewards productivity-per-worker narratives over worker-replacement ones; skilling programmes attract state co-funding [3]", sowhat: "Bundle operator-skilling into every digitalisation solution sale — it differentiates against pure-automation vendors and unlocks incentives", i: "low", subs: ["Industry 5.0"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Technology Adoption & Maturity", p: "Industry 4.0→5.0 maturity is a sellable service, not just internal practice — Indian factories demand proven digitalisation", why: "Proven practitioners can productise their know-how; Bosch's plants are reference-grade [4]", sowhat: "Bosch's own plant digitalisation is monetisable as solutions + consulting without entering EMS economics", i: "high", subs: ["Industry 5.0"], c: [4] },
+        { cat: "Pace of Change", p: "Dark-factory economics don't clear in India yet — automation cost vs labour cost defers lights-out beyond 5 years except in hazardous niches", why: "India's labour economics and political context push full automation out; hazardous/precision processes are the exception [4]", sowhat: "Keep Dark Factories at WATCH with a cost-parity trigger — don't let global automation narratives pull Indian investment forward", i: "low", subs: ["Dark Factories"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "ESG Pressure", p: "Green-manufacturing compliance (energy, ZLD, BRSR carbon reporting) tightens — certified-green capacity commands customer preference", why: "Customer scope-3 demands push factories toward audited sustainability [5]", sowhat: "Certified-green capacity is a Bosch-plant credential that commodity EMS rivals can't quickly match — price it into MaaS", i: "medium", subs: ["Contract Mfg (MaaS)", "EMS"], c: [5] },
+        { cat: "Circular Economy & E-Waste", p: "ELV Rules 2025 industrialise the recycling-material loop — recycled-content manufacturing becomes a compliance-adjacent capability", why: "Steel-linked EPR targets create demand for certified recycled-material processing and traceability in production [5]", sowhat: "Recycled-content-capable lines and material traceability connect the Manufacturing and Sustainability fields — one capability, two markets", i: "low", subs: ["Contract Mfg (MaaS)", "Industry 5.0"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "IATF 16949-class quality/liability discipline gates who can build safety parts — certification is the moat of the MaaS niche", why: "Safety-critical manufacturing is legally gated by certified quality systems [6]", sowhat: "Automotive-grade contract manufacturing is a defensible niche where certification is the moat", i: "medium", subs: ["Contract Mfg (MaaS)"], c: [6] },
+        { cat: "Taxation & Corporate Law", p: "Contract-manufacturing structures (job-work vs principal-to-principal) carry distinct GST and liability treatments — the commercial model choice is also a legal one", why: "MaaS deal economics shift materially between job-work and P2P structures; getting it wrong strands margin in tax [6][11]", sowhat: "Fix the standard MaaS contract structure with counsel before scaling the commercial unit", i: "low", subs: ["Contract Mfg (MaaS)"], c: [6, 11] },
+      ],
     },
     swot: {
       S: [
@@ -1291,7 +1428,7 @@ const DATA = {
       customers: [
         { s: "Global Tier-1s & OEMs (China+1)", buy: "Automotive-grade contract manufacturing", note: "Certification + trust buyers, not price buyers" },
         { s: "Indian component makers & startups", buy: "Manufacturing digitalisation solutions, I5.0 consulting", note: "Solutions track" },
-        { s: "Defence & industrial primes", buy: "High-reliability electronics builds", note: "Bridges to Defence field" },
+        { s: "Industrial & infrastructure primes", buy: "High-reliability electronics builds", note: "Certified-capacity buyers beyond automotive" },
       ],
       scoreRationale: "Score 7.2: the headline market is huge, but the Bosch-fit slice is 15% of it — still $1.8B at 18% CAGR. Confidence 0.74: EMS forecasts solid; the automotive-grade and addressable-share splits are ours.",
     },
@@ -1364,7 +1501,7 @@ const DATA = {
       { input: "I4.0 software platforms (SAP, Siemens)", supply_risk: 5, profit_impact: 7, quadrant: "strategic", reasoning: "Digital-manufacturing platforms are strategic; Bosch's internal tools are the proprietary layer." },
       { input: "Plant utilities (power, water)", supply_risk: 3, profit_impact: 4, quadrant: "non-critical", reasoning: "Commodity; managed through local plant operations." },
     ],
-    sources: ["PLI disbursement & China+1 flows", "EMS player financials & margins", "Manufacturing employment policy notes", "I4.0/I5.0 adoption studies", "BRSR/green-manufacturing requirements", "IATF/liability frameworks", "EMS market forecasts", "Capacity announcement trackers"],
+    sources: ["PLI disbursement & China+1 flows", "EMS player financials & margins", "Manufacturing employment policy notes", "I4.0/I5.0 adoption studies", "BRSR/green-manufacturing requirements", "IATF/liability frameworks", "EMS market forecasts", "Capacity announcement trackers", "MHI PM E-DRIVE extension notification (Aug-2025)", "RBI MPC Jun-2026", "GST Council 56th meeting (Sept-2025)"],
   },
 
   fintech: {
@@ -1377,12 +1514,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.0, conf: 0.80, why: "In-vehicle UPI near, UBI insurance and vehicle identity next, monetisation platforms later. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "India's DPI (UPI, FASTag, Account Aggregator, VAHAN) is state-built rails for vehicle commerce", why: "NPCI rails and government registries mean vehicle payments and identity ride public infrastructure, not private walled gardens [1]", sowhat: "Build ON the rails (UPI in-vehicle, VAHAN-linked identity) rather than building rails — uniquely low-cost entry vs other markets", i: "high", c: [1] }],
-      Economic: [{ p: "Vehicle-linked financial flows (tolls, charging, insurance, financing) are massive and digitising", why: "FASTag normalised in-vehicle payments; EV charging adds a new payment surface; UBI insurance pilots grow [2]", sowhat: "The enablement layer (secure vehicle identity, payment HW/SW, data feeds) is the Bosch-capturable slice of a huge flow", i: "high", c: [2] }],
-      Social: [{ p: "Indians pay by UPI reflexively — in-vehicle payment friction is now an anomaly", why: "QR-scanning at toll/parking/charging is the workaround; seamless in-vehicle payment matches established behaviour [3]", sowhat: "In-vehicle UPI is a when-not-if feature — first credible automotive-grade implementation wins the socket", i: "medium", c: [3] }],
-      Technological: [{ p: "Secure elements + vehicle identity make the car a trusted payment device", why: "Automotive-grade secure hardware, DPDP-compliant consent and VAHAN-anchored identity solve fraud/UX problems fintechs can't from outside [4]", sowhat: "Vehicle-side trust infrastructure is exactly Tier-1 territory — the 'Vehicle Aadhar' sub-field formalises it", i: "high", c: [4] }],
-      Environmental: [{ p: "EV-transition financing gaps (battery risk) need data to price", why: "Lenders/insurers struggle with battery residual risk; verified vehicle data unlocks credit and UBI products [5]", sowhat: "Bosch battery/vehicle data feeds become financial-product inputs — bridges to Energy & Sustainability fields", i: "medium", c: [5] }],
-      Legal: [{ p: "RBI/IRDAI licensing perimeter strictly gates financial activities", why: "Payments, lending and insurance require licences and compliance infrastructure far from Bosch's footprint [6]", sowhat: "Hard boundary: Bosch enables, partners execute regulated activities — structure every deal accordingly", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "India's DPI (UPI, FASTag, Account Aggregator, VAHAN) is state-built rails for vehicle commerce — public infrastructure, not private walled gardens", why: "NPCI rails and government registries mean vehicle payments and identity ride public infrastructure [1]", sowhat: "Build ON the rails (UPI in-vehicle, VAHAN-linked identity) rather than building rails — uniquely low-cost entry vs other markets", i: "high", subs: ["In-Vehicle Payment", "Vehicle Aadhar"], c: [1] },
+        { cat: "Government Stability & Policy Certainty", p: "DPI expansion is durable state policy across administrations — the rails Bosch would build on carry near-zero political risk", why: "UPI, ONDC and AA growth is a flagship national programme with continuous NPCI investment and international export ambitions [1]", sowhat: "Enablement investments on NPCI rails can be business-cased on decade horizons — rare policy certainty for a fintech-adjacent play", i: "medium", subs: ["In-Vehicle Payment"], c: [1] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "UPI processes 23.2B transactions/month (~49% of global real-time payment volume) — the rails are proven at national scale, and vehicle-linked flows are digitising onto them", why: "FASTag normalised in-vehicle payments; EV charging adds a new payment surface; UBI insurance pilots grow [2][9]", sowhat: "The enablement layer (secure vehicle identity, payment HW/SW, data feeds) is the Bosch-capturable slice of a huge, still-digitising flow", i: "high", subs: ["In-Vehicle Payment", "Insurance"], c: [2, 9] },
+        { cat: "Consumer Spending Patterns", p: "Credit inclusion via digital footprints (AA-based lending, BNPL) is expanding vehicle-linked finance down-market — data quality is the binding constraint", why: "Account Aggregator flows let lenders underwrite thin-file customers; verified vehicle/usage data extends the same logic to vehicle finance [2]", sowhat: "Verified vehicle-data feeds become underwriting inputs for a widening credit market — the licence-free revenue line grows with financial inclusion itself", i: "medium", subs: ["Insurance", "Vehicle Monetization"], c: [2] },
+      ],
+      Social: [
+        { cat: "Digital Literacy & Connectivity", p: "Indians pay by UPI reflexively — in-vehicle payment friction is now a behavioural anomaly waiting to be fixed", why: "QR-scanning at toll/parking/charging is the workaround; seamless in-vehicle payment matches established behaviour [3]", sowhat: "In-vehicle UPI is a when-not-if feature — first credible automotive-grade implementation wins the socket", i: "medium", subs: ["In-Vehicle Payment"], c: [3] },
+        { cat: "Consumer Behavior & Values", p: "Trust in digital finance is high but fraud-sensitivity is rising — a hardware-anchored, tamper-resistant payment device is a trust story consumers understand", why: "Payment-fraud coverage makes security a consumer-visible attribute; a vehicle secure element out-trusts a phone app in the public narrative [3][4]", sowhat: "Market the vehicle as the most secure payment device the customer owns — the Tier-1 trust pedigree becomes consumer-facing", i: "medium", subs: ["In-Vehicle Payment", "Vehicle Aadhar"], c: [3, 4] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Secure elements + vehicle identity make the car a trusted payment device — vehicle-side trust infrastructure is exactly Tier-1 territory", why: "Automotive-grade secure hardware, DPDP-compliant consent and VAHAN-anchored identity solve fraud/UX problems fintechs can't from outside [4]", sowhat: "The 'Vehicle Aadhar' sub-field formalises it — own the trust layer every fintech partner must rent", i: "high", subs: ["Vehicle Aadhar", "In-Vehicle Payment"], c: [4] },
+        { cat: "Interoperability & Standards", p: "NPCI market-structure rules (like the 30% app-volume cap) shape which payment partners can scale — partner selection is a standards question, not just a commercial one", why: "NPCI governs UPI ecosystem concentration; automotive payment flows must be architected for multi-app, cap-compliant routing [1]", sowhat: "Design the in-vehicle UPI layer app-agnostic from day one — locking to a single payment app is both a regulatory and a commercial risk", i: "medium", subs: ["In-Vehicle Payment"], c: [1] },
+      ],
+      Environmental: [
+        { cat: "ESG Pressure", p: "EV-transition financing gaps (battery risk) need data to price — verified vehicle data unlocks green credit and UBI products", why: "Lenders/insurers struggle with battery residual risk; verified vehicle data unlocks credit and UBI products [5]", sowhat: "Bosch battery/vehicle data feeds become financial-product inputs — bridges to Energy & Sustainability fields", i: "medium", subs: ["Insurance", "Vehicle Monetization"], c: [5] },
+        { cat: "Climate Policy & Emission Regulations", p: "Green-finance frameworks (priority-sector EV lending, sustainability-linked rates) reward verifiable environmental data — vehicle telemetry becomes a rate-setting input", why: "Lenders offering preferential EV rates need usage and battery-health verification to prevent greenwashing in their own books [5]", sowhat: "Position verified telemetry as green-finance compliance infrastructure — a second buyer for the same data feed", i: "low", subs: ["Insurance"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Taxation & Corporate Law", p: "RBI/IRDAI licensing perimeter strictly gates financial activities — the hard boundary that defines Bosch's enablement-only posture", why: "Payments, lending and insurance require licences and compliance infrastructure far from Bosch's footprint [6]", sowhat: "Hard boundary: Bosch enables, partners execute regulated activities — structure every deal accordingly", i: "high", subs: ["In-Vehicle Payment", "Insurance"], c: [6] },
+        { cat: "Data Privacy & Security Law", p: "Financial-behaviour data sits in DPDP's most scrutinised zone — consent architecture for payment and driving data must be designed jointly, not bolted together", why: "Vehicle payment flows combine financial data (RBI ambit) with personal mobility data (DPDP ambit); dual-regime compliance is an architecture problem [6]", sowhat: "A consent-native, dual-regime data architecture is itself a sellable asset to fintech partners facing the same problem — compliance as product", i: "medium", subs: ["In-Vehicle Payment", "Vehicle Aadhar"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -1490,7 +1645,7 @@ const DATA = {
       { input: "NPCI APIs / UPI stack", supply_risk: 3, profit_impact: 7, quadrant: "leverage", reasoning: "Open government APIs; low supply risk, high value enablement." },
       { input: "Telematics / connectivity hardware", supply_risk: 5, profit_impact: 6, quadrant: "leverage", reasoning: "Shared with Connectivity field; managed jointly." },
     ],
-    sources: ["NPCI/UPI/FASTag/AA architecture", "Vehicle-linked financial-flow data", "Payment-behaviour studies", "Secure-element & identity briefings", "EV-financing risk analyses", "RBI/IRDAI perimeter guidance", "Enablement-market estimates", "Fintech competitive trackers"],
+    sources: ["NPCI/UPI/FASTag/AA architecture", "Vehicle-linked financial-flow data", "Payment-behaviour studies", "Secure-element & identity briefings", "EV-financing risk analyses", "RBI/IRDAI perimeter guidance", "Enablement-market estimates", "Fintech competitive trackers", "NPCI UPI statistics (May-2026)"],
   },
 
   infrastructure: {
@@ -1503,12 +1658,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.4, conf: 0.82, why: "MLFF tolling imminent, V2X corridors next, intermodal orchestration later. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "GNSS-based barrier-free (MLFF) tolling is policy direction, replacing FASTag plazas", why: "NHAI pilots and policy statements target satellite-based tolling — a nationwide system transition [1]", sowhat: "Bosch's global GNSS-tolling experience meets a once-in-a-generation Indian system build — the field's defining opportunity", i: "high", c: [1] }],
-      Economic: [{ p: "Record highway & urban-transport capex with ITS components embedded", why: "National infrastructure pipeline allocates explicitly to smart corridors, traffic management and electronic enforcement [2]", sowhat: "Funded demand exists; the contest is procurement access, not budget creation", i: "high", c: [2] }],
-      Social: [{ p: "Urban congestion & road-safety pressure make ITS politically visible", why: "Indian cities top global congestion indices; road-fatality reduction is a stated national mission [3]", sowhat: "Safety-framed ITS (V2X for VRUs, enforcement tech) aligns commercial offers with political priorities", i: "medium", c: [3] }],
-      Technological: [{ p: "C-V2X has won the standards contest; Indian corridor pilots underway", why: "Global C-V2X consolidation removes technology ambiguity; NHAI/smart-city pilots test infrastructure-side deployment [4]", sowhat: "Vehicle-side V2X (Bosch ECU/connectivity assets) + infrastructure-side partnerships can be packaged now", i: "high", c: [4] }],
-      Environmental: [{ p: "EV-charging discoverability & routing is an infrastructure-data problem", why: "Charger reliability/availability data quality limits EV adoption; map-service integration is the fix [5]", sowhat: "Map-services-for-charging sub-field bridges to the Energy field — shared offer architecture", i: "medium", c: [5] }],
-      Legal: [{ p: "B2G procurement rules (L1 bias, localisation clauses) shape who can win", why: "Public tenders weight price and local content heavily; consortium structures are often mandatory [6]", sowhat: "Partner with Indian system integrators for tender access; Bosch as technology provider inside consortia", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "GNSS-based barrier-free (MLFF) tolling is policy direction, replacing FASTag plazas — a once-in-a-generation system transition", why: "NHAI pilots and policy statements target satellite-based tolling — a nationwide system replacement [1]", sowhat: "Bosch's global GNSS-tolling experience meets a once-in-a-generation Indian system build — the field's defining opportunity", i: "high", subs: ["Tolling & Parking"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "5.9 GHz de-licensing for C-V2X OBUs (Jun-2026) is the field's headline regulatory ENABLER — the V2X sub-field's biggest barrier just fell", why: "The WPC exempted C-V2X on-board units from spectrum licensing, aligning India with US/EU and removing the deployment contingency that stalled corridor business cases [9]", sowhat: "V2X corridor proposals can now be tendered and costed without spectrum risk — materially strengthens the both-sides-of-the-air-gap V2X thesis", i: "high", enabler: true, subs: ["V2X"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Infrastructure Investment", p: "Record highway & urban-transport capex with ITS components embedded — funded demand exists; the contest is procurement access, not budget creation", why: "National infrastructure pipeline allocates explicitly to smart corridors, traffic management and electronic enforcement [2]", sowhat: "The constraint is consortium position, not market size — secure technology-partner slots within 12 months", i: "high", subs: ["Urban Traffic Mgmt", "Tolling & Parking"], c: [2] },
+        { cat: "Infrastructure Investment", p: "PM E-DRIVE's ₹2,000 Cr charging-corridor outlay makes charger-network data a funded, near-term market", why: "Public charging deployment across cities and national highways is milestone-funded through Mar-2028 — every charger needs discoverability, routing and reliability data [10]", sowhat: "The Map Services charging-data line has a policy-guaranteed demand floor — the field's fastest commercial (non-B2G) revenue", i: "medium", subs: ["Map Services"], c: [10] },
+      ],
+      Social: [
+        { cat: "Demographics & Urbanization", p: "Urban congestion & road-safety pressure make ITS politically visible — Indian metros top global congestion indices", why: "Road-fatality reduction is a stated national mission; congestion is an everyday, voter-visible pain point [3]", sowhat: "Safety-framed ITS (V2X for VRUs, enforcement tech) aligns commercial offers with political priorities", i: "medium", subs: ["V2X", "Urban Traffic Mgmt"], c: [3] },
+        { cat: "Digital Literacy & Connectivity", p: "FASTag trained 60M+ vehicle owners to accept automatic, account-linked road payments — the behavioural groundwork for MLFF is already done", why: "FASTag's near-universal adoption normalised device-linked tolling; GNSS tolling is an upgrade to an accepted behaviour, not a new ask [1]", sowhat: "MLFF user-adoption risk is low — the transition risk is institutional (procurement, enforcement), which shapes where to invest", i: "medium", subs: ["Tolling & Parking"], c: [1] },
+      ],
+      Technological: [
+        { cat: "Interoperability & Standards", p: "C-V2X has won the standards contest; Indian corridor pilots are underway — technology ambiguity is gone", why: "Global C-V2X consolidation removes standards risk; NHAI/smart-city pilots test infrastructure-side deployment [4]", sowhat: "Vehicle-side V2X (Bosch ECU/connectivity assets) + infrastructure-side partnerships can be packaged now", i: "high", subs: ["V2X"], c: [4] },
+        { cat: "Emerging Technologies", p: "A GNSS-OBU ecosystem is forming around the MLFF transition — OBU hardware, backend tolling logic and enforcement analytics are all being re-sourced", why: "Plaza-based infrastructure obsoletes entirely under satellite tolling; every layer of the stack gets a new supplier decision [1][4]", sowhat: "The OBU + backend technology layer is the asymmetric prize — technology leadership matters more than incumbency in a system replacement", i: "high", subs: ["Tolling & Parking", "V2X"], c: [1, 4] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "EV-charging discoverability & routing is an infrastructure-data problem — charger data quality now limits EV adoption", why: "Charger reliability/availability data quality limits EV adoption; map-service integration is the fix [5]", sowhat: "Map-services-for-charging bridges to the Energy field — shared offer architecture", i: "medium", subs: ["Map Services"], c: [5] },
+        { cat: "Pollution & Waste Management", p: "Congestion-management ITS is increasingly justified on air-quality grounds — traffic flow optimisation is an emissions intervention", why: "Idling traffic is a measurable urban-pollution source; smart-corridor business cases now cite AQI alongside travel time [3]", sowhat: "Frame traffic-management offers with quantified emissions benefits — it widens the funding sources a city can tap", i: "low", subs: ["Urban Traffic Mgmt"], c: [3] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "B2G procurement rules (L1 bias, localisation clauses) shape who can win — consortium structures are often mandatory", why: "Public tenders weight price and local content heavily [6]", sowhat: "Partner with Indian system integrators for tender access; Bosch as technology provider inside consortia — never solo bids", i: "high", subs: ["Tolling & Parking", "Urban Traffic Mgmt"], c: [6] },
+        { cat: "Data Privacy & Security Law", p: "GNSS tolling generates continuous location trails — DPDP compliance for tolling data is a design requirement the MLFF architecture must answer", why: "Satellite tolling tracks every vehicle's movement; consent, purpose-limitation and retention rules apply to a dataset FASTag never created [6]", sowhat: "Privacy-preserving tolling architecture (on-device aggregation, minimal retention) is a differentiator in tender evaluations — and a public-trust necessity", i: "medium", subs: ["Tolling & Parking", "Map Services"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -1620,7 +1793,7 @@ const DATA = {
       { input: "RSU (Road-Side Unit) electronics", supply_risk: 6, profit_impact: 7, quadrant: "bottleneck", reasoning: "C-V2X RSU hardware is a specialised supply; limited certified vendors in India." },
       { input: "Cloud ITS backend infrastructure", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "AWS/Azure infrastructure; multi-cloud possible." },
     ],
-    sources: ["NHAI MLFF policy & pilots", "Infrastructure capex allocations", "Congestion & road-safety data", "C-V2X standards & corridor pilots", "EV charging-data quality studies", "B2G procurement rules", "ITS market forecasts", "Consortium & tender trackers"],
+    sources: ["NHAI MLFF policy & pilots", "Infrastructure capex allocations", "Congestion & road-safety data", "C-V2X standards & corridor pilots", "EV charging-data quality studies", "B2G procurement rules", "ITS market forecasts", "Consortium & tender trackers", "WPC 5.9 GHz C-V2X OBU de-licensing notification (Jun-2026)", "MHI PM E-DRIVE extension notification (Aug-2025)"],
   },
 
   sustainability: {
@@ -1633,12 +1806,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.2, conf: 0.80, why: "Recycling/EPR now, second-life and residual-value next, carbon and right-to-repair platforms later. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "Battery Waste Management Rules mandate EPR; Right-to-Repair policy advancing", why: "MoEFCC EPR targets create compliance obligations; a national Right-to-Repair framework is in motion for automobiles [1]", sowhat: "Regulation manufactures demand for traceability, diagnostics and second-life — the data layer Bosch can own", i: "high", c: [1] }],
-      Economic: [{ p: "EV battery value retention is a major TCO and financing lever", why: "Battery is ~40% of EV cost; second-life and accurate residual valuation unlock fleet economics and resale markets [2]", sowhat: "Residual-value estimation and second-life enablement are monetisable data services with cross-field synergy (Energy, Fintech)", i: "high", c: [2] }],
-      Social: [{ p: "Sustainability disclosure pressure rises but consumer willingness-to-pay lags", why: "Corporate BRSR/scope-3 demands outpace individual buyers' green premium in price-sensitive India [3]", sowhat: "Target B2B/regulatory-driven demand (OEMs, fleets, compliance), not consumer green premiums", i: "medium", c: [3] }],
-      Technological: [{ p: "Battery diagnostics + traceability are the technical heart of circularity", why: "Second-life grading, recycling routing and residual valuation all depend on accurate battery-state data and lifecycle traceability [4]", sowhat: "Bosch BMS/diagnostics + workshop network can generate and certify exactly this data — the defensible position", i: "high", c: [4] }],
-      Environmental: [{ p: "Circular-economy mandates are the field's entire reason for being", why: "Carbon accounting, recycled-content rules and producer responsibility are tightening across the value chain [5]", sowhat: "Aligns directly with the mapped Circular-Economy BBM stream — strategic coherence", i: "high", c: [5] }],
-      Legal: [{ p: "Carbon-credit & EPR compliance frameworks still maturing — rule risk is high", why: "Carbon markets and EPR mechanics in India are evolving; standards and pricing are unsettled [6]", sowhat: "Build flexible, standards-agnostic platforms; avoid betting on any single immature mechanism", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "ELV Rules 2025 (steel-linked EPR) + Battery Waste Rules + advancing Right-to-Repair policy — regulation is manufacturing this field's demand", why: "MoEFCC EPR targets create audited compliance obligations; a national Right-to-Repair framework is in motion for automobiles [1][9]", sowhat: "Traceability, diagnostics and second-life services have regulation-guaranteed buyers — the data layer Bosch can own", i: "high", subs: ["Battery 2nd Life & Recycling", "Right to Repair"], c: [1, 9] },
+        { cat: "Government Schemes & Incentives", p: "The vehicle-scrapping market formalises from $12.8B (2026) to a projected $31.7B (2033) — policy is industrialising the reverse value chain", why: "ELV rules, registered scrapping facilities and fitness-test enforcement convert an informal sector into an auditable industry [9]", sowhat: "An industrialised reverse chain needs exactly the certification, diagnostics and traceability infrastructure Bosch's data-layer strategy provides", i: "high", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Compliance-driven demand is GDP-cycle-independent — EPR obligations bind in good years and bad", why: "Producers must evidence collection and recycling regardless of market conditions; the demand floor is legal, not economic [1]", sowhat: "The traceability/compliance revenue line carries counter-cyclical resilience rare among the search fields", i: "medium", subs: ["Battery 2nd Life & Recycling"], c: [1] },
+        { cat: "Economic Growth & Consumer Spending", p: "EV battery value retention is a major TCO and financing lever — battery is ~40% of EV cost", why: "Second-life and accurate residual valuation unlock fleet economics and resale markets [2]", sowhat: "Residual-value estimation and second-life enablement are monetisable data services with cross-field synergy (Energy, Fintech)", i: "high", subs: ["Residual Value", "Battery 2nd Life & Recycling"], c: [2] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Corporate BRSR/scope-3 pressure outpaces consumer green premiums — the buyer of circularity is the enterprise, not the individual", why: "Disclosure mandates drive corporate demand while price-sensitive consumers won't pay green premiums [3]", sowhat: "Target B2B/regulatory-driven demand (OEMs, fleets, compliance), not consumer green premiums", i: "medium", subs: ["Carbon Credits", "Battery 2nd Life & Recycling"], c: [3] },
+        { cat: "Lifestyle & Consumer Behavior", p: "India's deep repair-and-reuse culture is a structural ally of Right-to-Repair — formalising it creates the market rather than fighting behaviour", why: "Indian vehicle owners already repair and extend product life by default; policy formalisation channels existing behaviour through certified providers [1]", sowhat: "The workshop network converts cultural repair behaviour into certified, warranty-safe service revenue — a moat informal players can't match on trust", i: "medium", subs: ["Right to Repair"], c: [1] },
+      ],
+      Technological: [
+        { cat: "Data-Driven Insights", p: "Battery diagnostics + traceability are the technical heart of circularity — every downstream market prices on battery-state data quality", why: "Second-life grading, recycling routing and residual valuation all depend on accurate battery-state data and lifecycle traceability [4]", sowhat: "Bosch BMS/diagnostics + workshop network can generate and certify exactly this data — the defensible position", i: "high", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [4] },
+        { cat: "Emerging Technologies", p: "Battery-passport architectures (EU-style) are coming to India via export coupling — early passport capability is exportable compliance infrastructure", why: "Indian battery and vehicle exporters must meet EU battery-passport rules regardless of Indian timelines; domestic frameworks tend to follow [4]", sowhat: "Build passport-grade traceability once, sell it twice: EU-export compliance now, Indian EPR compliance as rules mature", i: "medium", subs: ["Battery 2nd Life & Recycling"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "Circular Economy & E-Waste", p: "Circular-economy mandates are the field's entire reason for being — producer responsibility tightens across the value chain", why: "Carbon accounting, recycled-content rules and producer responsibility are tightening [5]", sowhat: "Aligns directly with the mapped Circular-Economy BBM stream — strategic coherence", i: "high", subs: ["Battery 2nd Life & Recycling", "Carbon Credits"], c: [5] },
+        { cat: "Natural Resources", p: "The battery-retirement wave (first EV cohorts retiring post-2027) is the field's volume clock — feedstock scales with the parc's age, not policy", why: "End-of-life battery volumes ramp sharply as early EV cohorts age out; the material-recovery opportunity is demographically locked-in [7]", sowhat: "Time capacity and platform investments to the retirement curve — the trigger-based scaling in this field's verdict", i: "high", subs: ["Battery 2nd Life & Recycling"], c: [7] },
+      ],
+      Legal: [
+        { cat: "Environmental & Sustainability Regulations", p: "Carbon-credit & EPR compliance frameworks are still maturing — rule risk is high, so platforms must be standards-agnostic", why: "Carbon markets and EPR mechanics in India are evolving; standards and pricing are unsettled [6]", sowhat: "Build flexible, standards-agnostic platforms; avoid betting on any single immature mechanism", i: "high", subs: ["Carbon Credits"], c: [6] },
+        { cat: "Government Schemes & Incentives", p: "MoRTH's draft scrappage incentives (rebates for scrapping against new purchases) would accelerate ELV volumes into the formal chain", why: "Purchase-linked scrappage rebates pull end-of-life vehicles out of informal channels and into registered facilities where traceability applies [10]", sowhat: "If notified, the incentive spikes certified-scrapping demand — a watch-trigger for scaling the traceability platform", i: "medium", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [10] },
+      ],
     },
     swot: {
       S: [
@@ -1746,7 +1937,7 @@ const DATA = {
       { input: "Traceability software platform", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Cloud-based; multiple platform options or internal build." },
       { input: "Workshop consumables / logistics", supply_risk: 3, profit_impact: 4, quadrant: "non-critical", reasoning: "Managed through existing Bosch service network." },
     ],
-    sources: ["Battery Waste Mgmt Rules & Right-to-Repair", "EV battery TCO & residual studies", "BRSR/scope-3 disclosure trends", "Battery diagnostics & traceability briefings", "Circular-economy mandate analyses", "Carbon-market & EPR mechanics", "Recycling/second-life market forecasts", "Competitive landscape trackers"],
+    sources: ["Battery Waste Mgmt Rules & Right-to-Repair", "EV battery TCO & residual studies", "BRSR/scope-3 disclosure trends", "Battery diagnostics & traceability briefings", "Circular-economy mandate analyses", "Carbon-market & EPR mechanics", "Recycling/second-life market forecasts", "Competitive landscape trackers", "NITI Aayog ELV circular-economy report (Jan-2026) & scrapping-market forecasts", "MoRTH scrappage-incentive draft"],
   },
 
   evtol: {
@@ -1759,12 +1950,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 5.6, conf: 0.72, why: "Almost entirely H3; meaningful India revenue is a 5–10 year proposition. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "No Indian eVTOL/UAM certification regime yet; DGCA drone rules are the only adjacent framework", why: "India lacks type-certification, vertiport and air-corridor rules for passenger eVTOL; drone policy is the nearest precedent [1]", sowhat: "Market formation is regulation-gated and years away — this is optionality, not a near-term business", i: "high", c: [1] }],
-      Economic: [{ p: "Use-case economics favour cargo/medical before passenger in India", why: "Passenger UAM needs affluent dense corridors; medical-emergency and cargo logistics have clearer near-term value [2]", sowhat: "If Bosch engages, the rational wedge is component supply into cargo/medical platforms, not passenger air-taxi bets", i: "medium", c: [2] }],
-      Social: [{ p: "Public-acceptance and noise concerns are unproven in Indian urban contexts", why: "Safety perception, noise and equity questions are unresolved globally and untested in India [3]", sowhat: "Adoption risk compounds regulatory risk — reinforces a wait-and-supply posture", i: "low", c: [3] }],
-      Technological: [{ p: "Powertrain, sensing and flight-control electronics overlap with Bosch automotive competencies", why: "Electric propulsion, redundant power electronics, IMUs/sensors and safety-critical control transfer meaningfully from automotive to eVTOL [4]", sowhat: "The credible Bosch angle is aerospace-qualified components, not whole aircraft — leverage transferable tech", i: "high", c: [4] }],
-      Environmental: [{ p: "Zero-emission urban-air narrative aligns with electrification but battery energy-density is the binding constraint", why: "Current cell energy density limits payload/range; the same battery progress that helps EVs gates eVTOL [5]", sowhat: "eVTOL viability tracks battery advances Bosch already watches in Energy — shared signal", i: "medium", c: [5] }],
-      Legal: [{ p: "Aerospace certification (DGCA/global) is a categorically higher bar than automotive", why: "Type certification, airworthiness and aviation liability regimes require capabilities and timelines beyond automotive norms [6]", sowhat: "Certification is the gatekeeper — component supply to certified primes is the only realistic Bosch route", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Stability & Policy Certainty", p: "No Indian eVTOL/UAM certification regime exists — the regulatory gap is itself the strategic finding", why: "India lacks type-certification, vertiport and air-corridor rules for passenger eVTOL; DGCA drone policy is the nearest precedent [1]", sowhat: "Market formation is regulation-gated and years away — this is optionality, not a near-term business", i: "high", subs: ["Urban Air Mobility"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "Unlike EVs, semiconductors or drones, UAM has no incentive scheme — there is no policy pull to accelerate the market", why: "PLI-class support exists for adjacent sectors but not eVTOL; the drone PLI is the closest and excludes passenger platforms [1]", sowhat: "No subsidy floor means the field must clear pure commercial economics — a further argument for the watch-only posture", i: "medium", subs: ["Urban Air Mobility", "Rural Applications"], c: [1] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Use-case economics favour cargo/medical before passenger in India — the rational wedge is component supply into those platforms", why: "Passenger UAM needs affluent dense corridors; medical-emergency and cargo logistics have clearer near-term value [2]", sowhat: "If Bosch engages, it is component supply into cargo/medical platforms, not passenger air-taxi bets", i: "medium", subs: ["Rural Applications", "Urban Air Mobility"], c: [2] },
+        { cat: "Inflation & Interest Rates", p: "At a 5.25% cost of capital with zero near-term revenue, every rupee committed to eVTOL carries the portfolio's highest opportunity cost", why: "Pre-revenue capital deployment competes against funded H1 demand in other fields; the discount math is unforgiving for 5–10 year paybacks [9]", sowhat: "Cap engagement at monitoring cost — transferable-tech readiness is already paid for by the Energy and ECA fields", i: "medium", subs: ["Urban Air Mobility"], c: [9] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "Public-acceptance and noise concerns are unproven in Indian urban contexts — adoption risk compounds regulatory risk", why: "Safety perception, noise and equity questions are unresolved globally and untested in India [3]", sowhat: "Reinforces a wait-and-supply posture", i: "low", subs: ["Urban Air Mobility"], c: [3] },
+        { cat: "Lifestyle & Consumer Behavior", p: "The medical-access social case (hill states, rural emergency response) is India's most credible UAM narrative — and its most likely first regulatory sandbox", why: "Drone medical-logistics pilots already operate in access-constrained geographies; passenger-free medical UAM extends a proven pattern [3]", sowhat: "Watch medical/rural corridors as the leading indicator — the trigger for component-qualification engagement", i: "medium", subs: ["Rural Applications"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Powertrain, sensing and flight-control electronics overlap with Bosch automotive competencies — the credible angle is aerospace-qualified components", why: "Electric propulsion, redundant power electronics, IMUs/sensors and safety-critical control transfer meaningfully from automotive to eVTOL [4]", sowhat: "Component supply, not whole aircraft — leverage transferable tech when the market forms", i: "high", subs: ["Urban Air Mobility", "Rural Applications"], c: [4] },
+        { cat: "Pace of Change", p: "Battery energy density is the binding technical constraint — eVTOL viability tracks the same cell-chemistry progress the Energy field already watches", why: "Current energy density limits payload/range; meaningful improvement timelines are measured in cell-chemistry generations [5]", sowhat: "No separate technology watch needed — the Energy field's chemistry monitoring doubles as the eVTOL viability signal", i: "medium", subs: ["Urban Air Mobility"], c: [5] },
+      ],
+      Environmental: [
+        { cat: "Climate Policy & Emission Regulations", p: "The zero-emission urban-air narrative aligns with electrification policy — but delivers no regulatory pull while certification is absent", why: "Climate alignment is necessary but not sufficient; without a certification regime there is nothing for green policy to accelerate [5]", sowhat: "Don't mistake narrative alignment for market formation — the gate is DGCA, not MoEFCC", i: "low", subs: ["Urban Air Mobility"], c: [5] },
+        { cat: "Physical Climate Risk", p: "Indian operating conditions (heat, monsoon, dust) raise eVTOL engineering bars beyond global baselines — relevant to any future component qualification", why: "Thermal derating and weather-resilience requirements compound the already-hard aviation engineering problem in Indian conditions [5]", sowhat: "India-hardening expertise (a Bosch automotive strength) becomes a component-supply differentiator if/when qualification begins", i: "low", subs: ["Rural Applications"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Aerospace certification (DGCA/global) is a categorically higher bar than automotive — the gatekeeper that defines the entire field posture", why: "Type certification, airworthiness and aviation liability regimes require capabilities and timelines beyond automotive norms [6]", sowhat: "Component supply to certified primes is the only realistic Bosch route", i: "high", subs: ["Urban Air Mobility", "Rural Applications"], c: [6] },
+        { cat: "Taxation & Corporate Law", p: "Aviation liability and insurance regimes are unformed for UAM in India — contractual risk allocation for component suppliers is unwritten territory", why: "Component-supplier liability in aviation differs fundamentally from automotive Tier-1 norms; Indian UAM liability law doesn't exist yet [6]", sowhat: "Any future supply agreements need aviation-specialist legal structuring — budget it into the engagement cost when triggers fire", i: "low", subs: ["Urban Air Mobility"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -1866,7 +2075,7 @@ const DATA = {
       { input: "Battery cells (high-density)", supply_risk: 7, profit_impact: 8, quadrant: "strategic", reasoning: "Aviation-grade battery energy density is beyond current automotive cells; critical gap." },
       { input: "Power electronics (shared with Energy field)", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Shared with Energy field investment — capital-efficient cross-leverage." },
     ],
-    sources: ["DGCA drone/UAM framework status", "UAM use-case economics studies", "Public-acceptance research", "Propulsion transferability briefings", "Battery energy-density analyses", "Aerospace certification overviews", "Speculative UAM market forecasts", "Pre-market competitive notes"],
+    sources: ["DGCA drone/UAM framework status", "UAM use-case economics studies", "Public-acceptance research", "Propulsion transferability briefings", "Battery energy-density analyses", "Aerospace certification overviews", "Speculative UAM market forecasts", "Pre-market competitive notes", "RBI MPC Jun-2026"],
   },
 
   robotics: {
@@ -1879,12 +2088,30 @@ const DATA = {
       { ...WEIGHTS[4], s: 7.6, conf: 0.80, why: "AMR now, campus autonomy and robotics-SdV convergence next, humanoids later — strong staged pipeline. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "Make-in-India & automation incentives support industrial/warehouse robotics", why: "Manufacturing-competitiveness and logistics-efficiency policy favours AMR and industrial automation adoption [1]", sowhat: "Industrial/warehouse robotics has policy tailwind and real near-term demand — the pragmatic entry vs humanoid hype", i: "medium", c: [1] }],
-      Economic: [{ p: "Warehouse/logistics boom drives AMR demand; labour economics still temper full automation", why: "E-commerce and 3PL growth pull AMR adoption, but cheap labour slows payback in many segments [2]", sowhat: "Target high-throughput, labour-constrained nodes (large fulfilment, ports) where AMR economics already work", i: "high", c: [2] }],
-      Social: [{ p: "Automation-vs-jobs sensitivity shapes deployment narratives", why: "Robotics deployment intersects employment politics, especially for visible service robots [3]", sowhat: "Frame as augmentation and safety; industrial settings face less friction than public-facing humanoids", i: "medium", c: [3] }],
-      Technological: [{ p: "Robotics and SDV share the same stack: sensors, compute, motion planning, safety", why: "Perception, real-time compute, actuation and functional safety are common to autonomous vehicles and robots — the explicit 'convergence' sub-field [4]", sowhat: "Bosch's SdV and ADAS investments are directly reusable — robotics is an adjacency, not a new domain", i: "high", c: [4] }],
-      Environmental: [{ p: "Electrification & efficiency requirements apply to mobile robots", why: "Battery, power-electronics and thermal constraints mirror EV engineering [5]", sowhat: "Energy-field competencies transfer to mobile-robot powertrains", i: "low", c: [5] }],
-      Legal: [{ p: "Safety standards for collaborative/mobile robots maturing; humanoid norms absent", why: "Industrial robot safety standards exist; mobile-robot and humanoid safety/liability frameworks are still forming [6]", sowhat: "Industrial/AMR is certifiable now; humanoids carry regulatory immaturity — favour the former", i: "medium", c: [6] }],
+      Political: [
+        { cat: "Government Schemes & Incentives", p: "Make-in-India & automation incentives support industrial/warehouse robotics — policy tailwind for the pragmatic entry, not humanoid hype", why: "Manufacturing-competitiveness and logistics-efficiency policy favours AMR and industrial automation adoption [1]", sowhat: "Industrial/warehouse robotics has policy tailwind and real near-term demand — the pragmatic entry vs humanoid hype", i: "medium", subs: ["AMR"], c: [1] },
+        { cat: "Government Stability & Policy Certainty", p: "No robotics-specific regulation or incentive regime exists — the field rides adjacent policy (manufacturing, logistics, drones) rather than its own", why: "India has no national robotics mission comparable to semiconductors or EVs; policy support arrives indirectly via manufacturing incentives [1]", sowhat: "Don't build the business case on policy support that doesn't exist — AMR economics must clear commercially, which at scale nodes they do", i: "low", subs: ["AMR", "Humanoids"], c: [1] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "The warehouse/logistics boom drives AMR demand — but labour economics still temper full automation outside scale nodes", why: "E-commerce and 3PL growth pull AMR adoption; cheap labour slows payback in many segments [2]", sowhat: "Target high-throughput, labour-constrained nodes (large fulfilment, ports) where AMR economics already work", i: "high", subs: ["AMR"], c: [2] },
+        { cat: "Consumer Spending Patterns", p: "Gig-logistics growth creates the labour-scarcity pockets where robot economics flip first — night shifts, hazardous zones, peak-season surges", why: "Even in a labour-abundant market, specific shifts and conditions face genuine scarcity; those niches set AMR's beachhead pricing [2]", sowhat: "Sell AMR components into surge/hazard/night niches first — the TCO story is provable there before it generalises", i: "medium", subs: ["AMR", "Campus Shuttles"], c: [2] },
+      ],
+      Social: [
+        { cat: "Workforce & Labor", p: "Automation-vs-jobs sensitivity shapes deployment narratives — industrial settings face less friction than public-facing robots", why: "Robotics deployment intersects employment politics, especially for visible service robots [3]", sowhat: "Frame as augmentation and safety; industrial settings face less friction than public-facing humanoids", i: "medium", subs: ["AMR", "Humanoids"], c: [3] },
+        { cat: "Technology Adoption Behavior", p: "Indian enterprises adopt automation pragmatically — pilot-heavy, ROI-gated, reference-driven — which rewards proven component reliability over novelty", why: "Enterprise buying culture demands demonstrated paybacks and local support; hyped platforms without references stall at pilot stage [3]", sowhat: "Bosch's brand and service network fit the buying culture — lead with reliability evidence and local support, not technology theatre", i: "low", subs: ["AMR"], c: [3] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "Robotics and SDV share the same stack — sensors, compute, motion planning, safety — making robotics an adjacency, not a new domain", why: "Perception, real-time compute, actuation and functional safety are common to autonomous vehicles and robots — the explicit 'convergence' sub-field [4]", sowhat: "Bosch's SdV and ADAS investments are directly reusable — one investment serves two fields", i: "high", subs: ["Robotics × SDV", "AMR"], c: [4] },
+        { cat: "Pace of Change", p: "Open-source robotics stacks + cheap compute are collapsing entry barriers — differentiation migrates to safety certification and reliability, exactly Bosch's ground", why: "ROS-class open stacks and commodity edge compute let startups assemble robots fast; what they can't assemble is certified safety and automotive-grade reliability [4]", sowhat: "The commoditisation wave strengthens the component/safety-layer strategy — sell the parts of the stack that can't be open-sourced", i: "medium", subs: ["AMR", "Robotics × SDV"], c: [4] },
+      ],
+      Environmental: [
+        { cat: "Natural Resources", p: "Electrification & efficiency requirements apply to mobile robots — battery, power-electronics and thermal constraints mirror EV engineering", why: "Mobile-robot powertrains face the same energy and thermal engineering problems as EVs [5]", sowhat: "Energy-field competencies transfer to mobile-robot powertrains", i: "low", subs: ["AMR", "Campus Shuttles"], c: [5] },
+        { cat: "Circular Economy & E-Waste", p: "Robot fleets at scale become an e-waste and battery-EPR category — lifecycle obligations will follow the deployment curve", why: "AMR fleets carry batteries and electronics under the same waste rules tightening for vehicles; fleet operators will need compliant end-of-life routes [5]", sowhat: "The Sustainability field's traceability/diagnostics layer extends to robot fleets — a future cross-sell, design for it now", i: "low", subs: ["AMR"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Safety standards for collaborative/mobile robots are maturing; humanoid norms are absent — AMR is certifiable now, humanoids carry regulatory immaturity", why: "Industrial robot safety standards exist; mobile-robot and humanoid safety/liability frameworks are still forming [6]", sowhat: "Favour AMR/industrial where certification paths exist — another reason humanoids stay at WATCH", i: "medium", subs: ["AMR", "Humanoids"], c: [6] },
+        { cat: "Data Privacy & Security Law", p: "Camera-bearing robots in workplaces and campuses process personal data — DPDP consent and purpose-limitation duties apply to robot perception", why: "AMR and shuttle perception stacks capture workers and the public; the same DPDP architecture questions as vehicle cameras apply [6]", sowhat: "Reuse the vehicle-grade privacy architecture (on-device processing, minimal retention) across robot platforms — compliance becomes a component feature", i: "low", subs: ["AMR", "Campus Shuttles"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -1999,130 +2226,6 @@ const DATA = {
     sources: ["Make-in-India & automation incentives", "Warehouse/logistics automation studies", "Automation-employment research", "Robotics-SDV convergence briefings", "Mobile-robot powertrain analyses", "Robot safety-standard status", "Robotics market forecasts", "Competitive & funding trackers"],
   },
 
-  defence: {
-    ma: [], bbm: [],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 6.6, conf: 0.80, why: "High-reliability electronics, sensing and manufacturing transfer well; gap at defence-specific certification, clearances and offset craft. See Competency tab." },
-      { ...WEIGHTS[1], s: 5.8, conf: 0.74, why: "Manufacturing/sensing strengths and indigenisation tailwind vs no hooks and a relationship-driven, slow procurement world. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.6, conf: 0.70, why: "Large indigenisation-driven market, but the component/contract-manufacturing slice that fits Bosch is a fraction. See Market tab." },
-      { ...WEIGHTS[3], s: 6.0, conf: 0.76, why: "High barriers and entrenched DPSUs/primes, offset by indigenisation mandates opening component supply. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 6.4, conf: 0.76, why: "Component sales now, qualified contract manufacturing next, deeper subsystems later. See 3 Horizons tab." },
-    ],
-    pestel: {
-      Political: [{ p: "Atmanirbhar Bharat indigenisation lists and offset policy mandate domestic content", why: "Positive-indigenisation lists, defence-corridor incentives and offset obligations push localisation of components and manufacturing [1]", sowhat: "Indigenisation mandates open component-supply and contract-manufacturing doors for capable domestic players — Bosch India qualifies", i: "high", c: [1] }],
-      Economic: [{ p: "Record defence capital outlay with a domestic-procurement preference", why: "Growing defence budgets earmark a majority share for domestic acquisition [2]", sowhat: "Funded, policy-protected demand exists for localised components and manufacturing", i: "high", c: [2] }],
-      Social: [{ p: "National-security salience makes indigenous capability politically prized", why: "Self-reliance in defence is a high-priority national narrative [3]", sowhat: "Domestic high-reliability manufacturing carries reputational and relationship value", i: "medium", c: [3] }],
-      Technological: [{ p: "Dual-use electronics, sensing and power systems overlap with Bosch competencies", why: "Ruggedised electronics, sensors, power electronics and precision manufacturing are common to automotive and defence platforms [4]", sowhat: "The realistic angle is dual-use components and contract manufacturing, not weapons systems", i: "high", c: [4] }],
-      Environmental: [{ p: "Limited direct relevance; ruggedisation/reliability dominate over efficiency", why: "Defence prioritises reliability and environmental hardening over the efficiency metrics that drive automotive [5]", sowhat: "Reliability engineering — a Bosch strength — is the transferable virtue", i: "low", c: [5] }],
-      Legal: [{ p: "Security clearances, ITAR/export controls and defence-specific certification gate participation", why: "Defence supply requires clearances, controlled-technology compliance and specialised qualification regimes [6]", sowhat: "Certification, clearance and offset craft are the gatekeepers — partner with established defence primes/DPSUs", i: "high", c: [6] }],
-    },
-    swot: {
-      S: [
-        { p: "High-reliability electronics, sensing and precision manufacturing in India", why: "Bosch's ruggedised electronics, sensors and certified plants are directly relevant to defence component supply and contract builds", sowhat: "Supply dual-use components and qualified contract manufacturing to defence primes/DPSUs" },
-        { p: "Manufacturing-as-a-Service synergy with the Manufacturing field", why: "Defence contract manufacturing reuses the same certified-capacity thesis", sowhat: "One MaaS capability serves both Manufacturing and Defence customers" },
-      ],
-      W: [
-        { p: "No defence certification, security clearances or offset/procurement craft", why: "Defence supply is a specialised regulatory and relationship world Bosch doesn't operate in", sowhat: "Partner established primes/DPSUs; never attempt prime-contractor or weapons-system roles" },
-        { p: "No M&A/BBM hooks; slow, relationship-driven procurement", why: "No accelerating asset, and defence sales cycles are long and trust-dependent", sowhat: "Treat as a patient, partnership-led adjacency, not a fast-growth bet" },
-      ],
-      O: [
-        { p: "Indigenisation mandates creating domestic component-supply demand", why: "Positive-list items and offset obligations force localisation that capable Indian manufacturers can capture", sowhat: "Target dual-use component slots and contract manufacturing opened by indigenisation" },
-        { p: "Defence-corridor incentives for domestic manufacturing", why: "UP/Tamil Nadu defence corridors offer capacity incentives", sowhat: "Leverage existing Indian manufacturing footprint for corridor-aligned contract builds" },
-      ],
-      T: [
-        { p: "Entrenched DPSUs and defence primes own the relationships and clearances", why: "BEL/HAL-class and private primes (L&T, Tata, Adani Defence) hold incumbency and clearance depth", sowhat: "Position as a component/manufacturing partner to them — not a competitor" },
-        { p: "Export-control and clearance complexity for a multinational", why: "Foreign-parent considerations complicate controlled-technology participation", sowhat: "Structure participation through the Indian entity with appropriate compliance" },
-      ],
-      tows: {
-        SO: "Use certified manufacturing + high-reliability sensing (S) to capture dual-use component and MaaS slots opened by indigenisation mandates and defence-corridor incentives (O) — no prime-contractor risk, just component supply.",
-        ST: "Use certified manufacturing quality + MaaS synergy (S) to position as a reliable component/manufacturing partner TO established DPSUs and primes (T) rather than competing with them — converts the threat into a channel.",
-        WO: "Overcome no-defence-clearances (W) by partnering DPSUs/established primes who provide clearance access and procurement relationships (O) needed to capture indigenisation opportunities.",
-        WT: "Mitigate no-hooks + clearance absence (W) against DPSU incumbency and export-control complexity (T) by restricting to component supply and MaaS through Indian-entity structures with established partners only — patient and bounded.",
-      },
-      strategy: "Partnership-led, dual-use only: supply high-reliability components and qualified contract manufacturing to defence primes/DPSUs, leveraging the Manufacturing-field MaaS thesis; never pursue prime-contractor or weapons-system roles; manage clearance/export-control via the India entity.",
-      scoreRationale: "Score 5.8: real manufacturing/sensing strengths and a strong indigenisation tailwind, offset by the absence of clearances, certification and procurement craft, plus no hooks. A patient, partnership-bounded adjacency.",
-    },
-    market: {
-      tam: 9000, sam: 700, cagr: 14, year: 2030,
-      derivation: [
-        { step: "India domestic defence procurement-addressable electronics & manufacturing 2030", value: "$9B (electronics/manufacturing-relevant subset of defence capex)", src: "Defence budget & indigenisation analyses; estimate [7]" },
-        { step: "Of which dual-use components + contract manufacturing", value: "~$2.6B", src: "Segment estimate" },
-        { step: "Serviceable filter: Bosch-addressable dual-use component & MaaS slice (excl. platforms, weapons, prime scope)", value: "≈8% of relevant subset", src: "Estimate" },
-        { step: "= SAM (2030)", value: "$0.7B", src: "Derived — estimate" },
-      ],
-      crossCheck: "Sanity check: defence electronics localisation programmes and private-sector defence revenues already run in the billions; a sub-$1B dual-use/MaaS addressable slice for a new component entrant is conservative [1][7].",
-      customers: [
-        { s: "Defence primes & DPSUs", buy: "Dual-use components, contract manufacturing", note: "Partner channel — they hold clearances/relationships" },
-        { s: "Tier-1 defence suppliers", buy: "High-reliability electronics, sensing", note: "Indigenisation-driven demand" },
-        { s: "Defence-corridor programmes", buy: "Qualified manufacturing capacity", note: "Corridor incentives" },
-      ],
-      scoreRationale: "Score 6.6: large protected market but a small Bosch-addressable dual-use slice ($0.7B). Confidence 0.70: defence-spend subsets and addressable-share splits are estimates.",
-    },
-    porter: [
-      { force: "Rivalry", v: 6.0, why: "DPSUs and private primes dominate platforms; component-supply competition is more open but relationship-gated.", drivers: ["DPSU/prime dominance (platforms)", "Open-ish component layer"], c: [8] },
-      { force: "Supplier power", v: 5.0, why: "Specialised defence-grade inputs carry some power, but dual-use components have broad supply.", drivers: ["Dual-use broad supply", "Specialised-input pockets"], c: [4] },
-      { force: "Buyer power", v: 7.5, why: "Government and prime buyers wield strong leverage via procurement rules, indigenisation terms and offset demands.", drivers: ["Government/prime monopsony", "Offset & indigenisation terms"], c: [1] },
-      { force: "Substitutes", v: 4.0, why: "Imports are the substitute, but indigenisation policy actively suppresses them — a tailwind for domestic supply.", drivers: ["Imports (policy-suppressed)", "Indigenisation tailwind"], c: [1] },
-      { force: "New entrants", v: 5.0, why: "Clearances, certification and relationships are high barriers; capable domestic manufacturers can still qualify over time.", drivers: ["Clearance/cert barriers", "Domestic-capability path"], c: [6] },
-    ],
-    porterRationale: "Attractiveness 6.0 = 10 − weighted pressure. Buyer power (7.5) dominates; the indigenisation-suppressed substitute (4.0) is the structural tailwind. Attractive specifically for clearance-partnered domestic component suppliers.",
-    competency: [
-      { name: "High-reliability electronics", bosch: 8, req: 9, whyReq: "Defence demands ruggedised, mission-critical reliability (9)", whyBosch: "Strong reliability engineering; defence-grade qualification new (8)", gap: "build", gapWhy: "Qualify existing lines to defence standards" },
-      { name: "Precision/contract manufacturing", bosch: 8, req: 8, whyReq: "Qualified domestic manufacturing for indigenisation (8)", whyBosch: "Certified Indian plants; MaaS thesis (8)", gap: "none — match", gapWhy: "Shared with Manufacturing field" },
-      { name: "Sensing & power systems (dual-use)", bosch: 8, req: 8, whyReq: "Sensors and power electronics across platforms (8)", whyBosch: "Automotive franchises transferable (8)", gap: "none — match", gapWhy: "Dual-use supply" },
-      { name: "Defence certification & clearances", bosch: 2, req: 9, whyReq: "Participation gated by clearances & qualification regimes (9)", whyBosch: "No defence certification base (2)", gap: "partner", gapWhy: "Decisive gap — partner primes/DPSUs" },
-      { name: "Offset & defence-procurement craft", bosch: 3, req: 7, whyReq: "Winning needs offset structuring and procurement navigation (7)", whyBosch: "No defence-procurement experience (3)", gap: "partner / hire", gapWhy: "Rely on prime partners; selective hires" },
-    ],
-    competencyRationale: "Score 6.6: strong on the three manufacturing/electronics/sensing competencies, with the decisive certification/clearance and procurement-craft gaps closed only via prime partnerships. Confidence 0.80.",
-    horizons: {
-      h1: [{ item: "Dual-use component sales to defence primes/DPSUs", why: "Indigenisation demand exists now; dual-use components need least qualification friction" }],
-      h2: [
-        { item: "Qualified contract manufacturing for defence programmes", why: "Defence-grade qualification of capacity takes 2–4 years; corridor incentives help", trigger: "First defence-qualified line / prime-partner contract secured" },
-        { item: "Deeper sensing/power subsystems under indigenisation", why: "Subsystem localisation opens as relationships and clearances mature", trigger: "Positive-list item matched to a Bosch dual-use subsystem" },
-      ],
-      h3: [{ item: "Integrated defence subsystems via established partnerships", why: "Deeper participation needs years of trust, clearances and track record — 5+ years", trigger: "Sustained prime-partnership track record established" }],
-      rationale: "Score 6.4: H1 component sales are achievable, H2 contract manufacturing is realistic with qualification investment, H3 deeper participation is relationship-gated. Steady, partnership-paced growth.",
-    },
-    verdict: {
-      entry: "Partnership-led, dual-use entry: sell high-reliability components to primes/DPSUs now; pursue defence-qualified contract manufacturing leveraging the Manufacturing MaaS thesis; never pursue prime/weapons roles; manage clearances/export-control through the India entity.",
-      reasoning: [
-        "Market 6.6 and Competency 6.6 support entry, but only at the dual-use/component/MaaS layer where Bosch's strengths actually apply",
-        "Porter 6.0 with buyer power at 7.5 and the certification/clearance gaps make prime partnership non-negotiable",
-        "SWOT 5.8 and the absence of hooks place this as a patient, bounded adjacency — hence EXPLORE via partnership, not standalone build",
-      ],
-      portfolio: [
-        { sub: "Component Sales", play: "LEAD", why: "Dual-use components — least friction, indigenisation-pulled, immediate" },
-        { sub: "Contract Manufacturing", play: "PARTNER", why: "Defence-qualified MaaS via primes; shares Manufacturing-field capability" },
-      ],
-      risks: ["Clearance/export-control complexity for a multinational parent", "Slow, relationship-driven procurement straining business cases", "DPSU/prime incumbency limiting component-slot access"],
-    },
-    activity: [
-      { d: "Jun 04, 2026", t: "Defence ministry expands positive-indigenisation list with electronics line items", s: "Economic Times" },
-      { d: "May 26, 2026", t: "Private prime seeks domestic partners for ruggedised electronics localisation", s: "Business Standard" },
-      { d: "May 15, 2026", t: "Defence corridor announces incentives for high-reliability manufacturing units", s: "Mint" },
-      { d: "May 05, 2026", t: "DPSU issues RFI for dual-use sensor and power-electronics components", s: "ET Auto" },
-    ],
-    stakeholders: [
-      { name: "MoD / DDP (Dept of Defence Production)", type: "government", influence: 10, interest: 6, stance: "neutral", reasoning: "Indigenisation policy and positive-list mandates create the component-supply opportunity; must understand procurement rules." },
-      { name: "DPSUs (BEL, BDL, HAL, DRDO)", type: "oem", influence: 8, interest: 7, stance: "neutral", reasoning: "Primary system integrators for indigenised defence; Bosch's target consortium partners." },
-      { name: "Private defence primes (L&T, Tata Advanced Systems, Adani Defence)", type: "oem", influence: 8, interest: 7, stance: "neutral", reasoning: "Growing private-prime ecosystem; more commercially flexible than DPSUs." },
-      { name: "Bosch legal / export-control compliance", type: "oem", influence: 7, interest: 8, stance: "ally", reasoning: "Internal stakeholder who gates any defence participation; must structure through India entity." },
-    ],
-    competitors: [
-      { name: "BEL (Bharat Electronics)", type: "indian-incumbent", x_price_position: 5, y_tech_depth: 7, moat: "DPSU relationships + government procurement incumbency", reasoning: "The prime system-integrator Bosch partners with, not competes against." },
-      { name: "L&T Defence / L&T Technology Services", type: "indian-incumbent", x_price_position: 6, y_tech_depth: 7, moat: "Prime-contractor credentials + EPC experience", reasoning: "Same dynamic as BEL — Bosch's component/MaaS offer fits their supply chain." },
-      { name: "ELBIT / Thales (global defence Tier-1s)", type: "global", x_price_position: 8, y_tech_depth: 9, moat: "Defence-certified systems + government clearances", reasoning: "Not direct competitors — Bosch is not a prime; they are potential system partners." },
-      { name: "Bosch (target position)", type: "global", x_price_position: 6, y_tech_depth: 7, moat: "High-reliability electronics + certified manufacturing + India entity", reasoning: "Component/MaaS supplier inside prime-led consortia — bounded but defensible." },
-    ],
-    competitorWhiteSpace: "Automotive-grade ruggedised electronics and certified contract manufacturing for indigenised defence programmes — existing defence suppliers lack Bosch's electronics depth; Bosch fills a genuine capability gap.",
-    suppliers: [
-      { input: "Ruggedised electronic components", supply_risk: 7, profit_impact: 7, quadrant: "strategic", reasoning: "MIL-grade components are a constrained supply; manage via defence-qualified distributor relationships." },
-      { input: "Specialised manufacturing equipment", supply_risk: 6, profit_impact: 6, quadrant: "bottleneck", reasoning: "Defence-specification tooling is concentrated with few certified vendors." },
-      { input: "Raw materials (special alloys, PCB substrates)", supply_risk: 5, profit_impact: 5, quadrant: "leverage", reasoning: "Manageable through global Bosch procurement." },
-    ],
-    sources: ["Indigenisation lists & offset policy", "Defence budget & domestic-procurement data", "Self-reliance policy notes", "Dual-use technology overlap briefings", "Ruggedisation/reliability standards", "Clearance & export-control frameworks", "Defence-electronics market analyses", "Prime/DPSU sourcing trackers"],
-  },
-
   health: {
     ma: [], bbm: [],
     criterionScores: [
@@ -2133,12 +2236,29 @@ const DATA = {
       { ...WEIGHTS[4], s: 6.2, conf: 0.74, why: "E-call now, assisted motion & inclusive design next, in-vehicle health monitoring later. See 3 Horizons tab." },
     ],
     pestel: {
-      Political: [{ p: "Emergency-call (e-call/112 integration) is moving toward mandate, as in other markets", why: "Road-safety missions and global e-call precedents point to Indian emergency-call requirements for vehicles [1]", sowhat: "E-call is the regulation-pulled, near-term wedge of this otherwise diffuse field", i: "high", c: [1] }],
-      Economic: [{ p: "Healthcare-access gaps make mobility-linked health services socially valuable but hard to monetise", why: "Rural access and emergency-response gaps are real, but willingness/ability to pay is limited [2]", sowhat: "Lead with mandated/safety features (e-call); treat broader health services as long-horizon social-impact optionality", i: "medium", c: [2] }],
-      Social: [{ p: "DEI & inclusive-mobility-design expectations are rising in policy and procurement", why: "Accessibility norms and inclusive-design advocacy grow in public transport and vehicle design [3]", sowhat: "Inclusive-design capability is a differentiator in public/fleet procurement and aligns with safety positioning", i: "medium", c: [3] }],
-      Technological: [{ p: "In-cabin sensing enables health monitoring, but medical-grade is a high bar", why: "Radar/camera vitals sensing is technically emerging (shared with Interior Systems) but clinical-grade validation is demanding [4]", sowhat: "Wellness-grade (non-medical) features are reachable; medical-grade needs partnerships and clinical pathways", i: "high", c: [4] }],
-      Environmental: [{ p: "Limited direct environmental relevance", why: "Field is health/safety-driven, not efficiency-driven [5]", sowhat: "Not a material decision factor here", i: "low", c: [5] }],
-      Legal: [{ p: "Medical-device regulation (CDSCO) and DPDP health-data rules gate clinical features", why: "Anything making medical claims falls under device regulation; health data is sensitive personal data under DPDP [6]", sowhat: "Stay wellness/safety-grade unless partnering a medical-device player — regulatory line defines scope", i: "high", c: [6] }],
+      Political: [
+        { cat: "Government Stability & Policy Certainty", p: "Emergency-call (e-call/112 integration) is moving toward mandate, as in other markets — the regulation-pulled wedge of this otherwise diffuse field", why: "Road-safety missions and global e-call precedents point to Indian emergency-call requirements for vehicles [1]", sowhat: "E-call is the regulation-pulled, near-term wedge — position for the mandate before it lands", i: "high", subs: ["E-Call"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "PM E-DRIVE's extended outlay funds e-ambulances (~₹500 Cr) — a new, policy-funded adjacency linking emergency mobility to the field", why: "The post-pivot scheme explicitly allocates to e-ambulance deployment through Mar-2028, creating a funded emergency-mobility vehicle category [9]", sowhat: "E-ambulance platforms need e-call, telematics and emergency-response integration — a concrete, funded buyer for the field's wedge products", i: "medium", subs: ["E-Call"], c: [9] },
+      ],
+      Economic: [
+        { cat: "Economic Growth & Consumer Spending", p: "Healthcare-access gaps make mobility-linked health services socially valuable but hard to monetise — willingness-to-pay is thin outside mandates", why: "Rural access and emergency-response gaps are real, but willingness/ability to pay is limited [2]", sowhat: "Lead with mandated/safety features (e-call); treat broader health services as long-horizon social-impact optionality", i: "medium", subs: ["E-Call", "Assisted Motion"], c: [2] },
+        { cat: "Infrastructure Investment", p: "112 emergency-response infrastructure and ambulance-network digitisation are the public-side rails e-call must integrate with — their maturity paces the mandate", why: "An e-call mandate is only useful if the receiving infrastructure (112 centres, dispatch, hospital routing) can act on it; that build-out is underway but uneven [1]", sowhat: "Track 112-infrastructure maturity as the leading indicator of e-call mandate timing — it calibrates the market-entry clock", i: "medium", subs: ["E-Call"], c: [1] },
+      ],
+      Social: [
+        { cat: "Consumer Behavior & Values", p: "DEI & inclusive-mobility-design expectations are rising in policy and procurement — accessibility is becoming a tender criterion", why: "Accessibility norms and inclusive-design advocacy grow in public transport and vehicle design [3]", sowhat: "Inclusive-design capability is a differentiator in public/fleet procurement and aligns with safety positioning", i: "medium", subs: ["DEI Mobility Design"], c: [3] },
+        { cat: "Lifestyle & Consumer Behavior", p: "The rural emergency-access gap gives vehicle-linked emergency response its strongest India story — response time is the difference between statistic and survivor", why: "Two-thirds of the population lives where emergency response is slowest; automatic crash notification has outsized life-saving value on highways between cities [2]", sowhat: "Frame e-call's value on Indian crash-response data, not European regulatory precedent — a more persuasive OEM and policy story", i: "medium", subs: ["E-Call"], c: [2] },
+      ],
+      Technological: [
+        { cat: "Emerging Technologies", p: "In-cabin sensing enables health monitoring, but medical-grade is a high bar — wellness-grade is reachable, clinical-grade needs partners", why: "Radar/camera vitals sensing is technically emerging (shared with Interior Systems) but clinical-grade validation is demanding [4]", sowhat: "Wellness-grade (non-medical) features are reachable; medical-grade needs partnerships and clinical pathways", i: "high", subs: ["Assisted Motion", "E-Call"], c: [4] },
+        { cat: "Data-Driven Insights", p: "The wellness-vs-medical boundary is a data-architecture decision — what you infer, store and claim determines which regulator owns you", why: "The same vitals signal can be a comfort feature or a medical device depending on processing and claims; the boundary is drawn in software [4][6]", sowhat: "Engineer the sensing stack with an explicit claims firewall — wellness features ship now, clinical inference stays behind a partnership gate", i: "medium", subs: ["Assisted Motion"], c: [4, 6] },
+      ],
+      Environmental: [
+        { cat: "Physical Climate Risk", p: "Environmental factors are largely immaterial to this field — the one exception is extreme-heat resilience of emergency electronics", why: "The field is health/safety-driven, not efficiency-driven; but e-call units must function in crash + heat conditions [5]", sowhat: "State the immateriality plainly in reviews; hold the heat-hardening requirement for e-call hardware", i: "low", subs: ["E-Call"], c: [5] },
+      ],
+      Legal: [
+        { cat: "Automotive Industry Regulations", p: "Medical-device regulation (CDSCO) gates clinical features — the regulatory line defines the field's scope", why: "Anything making medical claims falls under device regulation [6]", sowhat: "Stay wellness/safety-grade unless partnering a medical-device player — regulatory line defines scope", i: "high", subs: ["Assisted Motion"], c: [6] },
+        { cat: "Data Privacy & Security Law", p: "Health data sits in DPDP's highest protection class — in-cabin health signals demand the strictest consent and security architecture in the portfolio", why: "Health data is sensitive personal data under DPDP; breach consequences and consent requirements exceed ordinary vehicle data [6]", sowhat: "The privacy architecture for health features must exceed even the biometric standard — design it once, certify it, and make it a trust asset", i: "high", subs: ["Assisted Motion", "E-Call"], c: [6] },
+      ],
     },
     swot: {
       S: [
@@ -2245,7 +2365,7 @@ const DATA = {
       { input: "In-cabin radar (shared with Interior Systems)", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Cross-field shared supply — leverages Interior-Systems investment." },
       { input: "PSAP / 112 backend integration", supply_risk: 6, profit_impact: 6, quadrant: "bottleneck", reasoning: "Government PSAP integration is a bottleneck; must be certified by regulatory bodies." },
     ],
-    sources: ["E-call/112 integration policy", "Healthcare-access & mobility studies", "DEI/accessibility procurement norms", "In-cabin vitals-sensing briefings", "(limited environmental relevance)", "CDSCO & DPDP health-data rules", "Mobility-health niche forecasts", "Adjacent competitive trackers"],
+    sources: ["E-call/112 integration policy", "Healthcare-access & mobility studies", "DEI/accessibility procurement norms", "In-cabin vitals-sensing briefings", "(limited environmental relevance)", "CDSCO & DPDP health-data rules", "Mobility-health niche forecasts", "Adjacent competitive trackers", "MHI PM E-DRIVE extension notification (Aug-2025)"],
   },
 };
 
@@ -2381,13 +2501,14 @@ const Methodology = ({ compact }) => (
   </div>
 );
 
-const TABS = ["Recommendation", "PESTEL", "SWOT", "Market", "Attractiveness", "Competency", "Stakeholders", "Competitors", "Suppliers", "3 Horizons", "Recent Activity", "Methodology"];
+const TABS = ["PESTEL", "SWOT", "Market", "Attractiveness", "Competency", "Stakeholders", "Competitors", "Suppliers", "3 Horizons", "Recent Activity", "Methodology", "Recommendation"];
 
 export default function App() {
   const [fieldId, setFieldId] = useState("lighting");
   const [sub, setSub] = useState("All");
-  const [tab, setTab] = useState("Recommendation");
+  const [tab, setTab] = useState("PESTEL");
   const [showWorking, setShowWorking] = useState(true);
+  const [showMacro, setShowMacro] = useState(false);
   const [swotView, setSwotView] = useState("swot"); // "swot" | "tows"
   const field = FIELDS.find(f => f.id === fieldId);
   const d = DATA[fieldId];
@@ -2403,15 +2524,15 @@ export default function App() {
           <div className="text-xs text-slate-500 mt-0.5">Bosch Mobility · India Market · BBM Strategy Agent</div>
         </div>
         <div className="ml-auto flex items-center gap-2 text-xs text-slate-500">
-          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> One methodology for all 16 fields · scores computed, not generated · Version 1.0
+          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> One methodology for all fields · scores computed, not generated · Version 1.0
         </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
         <aside className="w-64 bg-white border-r border-slate-200 overflow-y-auto py-3 shrink-0">
-          <div className="px-4 pb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">16 Search Fields</div>
+          <div className="px-4 pb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">{FIELDS.length} Search Fields</div>
           {FIELDS.map(f => (
-            <button key={f.id} onClick={() => { setFieldId(f.id); setSub("All"); setTab("Recommendation"); }}
+            <button key={f.id} onClick={() => { setFieldId(f.id); setSub("All"); setTab("PESTEL"); }}
               className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between border-l-2 transition-colors ${fieldId === f.id ? "border-red-600 bg-red-50/60 font-semibold" : "border-transparent hover:bg-slate-50"}`}>
               <span className="truncate pr-2">{f.name}</span>
               <span className="text-[10px] text-slate-400">{f.subs.length}</span>
@@ -2545,15 +2666,56 @@ export default function App() {
 
               {/* ─────────────── PESTEL ─────────────── */}
               {tab === "PESTEL" && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {Object.entries(d.pestel).map(([k, pts]) => (
-                    <Card key={k} title={k}>
-                      {pts.map((x, i) => (
-                        <Reasoned key={i} point={x.p} why={x.why} sowhat={x.sowhat} cites={x.c}
-                          tag={<span className="flex gap-1">{x.enabler && <Chip tone="violet">enabler</Chip>}<Chip tone={x.i === "high" ? "red" : x.i === "medium" ? "amber" : "slate"}>{x.i}</Chip></span>} />
-                      ))}
-                    </Card>
-                  ))}
+                <div className="space-y-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <button onClick={() => setShowMacro(!showMacro)} className="w-full flex items-center justify-between px-4 py-3">
+                      <div className="text-left">
+                        <span className="text-sm font-semibold text-slate-800">India Macro Context — shared baseline across all search fields</span>
+                        <span className="text-xs text-slate-400 ml-2">verified as of {MACRO.asOf}</span>
+                      </div>
+                      <span className="text-xs text-teal-700 font-medium">{showMacro ? "collapse ▲" : "expand ▼"}</span>
+                    </button>
+                    {showMacro && (
+                      <div className="px-4 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {Object.entries(MACRO).filter(([k]) => k !== "asOf").map(([dim, rows]) => (
+                          <div key={dim} className="border border-slate-200 rounded-lg p-3">
+                            <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">{dim}</div>
+                            {rows.map(r => (
+                              <div key={r.k} className="mb-2 last:mb-0">
+                                <div className="text-[11px] font-semibold text-slate-700">{r.k}</div>
+                                <div className="text-[11px] text-slate-600">{r.v}</div>
+                                <div className="text-[10px] text-slate-400">{r.src}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {Object.entries(d.pestel).map(([k, pts]) => (
+                      <Card key={k} title={`${k} — ${field.name} specific`}>
+                        {pts.map((x, i) => (
+                          <div key={i} className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
+                            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                              {x.cat && <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">{x.cat}</span>}
+                              {x.enabler && <Chip tone="violet">enabler</Chip>}
+                              <Chip tone={x.i === "high" ? "red" : x.i === "medium" ? "amber" : "slate"}>{x.i}</Chip>
+                            </div>
+                            <div className="text-sm font-medium">{x.p}{x.c?.length ? <span className="text-slate-400 text-xs font-normal"> [{x.c.join(",")}]</span> : null}</div>
+                            {x.why && <div className="text-xs text-slate-600 mt-1.5 flex gap-1.5"><b className="text-teal-700 shrink-0">WHY</b><span>{x.why}</span></div>}
+                            {x.sowhat && <div className="text-xs text-slate-600 mt-1 flex gap-1.5"><b className="text-purple-700 shrink-0">SO WHAT</b><span>{x.sowhat}</span></div>}
+                            {x.subs?.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {x.subs.map(s => <span key={s} className="text-[10px] text-teal-800 bg-teal-50 border border-teal-100 rounded-full px-2 py-0.5">↳ {s}</span>)}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </Card>
+                    ))}
+                  </div>
                 </div>
               )}
 
