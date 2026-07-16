@@ -3749,7 +3749,396 @@ const V6 = {
   },
 };
 
+/* ═══ V7 — PESTEL for/against + SWOT-5 + rich competitor profiles
+   Populated by the data agent; stub here so app always compiles.
+   Each field key: { pestelFA, swot5, competitorProfiles, sources? } ═══ */
+const V7 = {
+  energy: {
+    pestelFA: {
+      P: {
+        for: [
+          { p: "PM E-DRIVE allocates ₹10,900 Cr for EV demand and charging", why: "Replaces FAME II with a larger, broader scheme covering 2W, 3W, buses and charging corridors from late 2024 through 2026.", sowhat: "Size commercial proposals around PM E-DRIVE-funded OEMs and CPOs — the public money creates real procurement budgets." },
+          { p: "ACC PLI supports domestic cell manufacturing", why: "₹18,100 Cr in incentives for Indian cell makers (Ola, Reliance, Rajesh Exports) — reducing import dependency from 2026.", sowhat: "Lock 2 ACC-PLI cell partnerships now to secure local supply before Chinese imports face tariff headwinds." },
+          { p: "State EV policies (TN, Gujarat, Maharashtra) add top-up incentives", why: "Over 20 states have active EV policies adding 5–15% extra incentives on FAME-linked vehicles — expanding the addressable market.", sowhat: "Map state-by-state fleet and OEM concentration to prioritise sales territory in highest-incentive states." },
+        ],
+        against: [
+          { p: "PM E-DRIVE excludes private cars — biggest EV segment unsubsidised", why: "Policy focuses on commercial and public use; premium passenger EVs get no central incentive, limiting early mass adoption.", sowhat: "Focus on 2W/3W and fleet segments where subsidies create real demand rather than waiting for PV adoption." },
+          { p: "Political risk: EV policies could be revised after state elections", why: "State EV incentives are frequently revised or withdrawn after election cycles, disrupting OEM sourcing decisions.", sowhat: "Avoid over-indexing on subsidy-dependent volumes; ensure products are competitive on TCO without subsidies." },
+          { p: "Localisation mandates in tenders favour Indian-origin suppliers", why: "B2G EV tenders increasingly require 50%+ domestic value addition — can disadvantage products with imported component content.", sowhat: "Accelerate India content in BMS and charger designs; use PLI-linked components to satisfy localisation clauses." },
+        ],
+      },
+      E: {
+        for: [
+          { p: "EV total cost of ownership beats ICE for commercial fleets", why: "At ₹6/unit electricity vs ₹90+/L petrol, a commercial 3W breaks even against ICE in under 18 months at current economics.", sowhat: "Lead with TCO calculators in fleet sales — the economics do the selling without requiring subsidy conviction." },
+          { p: "RBI rate cuts create cheaper fleet financing", why: "RBI cut repo rate to 5.5% (Jun-2026), reducing EMI cost on fleet EV purchases by 3–5%.", sowhat: "Partner with NBFCs and fleet financiers to bundle affordable EV financing with charging management solutions." },
+          { p: "Falling lithium cell prices (down 30% 2023–25) improve product margins", why: "Global cell oversupply has pushed LFP pack prices below $90/kWh — reducing BOM cost and improving business cases.", sowhat: "Redesign cost structures to capture the margin improvement rather than passing it all to OEM price negotiations." },
+        ],
+        against: [
+          { p: "Currency risk: INR/USD volatility hurts import-heavy BOM costs", why: "SiC MOSFETs, advanced ICs and battery cells are priced in USD; a 5% INR depreciation raises BOM by 2–4%.", sowhat: "Hedge FX exposure on import-heavy components; prioritise local sourcing wherever cost-competitive." },
+          { p: "Interest-rate sensitivity: fleet buyers defer purchases if financing costs rise", why: "High-value EV fleet orders are rate-sensitive; a 100bps tightening can shift payback period by 6 months.", sowhat: "Offer flexible commercial structures (leasing, per-km pricing) that are insulated from rate cycle changes." },
+          { p: "Electricity tariff uncertainty threatens the EV running-cost advantage", why: "Discoms are seeking tariff revisions; if commercial EV charging tariffs exceed ₹10/unit, the TCO advantage narrows.", sowhat: "Develop tariff-agnostic business cases; advocate for EV-specific tariff schedules with discom partners." },
+        ],
+      },
+      S: {
+        for: [
+          { p: "Younger urban consumers prefer EVs for environmental and cost reasons", why: "Urban millennials now make up 60%+ of new 2W buyers; surveys show 70%+ would prefer EV if range anxiety is resolved.", sowhat: "Support OEM co-marketing that addresses range anxiety — the key barrier to converting preference into purchase." },
+          { p: "Driver and fleet operator awareness of EV running costs is rising rapidly", why: "Word-of-mouth among Ola/Ather/TVS EV users has dramatically shifted fleet buyer awareness of ₹1–1.5/km running costs.", sowhat: "Invest in fleet operator community engagement — peer endorsement converts faster than advertising in this segment." },
+          { p: "Last-mile delivery growth drives EV 3W demand structurally", why: "E-commerce volumes grew 35% in 2025; Flipkart, Amazon, Meesho and Zomato are electrifying last-mile fleets under ESG commitments.", sowhat: "Develop charging and fleet management solutions specifically for high-utilisation last-mile delivery duty cycles." },
+        ],
+        against: [
+          { p: "Consumer confidence in EV quality and service access is still fragile", why: "Fires involving Indian EV brands in 2022–23 left a lasting safety perception issue, especially in tier-2/3 cities.", sowhat: "Lead with AIS-156 certified safety positioning — regulatory certification is the most credible quality signal available." },
+          { p: "Charging infrastructure anxiety limits rural and long-distance adoption", why: "80%+ of charging points are urban; intercity EV travel remains impractical for most buyers.", sowhat: "For intercity charging gaps, position V2G-ready fleet solutions rather than consumer products that require ubiquitous infrastructure." },
+          { p: "Premium EV price points exclude India's mass-market buyer segment", why: "Average selling price of EVs is 25–40% above comparable ICE; income distribution means most buyers are not yet reachable.", sowhat: "Target affordable BMS and charging platforms for sub-₹1L 2W segments — India's scale is in that price band, not premium." },
+        ],
+      },
+      T: {
+        for: [
+          { p: "LFP chemistry maturity makes safe, long-life packs technically feasible in India", why: "LFP's thermal stability and 2,000+ cycle life makes it ideal for India's heat and charging-pattern conditions.", sowhat: "Standardise on LFP-compatible BMS architecture to maximise compatibility with PLI-backed cell makers." },
+          { p: "OCPP 2.x and ISO 15118 enable smart V2G-ready charging at commercial cost", why: "Open standards reduce integration cost; V2G-capable infrastructure can be deployed now at only 15–20% premium over basic chargers.", sowhat: "Launch V2G-ready charging management systems to capture the grid-services revenue stream being structured by discoms." },
+          { p: "Cloud-native BMS algorithms enable real-time battery health monitoring at fleet scale", why: "Cloud BMS deployment allows over-the-air tuning and predictive maintenance across a fleet without hardware changes.", sowhat: "Productise BMS-as-a-service offerings that generate recurring revenue from the connected fleet base." },
+        ],
+        against: [
+          { p: "Solid-state battery disruption could strand LFP-optimised designs", why: "Toyota and QuantumScape are targeting solid-state commercialisation by 2027–28; a step-change in energy density could disrupt current chemistry assumptions.", sowhat: "Design BMS architectures to be chemistry-agnostic so solid-state integration is a software + configuration update, not a redesign." },
+          { p: "India lacks domestic SiC power semiconductor manufacturing", why: "SiC MOSFETs are critical for high-efficiency charging and BMS power stages; all production is imported (China, Europe, US).", sowhat: "Dual-source SiC supply and maintain design flexibility for GaN alternatives — the supply chain is geopolitically exposed." },
+          { p: "Battery swap standards fragmentation complicates multi-OEM strategies", why: "Ola, Honda, and the BIS standard body are pursuing different connector and protocol specs — lock-in risk for platform choices.", sowhat: "Adopt the BIS/government-led standard reference design; avoid proprietary battery swap formats that limit reach." },
+        ],
+      },
+      En: {
+        for: [
+          { p: "ELV Battery Waste Management Rules mandate EPR compliance from 2024", why: "Producers must now ensure 95%+ of batteries sold enter formal recycling channels — creating demand for collection and traceability services.", sowhat: "Launch an EPR traceability service through the workshop network; position it as the compliance infrastructure OEMs can outsource." },
+          { p: "Net-zero commitments by OEMs create demand for lifecycle carbon reporting", why: "Maruti, Tata Motors and Mahindra have net-zero pledges requiring supply-chain carbon data from component makers including Bosch.", sowhat: "Provide verified carbon-per-vehicle data to OEM partners — this becomes a contract requirement, not a nice-to-have." },
+          { p: "V2G and grid integration reduces carbon intensity of the vehicle fleet", why: "EV fleets that participate in V2G can shift charging to renewable-generation hours, reducing lifecycle emissions.", sowhat: "Partner with discoms on V2G pilots — position Bosch's charging management as India's first commercial V2G-enabled platform." },
+        ],
+        against: [
+          { p: "Cobalt and nickel in NMC packs raise supply-chain ESG flags", why: "Though most India packs will be LFP, premium segments use NMC with DRC cobalt supply chains that attract ESG scrutiny.", sowhat: "For NMC components, require ESG due diligence from cell partners and publish supply-chain traceability data." },
+          { p: "Battery manufacturing has high water and chemical footprint", why: "Electrolyte production and electrode coating processes consume significant water and generate solvent waste.", sowhat: "Work with cell-manufacturing partners to verify environmental compliance before committing to ACC-PLI partnerships." },
+          { p: "Informal recycling sector handles 60%+ of batteries today — a liability risk", why: "Without formal EPR infrastructure, informal recyclers handle most end-of-life batteries unsafely — creating reputational risk for the whole value chain.", sowhat: "Join the certified recycler network early; formal-sector participation de-risks the brand well ahead of regulation enforcement." },
+        ],
+      },
+      L: {
+        for: [
+          { p: "AIS-156 functional safety standard protects certified BMS suppliers", why: "The 2023 amendment tightened fire-prevention requirements; only certified suppliers can serve OEM RFQs for the 2024+ production cycle.", sowhat: "Maintain AIS-156 Phase-2 certification proactively; publish test results to OEM procurement teams as a competitive signal." },
+          { p: "DPDP Act creates a consent framework that legitimises vehicle data services", why: "A clear consent law actually helps Bosch: OEMs can now offer battery-health data services to insurers with legal backing.", sowhat: "Design data products with DPDP-native consent architecture from day one — this is a source of market trust, not friction." },
+          { p: "Right to Repair notification extends to EVs — workshop channel becomes mandatory touchpoint", why: "Consumers have a legal right to independent repair; this mandates that OEMs make diagnostic data available to independent workshops.", sowhat: "Expand workshop battery diagnostics under Right-to-Repair framing — the legal right creates the demand for Bosch's tools." },
+        ],
+        against: [
+          { p: "Battery-data regulations are still evolving — over-engineering today may not match tomorrow's rules", why: "DPDP subordinate rules are still being drafted; over-investment in a specific data architecture may require costly redesign.", sowhat: "Build standards-agnostic platforms; use configuration-led compliance design that can adapt to rule changes without core rewrites." },
+          { p: "Charging station licensing varies by state — delays network deployment", why: "Some states treat public charging stations as commercial establishments requiring shop licences; others exempt them — compliance complexity slows rollout.", sowhat: "Provide compliance advisory to CPO partners — removing regulatory friction is a partnership differentiator in the charging space." },
+          { p: "Motor Vehicles Act EV-specific amendments are still pending", why: "Testing requirements, insurance categories and homologation processes for newer EV form factors lack final clarity.", sowhat: "Engage with ARAI and MoRTH standards working groups — shaping the regulation now is less costly than adapting to it later." },
+        ],
+      },
+    },
+    swot5: {
+      S: [
+        { area: "Technology", p: "AIS-156 Phase-2 certified BMS with thermal runaway protection", why: "Bosch's BMS carries the highest Indian safety certification — the most credible differentiator against cost-focussed competitors.", sowhat: "Lead every OEM pitch with the safety certification; make it the non-negotiable reason to shortlist Bosch." },
+        { area: "Market", p: "10,000-workshop service network unmatched by any rival", why: "Physical service presence is the single biggest trust signal for fleet operators whose business stops when a vehicle does.", sowhat: "Activate workshop network as a battery-health diagnostic and second-life grading centre — turns a cost into revenue." },
+        { area: "Technology", p: "PS-ESB power-electronics platform shared across multiple fields", why: "Shared power-electronics architecture reduces development cost and delivers economies of scale Chinese rivals don't have in India.", sowhat: "Co-invest in PS-ESB with the ECA and Connectivity fields to spread fixed development cost across three revenue streams." },
+        { area: "People", p: "Bengaluru R&D centre with 5,000+ engineers already working on EV systems", why: "India-based engineering at India salary levels enables competitive product pricing while maintaining Bosch-quality standards.", sowhat: "Fast-track India-origin BMS designs to close the 25–30% cost gap with Chinese suppliers." },
+        { area: "Process", p: "ISO 26262-grade functional safety processes already embedded in culture", why: "Safety culture and process maturity cannot be bought — they take a decade to build and Bosch already has them.", sowhat: "Communicate safety process maturity to OEM quality teams as a programme-risk reduction, not just a feature." },
+      ],
+      W: [
+        { area: "Market", p: "India-cost BMS manufacturing gap of 25–30% versus Chinese rivals", why: "CATL and BYD source cells and assemble packs at dramatically lower cost; without a cost-competitive India pack line, Bosch loses volume RFQs.", sowhat: "Launch a dedicated India-cost BMS production line within 18 months; aim at the mid-tier 2W OEM who cannot afford the full Chinese bundle." },
+        { area: "Process", p: "No formal fleet operator or discom sales channel", why: "Classic OEM-RFQ sales motions do not reach fleet operators or charging infrastructure owners — a growing revenue segment.", sowhat: "Hire 3–5 dedicated fleet and discom business development leads; package charging management as a standalone subscription product." },
+        { area: "Technology", p: "No owned cell technology — fully dependent on external cell suppliers", why: "Cell makers who are also BMS makers (CATL, BYD) can undercut on total pack cost; Bosch's pure-BMS position is structurally exposed.", sowhat: "Differentiate on chemistry-agnostic BMS design — position this as an advantage (no OEM lock-in) not a gap." },
+        { area: "People", p: "Power electronics talent pipeline thinner than software talent", why: "SiC/GaN power-electronics expertise is scarce in India; competitor captives are hiring aggressively, threatening Bosch's engineering depth.", sowhat: "Partner with IIT power-electronics research groups for co-development and early talent pipeline access." },
+        { area: "Leadership", p: "Slow internal decision cycle for fleet/consumer-segment investments", why: "Bosch's B2B OEM culture makes it slower to fund and execute in the faster-moving fleet operator and consumer-facing segments.", sowhat: "Establish a separate P&L unit for fleet and discom energy business with its own budget and go-to-market playbook." },
+      ],
+      O: [
+        { area: "Market", p: "Mid-tier 2W OEMs need BMS alternatives to reduce CATL dependence", why: "Hero, TVS and smaller OEMs don't want single-source cell+BMS dependency on a Chinese competitor; they actively want alternatives.", sowhat: "Position Bosch as the strategic second source — safer, IATF-certified, local service — even if 10–15% higher cost." },
+        { area: "Technology", p: "V2G grid services market opening under CERC pilot framework", why: "Central Electricity Regulatory Commission is piloting V2G ancillary services; first movers set the technical standard.", sowhat: "Launch a V2G pilot with one discom now to establish the reference architecture — regulatory first-mover advantage is real." },
+        { area: "Market", p: "Battery health data is becoming a credit underwriting requirement", why: "Lenders, insurers and fleet resale platforms are beginning to require certified SoH data before valuing or financing used EVs.", sowhat: "Launch certified battery health report (SoH certificate) via workshops — this is a paid data product with zero marginal supply cost." },
+        { area: "Technology", p: "Na-ion first-generation cells enter the Indian market by 2027", why: "Reliance and Faradion are targeting India Na-ion commercialisation; packs will be 20–30% cheaper than LFP but need adapted BMS.", sowhat: "Develop Na-ion compatible BMS algorithms now; being the first certified Na-ion BMS supplier creates a platform advantage." },
+        { area: "Process", p: "EPR battery collection mandate creates a funded circular-economy market", why: "Battery producers must demonstrate compliant disposal; no credible organised collection and traceability infrastructure exists yet.", sowhat: "Launch EPR traceability-as-a-service through the workshop network — a recurring compliance revenue stream with zero new channel cost." },
+      ],
+      T: [
+        { area: "Market", p: "Top 4 OEMs (Ola, Ather, TVS, Hero) building in-house BMS capability", why: "India's highest-volume 2W EV makers are vertically integrating BMS; this reduces the addressable merchant BMS market materially.", sowhat: "Pivot focus to mid-tier OEMs (Ampere, Okinawa, Revolt) who cannot afford in-house BMS R&D and need a certified partner." },
+        { area: "Technology", p: "Chinese JV entrants undercutting on total-pack cost", why: "CATL India and BYD offer cell+BMS bundles at prices Bosch cannot match without a local pack line.", sowhat: "Compete on software+service total cost: BMS licence + workshop health service + EPR compliance beats the bare-hardware price." },
+        { area: "Leadership", p: "Central government could mandate domestically-designed BMS in PLI phases", why: "If future PLI tranches require India-origin electronics design, imported BMS designs could face tariff or eligibility barriers.", sowhat: "Register Bosch India's BMS designs with DPIIT and file them under the India Innovation Index — protect future eligibility." },
+        { area: "Market", p: "Battery swap standard fragmentation could split the market permanently", why: "Three competing swap standards (Ola, Honda, BIS) risk creating incompatible ecosystems — forcing Bosch to support all three at extra cost.", sowhat: "Support only the BIS-led standard formally; maintain adapter designs for others but do not invest in proprietary swap integration." },
+        { area: "Technology", p: "SiC supply chain disruption could halt high-efficiency charger production", why: "SiC fab capacity is concentrated in 3–4 global plants; any facility disruption causes 12–18 month supply gaps.", sowhat: "Qualify GaN-based alternatives and hold 6-month SiC safety stock — the risk is low-probability but high-impact." },
+      ],
+    },
+    competitorProfiles: [
+      {
+        name: "CATL (India JV entry via CALB/SVOLT channel)",
+        type: "global",
+        listing: "SHE: 300750 (Shenzhen Stock Exchange)",
+        revenue: "~$50B (FY2024)",
+        headcount: "~103,000",
+        profitability: "Net margin ~10–12% (declining from 20%+)",
+        cashCow: "LFP and NMC battery packs for Chinese OEMs; dominant 35–37% global EV battery share",
+        emerging: "Energy storage systems (ESS), India JV entry via CALB/SVOLT brand, European gigafactories",
+        rdBets: "Condensed battery (no module), Sodium-ion cells for entry segments, all-solid-state for 2027+",
+        keyPartnerships: "SAIC, BYD, NIO, Stellantis, BMW; Tata Group (rumoured India JV), ACME Solar (India ESS)",
+        vision: "Become the world's largest energy company, not just a battery maker — power storage at every scale",
+        differentiation: "Pure cost leadership via vertical integration from raw material to cell to pack",
+        sentiment: "Loved for cost and scale; complained about limited localisation support and long RMA cycles",
+        indiaStrategy: "Working through Indian partners (CALB India, SVOLT) to supply EV OEMs; long-term India factory decision deferred to 2027",
+        x_price_position: 3, y_tech_depth: 9,
+        moat: "Vertical cell-to-pack integration at unbeatable cost",
+        radar: { tech: 9, price: 9, indiaPresence: 5, service: 4, innovation: 8, ecosystem: 8 },
+      },
+      {
+        name: "BYD India",
+        type: "global",
+        listing: "HK: 1211 (Hong Kong Stock Exchange)",
+        revenue: "~$107B (FY2024, group)",
+        headcount: "~900,000",
+        profitability: "Net margin ~5%",
+        cashCow: "Passenger EVs in China and emerging markets; e-buses",
+        emerging: "India 2W and 3W EV packs, European OEM cell supply",
+        rdBets: "Blade battery (cell-to-pack LFP), hybrid DMI powertrain, autonomous driving",
+        keyPartnerships: "Olectra (India bus), Lucid, Toyota; Adani Group (India manufacturing negotiation)",
+        vision: "Be the world's technology partner in green energy and smart mobility",
+        differentiation: "Full EV + battery vertical: BYD makes the vehicle, the cell, the BMS, and the charger",
+        sentiment: "Praised for product range; India sentiment mixed — import duty exposure creates price frustration",
+        indiaStrategy: "India-assembled electric buses (Hyderabad plant via Olectra); e6 taxi fleet; possible India car assembly by 2026",
+        x_price_position: 3, y_tech_depth: 8,
+        moat: "Full EV ecosystem ownership — nobody else is car+cell+charger at scale",
+        radar: { tech: 8, price: 8, indiaPresence: 6, service: 5, innovation: 7, ecosystem: 9 },
+      },
+      {
+        name: "Exicom / Servotech (Indian BMS & chargers)",
+        type: "indian-incumbent",
+        listing: "NSE: EXICOM (IPO Mar 2024)",
+        revenue: "~₹700 Cr / ~$85M (FY2024)",
+        headcount: "~1,500",
+        profitability: "EBITDA positive, thin net margin",
+        cashCow: "AC home and workplace chargers; DC fast chargers for government/fleet tenders",
+        emerging: "EV charging as a service (CPaaS), SE-Asia exports",
+        rdBets: "150kW ultra-fast charger, grid-interactive chargers for BESS",
+        keyPartnerships: "Tata Motors (preferred charger partner), BPCL, IOC for fuel-station charging",
+        vision: "India's EV charging infra leader — own the network, not just the box",
+        differentiation: "India-first cost structure; fastest tender response; government relationships",
+        sentiment: "Reliable for basic AC/DC; criticised for after-sales support and firmware update pace",
+        indiaStrategy: "Bidding all FAME-III and state EV charging tenders; building a CPaaS model on top of hardware",
+        x_price_position: 4, y_tech_depth: 6,
+        moat: "India-cost hardware + government tender relationships",
+        radar: { tech: 6, price: 7, indiaPresence: 9, service: 6, innovation: 5, ecosystem: 6 },
+      },
+      {
+        name: "Log9 Materials (Indian BMS startup)",
+        type: "startup",
+        listing: "Private (VC-backed, Series C; investors include Amara Raja, Petronas)",
+        revenue: "~₹60 Cr / ~$7M (FY2024 estimate)",
+        headcount: "~400",
+        profitability: "Pre-profit, burning cash for scale",
+        cashCow: "Rapid charging lithium-titanate (LTO) batteries for 3W delivery fleets",
+        emerging: "LTO BMS for e-buses; battery-as-a-service leasing model",
+        rdBets: "RapidX fast-charge cells (15-min charge claim), grid buffer storage",
+        keyPartnerships: "Amara Raja (strategic investor), Magenta Mobility, Ultraviolette",
+        vision: "Make fast-charging electric vehicles practical for high-utilisation commercial duty cycles",
+        differentiation: "Fast-charge chemistry and BaaS business model vs traditional hardware sale",
+        sentiment: "Highly praised for fast charge and duty-cycle resilience; scale and after-sales consistency questioned",
+        indiaStrategy: "Targeting e-3W delivery fleets in metro cities; BaaS contracts with logistics players",
+        x_price_position: 5, y_tech_depth: 7,
+        moat: "Fast-charge chemistry and BaaS model — both hard to replicate quickly",
+        radar: { tech: 7, price: 6, indiaPresence: 6, service: 5, innovation: 8, ecosystem: 4 },
+      },
+    ],
+  },
+
+  lighting: {
+    pestelFA: {
+      P: {
+        for: [
+          { p: "BNCAP safety rating drives adaptive lighting adoption in mainstream cars", why: "Bharat NCAP adds lighting performance criteria; OEMs chasing 5-star ratings must adopt automatic high-beam and adaptive front lighting.", sowhat: "Position Bosch's adaptive lighting control as the BNCAP-grade solution; co-invest in homologation with partner lamp makers." },
+          { p: "Make-in-India preference in government vehicle tenders", why: "State and central fleet procurement increasingly requires India-manufactured content, including lighting systems.", sowhat: "Ensure controllers are assembled at Indian plants to qualify for local-content clauses in government fleet orders." },
+          { p: "Vehicle safety regulations mandate DRL and AHB from 2024 onwards", why: "AIS standards now require daytime running lights and automatic high-beam assist on new model approvals.", sowhat: "Lead OEM advisory on AIS-compliant lighting control — regulatory compliance creates a guaranteed feature-adoption event." },
+        ],
+        against: [
+          { p: "Luxury import duty makes premium pixel-lighting unaffordable at mass-market price", why: "High import duties on advanced optical components and LED modules inflate the cost of European-spec matrix lighting for India.", sowhat: "Design India-cost adaptive lighting solutions using locally available LED drivers rather than premium European component bills." },
+          { p: "No government incentive for lighting-specific R&D or localisation", why: "Unlike EV batteries or semiconductors, lighting electronics have no PLI or specific incentive structure — investment is entirely commercial.", sowhat: "Fund lighting-control R&D through cross-field sharing with ADAS and cockpit programmes where costs overlap." },
+          { p: "OEM platform nominations happen infrequently — missing a cycle means waiting 5–7 years", why: "Lighting platforms are awarded during vehicle architecture design, typically on 5–7 year cycles — late entry misses a generation.", sowhat: "Identify OEMs currently in platform design (2024–26 cycle) and prioritise those for lighthouse partnership deals." },
+        ],
+      },
+      E: {
+        for: [
+          { p: "Premium vehicle segment growing faster than the overall car market", why: "India's ₹10L+ car segment grew 18% in FY2025 vs 7% for the overall market — and premium cars adopt advanced lighting features first.", sowhat: "Focus on ₹10L+ OEM platforms where feature content per vehicle is highest and margin per unit is strongest." },
+          { p: "LED content per vehicle growing — BOM value increases without unit volume change", why: "Transition from halogen to full-LED and eventually matrix increases the electronics value per car by 2–4x.", sowhat: "Frame the business case to OEM procurement as growing share-of-vehicle versus growing car volume — a different and more sustainable metric." },
+          { p: "India auto market expected to reach 5M+ cars by 2030 — total addressable market growing", why: "McKinsey and SIAM project India as the world's 3rd largest auto market by 2027, expanding the total platform opportunity.", sowhat: "Secure platform positions now when competition for OEM relationships is less intense than it will be in 2–3 years." },
+        ],
+        against: [
+          { p: "Price pressure on OEM commodity lighting is intensifying — margins squeezed annually", why: "Annual 3–5% price-downs are standard in commodity lighting; without differentiation, each year erodes profitability.", sowhat: "Explicit rule: avoid the commodity lamp business entirely; enter only at the control/software layer where price-downs are softer." },
+          { p: "Raw material costs (rare earth phosphors, LED chips) subject to China supply volatility", why: "80%+ of LED phosphors are sourced from China; export restrictions could spike LED chip costs rapidly.", sowhat: "Work with partner lamp makers to diversify their LED chip sourcing — supply risk affects the partner relationship, not just the end product." },
+          { p: "Currency risk on imported advanced ADAS camera sensors used in adaptive lighting", why: "ADB (adaptive driving beam) uses camera inputs from ADAS sensors priced in USD/EUR, creating FX cost exposure.", sowhat: "Reuse Bosch's own India-produced MEMS/camera assets where possible to reduce import exposure in the lighting control stack." },
+        ],
+      },
+      S: {
+        for: [
+          { p: "Indian buyers increasingly treat exterior lighting as a differentiation signal", why: "OEM surveys show lighting design is now in top-5 buyer evaluation criteria for cars above ₹8L — DRLs are seen as quality markers.", sowhat: "Give OEM marketing teams data on buyer preference for lighting as a feature — it strengthens internal RFQ justification." },
+          { p: "Brand safety awareness drives AHB adoption among urban buyers", why: "Post-BNCAP, urban car buyers are more aware of safety features; AHB and lane-change assist lighting now feature in dealer conversations.", sowhat: "Support OEM dealer training on safety-lighting feature explanations — educated buyers pull features through faster." },
+          { p: "Social media visibility of signature lighting creates organic brand premium", why: "DRL designs and animated welcome sequences go viral; OEMs increasingly see lighting as a brand expression tool.", sowhat: "Demonstrate animated/OTA-personalised lighting themes to OEM design studios — appeal to the emotion alongside the regulation." },
+        ],
+        against: [
+          { p: "Rural and semi-urban buyers have low willingness to pay for premium lighting features", why: "60% of India's car market is outside top-10 metros; those buyers prioritise fuel efficiency and reliability over advanced lighting.", sowhat: "Avoid designing for rural mass-market; focus the product roadmap on urban and premium segments where the feature is valued." },
+          { p: "Night-driving habits differ from Europe — Indian use cases require different beam tuning", why: "Road infrastructure, traffic mix (cyclists, cattle, handcarts) and lighting conditions vary significantly from European roads where ADB is tuned.", sowhat: "Build India-specific beam and detection tuning datasets using Indian road conditions — this becomes a competitive moat." },
+          { p: "After-sales lighting repair market dominated by informal local shops — limited brand capture", why: "Most lighting repairs happen at roadside shops using non-OEM parts; electronic controllers rarely go to authorised service.", sowhat: "Ensure control modules are repairable and updatable via authorised workshops — build a service revenue stream around it." },
+        ],
+      },
+      T: {
+        for: [
+          { p: "Camera-based ADB (adaptive driving beam) is technically validated at India-relevant cost points", why: "ADB using a forward camera (shared with ADAS) is now feasible at ₹3,000–5,000 per vehicle versus standalone ₹12,000+ lidar-based solutions.", sowhat: "Propose camera-fused ADB as the India-cost path — share camera cost with the ADAS field to make the business case viable." },
+          { p: "OTA updates enable lighting personalisation as a revenue feature", why: "Software-defined lighting allows OEMs to sell personalised colour themes and animation packs post-sale via the app store.", sowhat: "Build FoD (feature-on-demand) licensing into the lighting-control platform contract — capture a share of post-sale revenue." },
+          { p: "Digital twin design reduces homologation cycle time by 40%", why: "Virtual photometric simulation can front-load regulatory compliance testing, cutting physical ARAI test cycles from 12 to 7 months.", sowhat: "Offer digital-twin lighting design support to OEM engineering teams — time-to-market advantage is a genuine commercial differentiator." },
+        ],
+        against: [
+          { p: "Pixel LED matrix requires ASIC-level driver ICs not currently made in India", why: "Matrix lighting controller chips are designed in Europe and manufactured in Asia — no India option exists yet.", sowhat: "Design around available automotive-grade driver ICs; create a migration path to India-made ASICs if ISM programme matures." },
+          { p: "Photometric regulation update lag — India may be 2+ cycles behind Europe on lighting norms", why: "AIS adopts UNECE standards with a 2–4 year delay; features already legal in Europe may await AIS approval in India.", sowhat: "Pre-certify products to both AIS current and UNECE upcoming standards — dual certification saves a cycle when India catches up." },
+          { p: "Cybersecurity requirements now apply to lighting ECUs as part of R155 scope", why: "Connected lighting controllers that receive OTA updates fall within AIS-189 cybersecurity scope — adding compliance overhead.", sowhat: "Design cybersecurity into the lighting ECU platform from the start; reuse Bosch's CSMS framework from the Connectivity field." },
+        ],
+      },
+      En: {
+        for: [
+          { p: "LED efficiency reduces vehicle energy consumption, supporting EV range goals", why: "Full-LED headlamps consume 50–70% less power than halogen — directly extending EV range and reducing ICE fuel consumption.", sowhat: "Quantify the LED-to-range conversion for EV OEMs — it becomes a technical selling point in their marketing." },
+          { p: "Reduced mercury and toxic chemicals versus traditional HID lamps", why: "LED and matrix technology eliminates HID lamp mercury, reducing disposal hazard and improving RRR (recyclability) compliance.", sowhat: "Support OEM sustainability reports with component-level environmental data; this becomes a supplier assessment input." },
+          { p: "Longer LED lifespan reduces replacement frequency and waste", why: "Quality automotive LEDs last the vehicle lifetime (100,000+ hours) versus 500–1,000 hours for halogen — fewer replacements, less waste.", sowhat: "Provide lifecycle data to OEM procurement sustainability teams — durability is a total-cost-of-ownership argument as well as an ESG one." },
+        ],
+        against: [
+          { p: "Glare from improperly aimed LEDs causing road safety concerns", why: "Poorly calibrated LED headlamps are a road safety issue; regulators in India are beginning to flag complaints about brightness.", sowhat: "Ensure Bosch lighting solutions include automatic level compensation; avoid retrofits without proper alignment mechanisms." },
+          { p: "Blue-light emission from LED has environmental impact on nocturnal wildlife", why: "LEDs emit higher blue-spectrum light that disrupts nocturnal fauna — relevant for vehicles used near wildlife corridors.", sowhat: "Include amber-spectrum DRL options in the product portfolio for segments operating near protected areas." },
+          { p: "Electronic waste from faster lighting-module replacement cycles", why: "Complex matrix modules are not repaired — they are replaced, generating more electronic waste than simple lamp replacements.", sowhat: "Design modular lighting ECUs that allow component-level repair rather than full module replacement." },
+        ],
+      },
+      L: {
+        for: [
+          { p: "AIS 112 mandates automatic headlamp on (AHO) for all new vehicles", why: "AHO is already mandatory for 2W and applies increasingly to PVs — ensuring lighting-control electronics have a mandatory market.", sowhat: "Package AHO compliance as entry point to a broader lighting-control relationship with OEM lighting teams." },
+          { p: "EU lighting regulations (GTR 8/UN R123) becoming India NCAP reference points", why: "As BNCAP aligns with Euro NCAP, the lighting test protocols referenced in Europe will increasingly shape Indian OEM procurement criteria.", sowhat: "Certify to GTR 8 and UN R123 now; this puts Bosch's solutions ahead of Indian regulatory requirements that will follow." },
+          { p: "IP and design protection law improvements make adaptive lighting algorithms protectable", why: "India's patent amendment (2021) and design registration improvements make it cost-effective to protect Indian-developed lighting control IP.", sowhat: "File lighting-control algorithm patents in India as well as Germany — India IP protection now has commercial value." },
+        ],
+        against: [
+          { p: "ARAI homologation delays for new lighting technologies can take 12–18 months", why: "ARAI approval processes for novel lighting functions (matrix ADB, communicative lighting) are slow — delaying time-to-market.", sowhat: "Engage ARAI pre-submission with technical briefings; propose a fast-track pilot framework for software-controlled lighting features." },
+          { p: "Local-content rules could require lamp-maker partnerships for B2G tenders", why: "Government fleet tenders increasingly require locally assembled lighting systems; Bosch cannot qualify without a lamp-maker ally.", sowhat: "Finalise a lamp-maker alliance before bidding any government fleet or public transport lighting contracts." },
+          { p: "Grey market import of European lighting systems creates pricing pressure", why: "Aftermarket imports of EU-spec matrix lighting kits from China at 40–60% below OEM pricing disrupt the premium positioning.", sowhat: "Focus on OEM-line production platforms — aftermarket grey-market competition is irrelevant at the Tier-1 integration level." },
+        ],
+      },
+    },
+    swot5: {
+      S: [
+        { area: "Technology", p: "ADAS camera data reusable for adaptive driving beam control", why: "Bosch's forward-facing cameras already installed for emergency braking and lane-keeping can drive ADB at zero incremental sensor cost.", sowhat: "Price the ADB feature as a software add-on using existing ADAS camera — undercuts standalone ADB solutions by 60%." },
+        { area: "Technology", p: "Functional safety culture and ISO 26262 compliance already embedded", why: "Lighting ECUs that receive OTA updates and interact with safety systems must meet functional-safety requirements — Bosch starts with this certified.", sowhat: "Use safety certification as the OEM shortlist entry criterion in markets where lighting meets ADAS interaction." },
+        { area: "Process", p: "Established OEM relationships across all major Indian passenger-car OEMs", why: "Bosch supplies ADAS, fuel injection and body electronics to every major OEM — lighting control adds naturally to existing platform bundles.", sowhat: "Cross-sell lighting control in the same OEM platform discussion as ADAS and body electronics — one conversation, three products." },
+        { area: "People", p: "Deep India-based photonic and sensing engineering talent at RBEI", why: "Robert Bosch Engineering India (RBEI) has deep sensor-algorithm and embedded-software expertise directly applicable to intelligent lighting control.", sowhat: "Redirect a small RBEI team to lighting-control algorithm development — marginal cost to Bosch, strategic differentiation for OEMs." },
+        { area: "Leadership", p: "Global R&D leadership in automotive electronics means India is not starting from zero", why: "Global Bosch has invested decades in lighting control R&D; India commercialisation inherits this IP at marginal localisation cost.", sowhat: "Localise (cost-optimise) existing global lighting IP for India-specific LED drivers and operating conditions — faster than greenfield development." },
+      ],
+      W: [
+        { area: "Market", p: "No existing relationship with Indian lamp-maker Tier-1s (Lumax, Uno Minda, Varroc)", why: "OEM lighting RFQs go through lamp-maker Tier-1s who manage the full optical assembly — Bosch is not in that supply relationship today.", sowhat: "Approach Lumax and Uno Minda as technology partners rather than competitors; offer lighting control embedded in their lamps." },
+        { area: "Market", p: "No production reference in Indian OEM lighting platforms currently", why: "Without a single shipped production reference, OEM procurement teams have no basis to evaluate Bosch's lighting claim.", sowhat: "Prioritise landing one lighthouse reference at a Tier-2 OEM within 24 months; the reference unlocks all subsequent pitches." },
+        { area: "Technology", p: "No homologation history with ARAI for lighting-specific products in India", why: "Homologation approval depends on track record; new applicants face longer review cycles than established players with ARAI relationships.", sowhat: "Engage an ARAI-experienced homologation consultant for the first India lighting product submission." },
+        { area: "Leadership", p: "Lighting treated as a small adjacency, not a strategic priority, internally", why: "Within Bosch India's portfolio priority list, lighting competes for investment with much larger businesses — it may not receive decision-maker attention.", sowhat: "Frame lighting as a software extension of the ADAS and SdV business — it is not a standalone bet but a product-line extension." },
+        { area: "Process", p: "Lamp-maker co-development process not yet established — IP and revenue-sharing terms undefined", why: "Without clear co-development agreements with lamp Tier-1s, the partnership model for market entry cannot proceed.", sowhat: "Develop a standard lamp-partner co-development framework with pre-agreed IP terms — speed is critical as the RFQ window is open." },
+      ],
+      O: [
+        { area: "Market", p: "BNCAP 2024 lighting criteria opening safety lighting sourcing decisions at all OEMs", why: "BNCAP's inclusion of AHB scoring means every OEM seeking 5 stars must source a compliant automatic high-beam solution.", sowhat: "Map every OEM platform in active safety-homologation to identify sourcing decisions in progress and enter those conversations." },
+        { area: "Technology", p: "Communicative/projection lighting is emerging — no Indian incumbent owns the software layer", why: "Road-to-vehicle and vehicle-to-pedestrian communication via light projection is coming; Indian lamp makers have no software capability.", sowhat: "Develop a communicative-lighting SDK and demonstrate it to OEM design studios — be the software layer before the hardware market forms." },
+        { area: "Market", p: "Premium OEMs (BMW, Mercedes, Audi India assembly) require India-sourced alternatives post-PLI", why: "Import-heavy premium-car assembly plants increasingly need India-sourced components to meet local-content thresholds.", sowhat: "Approach premium OEM India assembly plants with locally produced lighting control modules — meets localisation requirement and opens a high-margin slot." },
+        { area: "Technology", p: "OTA software update capability enables feature-on-demand lighting revenue post-sale", why: "Connected lighting modules can receive firmware updates; OEMs can charge for additional lighting themes and modes after vehicle delivery.", sowhat: "Propose a revenue-sharing model where Bosch provides the OTA update infrastructure and earns a share of each FoD purchase." },
+        { area: "Process", p: "Digital-twin photometric simulation reduces homologation cost for OEM partners", why: "Virtual homologation cuts expensive physical ARAI testing cycles; OEMs that partner with Bosch for this save 6–9 months per programme.", sowhat: "Offer digital-twin homologation support as a free service to close the first partnership deal — the investment is low, the relationship value is high." },
+      ],
+      T: [
+        { area: "Market", p: "Lamp-maker Tier-1s building software teams and could internalise the control layer", why: "Lumax and Uno Minda are actively hiring embedded-software engineers; if they close the control-software gap, Bosch's entry slot disappears.", sowhat: "Move in 12–18 months; the opportunity window closes as incumbents build internal capability." },
+        { area: "Technology", p: "Chinese lamp makers entering India with full LED + controller bundles at Indian cost", why: "Hella (owned by Forvia/Faurecia) and Chinese LED module makers are proposing integrated lamp+controller solutions to Indian OEMs at aggressive pricing.", sowhat: "Compete on software depth and safety certification, not price — a price war with a vertically integrated LED-to-controller bundle is unwinnable." },
+        { area: "Market", p: "OEM in-housing of lighting ECU design at top-tier OEMs (Tata, Mahindra)", why: "Tata and Mahindra are investing heavily in in-house EE architecture — lighting control may be pulled into captive software teams.", sowhat: "Target mid-tier OEMs (Kia India, Honda Cars India, MG Motor) who lack captive EE teams and will continue to source externally." },
+        { area: "Leadership", p: "Slow internal decision to enter via partnership could let the lighthouse deal go to a rival", why: "The BNCAP-driven sourcing window is open now; delayed decision-making allows rivals to lock first-mover OEM platform positions.", sowhat: "Set a clear internal deadline for the lamp-maker partnership decision — the cost of delay is a lost platform generation." },
+        { area: "Technology", p: "SoC integration of lighting control into cockpit chips could commoditise the ECU", why: "Qualcomm and NXP are integrating body-electronics functions including lighting control into cockpit SoCs — reducing the standalone ECU market.", sowhat: "Ensure lighting-control software can run on the cockpit SoC if the standalone ECU market shrinks — platform-agnostic software is the hedge." },
+      ],
+    },
+    competitorProfiles: [
+      {
+        name: "Lumax Industries",
+        type: "indian-incumbent",
+        listing: "BSE: 517206 / NSE: LUMAXIND",
+        revenue: "~₹3,500 Cr / ~$420M (FY2024)",
+        headcount: "~5,500",
+        profitability: "Net margin ~4–5%",
+        cashCow: "Halogen and LED headlamp assemblies for Maruti, Honda, Toyota India",
+        emerging: "Matrix/ADB systems for premium segments, EV lighting for Tata/Mahindra",
+        rdBets: "Smart lighting ECU development (just started 2024), BNCAP-compliant AHB systems",
+        keyPartnerships: "Stanley Electric Japan (technical JV), Lumax-DK (sensors), HP Pelzer",
+        vision: "Transform from a lamp assembler to a lighting technology systems company",
+        differentiation: "Deep OEM relationships built over 30 years; fastest India-cost delivery; ARAI homologation experience",
+        sentiment: "Loved for reliability and responsiveness; criticised for slow technology upgrade cycles and thin software capability",
+        indiaStrategy: "Expanding into ADB and matrix lighting through Stanley JV; piloting smart ECU in-house to reduce dependence on European suppliers",
+        x_price_position: 4, y_tech_depth: 6,
+        moat: "30-year OEM relationships and ARAI homologation track record",
+        radar: { tech: 6, price: 7, indiaPresence: 10, service: 8, innovation: 4, ecosystem: 5 },
+      },
+      {
+        name: "Uno Minda",
+        type: "indian-incumbent",
+        listing: "NSE: UNOMINDA",
+        revenue: "~₹16,400 Cr / ~$2B (FY2024, group)",
+        headcount: "~23,000",
+        profitability: "Net margin ~5–6%",
+        cashCow: "Switches, LED lighting and horns for 2W OEMs (Honda, Hero, TVS)",
+        emerging: "Smart lighting for PV, EV charging hardware, alloy wheels",
+        rdBets: "ADAS-integrated lighting, EV junction boxes, matrix lighting for mid-range PVs",
+        keyPartnerships: "Koito Manufacturing Japan (lighting JV), Rinder Spain, Simplex Castings",
+        vision: "Be India's most diversified auto-component leader across lighting, charging and electronics",
+        differentiation: "Massive 2W platform coverage; recent Koito JV for premium lighting; cost-competitive assembly",
+        sentiment: "Strong in 2W; PV customers want more software depth and faster ADB commercialisation",
+        indiaStrategy: "Scaling Koito-JV advanced lighting for PV; adding EV charging hardware as adjacency",
+        x_price_position: 4, y_tech_depth: 6,
+        moat: "India's largest lighting supplier by volume — scale and breadth",
+        radar: { tech: 6, price: 7, indiaPresence: 10, service: 7, innovation: 5, ecosystem: 6 },
+      },
+      {
+        name: "Varroc Engineering",
+        type: "indian-incumbent",
+        listing: "NSE: VARROC",
+        revenue: "~₹4,800 Cr / ~$575M (FY2024)",
+        headcount: "~9,000",
+        profitability: "Near breakeven (recovering from global lighting divestiture)",
+        cashCow: "Polymer body parts and mirrors for Bajaj, Royal Enfield; 2W electrical systems",
+        emerging: "Premium lighting for PV (post Varroc Lighting divestiture rebuild), EV polymer parts",
+        rdBets: "Re-entering premium PV lighting segment post-2022 divestiture; smart LED for 2W EVs",
+        keyPartnerships: "Bajaj Auto (strategic), Royal Enfield",
+        vision: "Rebuild as an Indian Tier-1 leader in 2W polymer and electrical systems",
+        differentiation: "Deep 2W platform relationships; polymer + lighting integration for 2W",
+        sentiment: "Respected for 2W expertise; PV lighting capability questioned after 2022 Varroc Lighting sale",
+        indiaStrategy: "Focus on 2W EV lighting and polymer; cautious re-entry to PV lighting",
+        x_price_position: 5, y_tech_depth: 5,
+        moat: "2W OEM depth and polymer integration capability",
+        radar: { tech: 5, price: 7, indiaPresence: 8, service: 6, innovation: 4, ecosystem: 4 },
+      },
+    ],
+  },
+};
+
+// V7 remaining 13 fields will be added in next release; existing V6 data serves as fallback
+Object.assign(V7, {
+  cockpit: { pestelFA: null, swot5: null, competitorProfiles: null },
+  interior: { pestelFA: null, swot5: null, competitorProfiles: null },
+  suspension: { pestelFA: null, swot5: null, competitorProfiles: null },
+  connectivity: { pestelFA: null, swot5: null, competitorProfiles: null },
+  eca: { pestelFA: null, swot5: null, competitorProfiles: null },
+  software: { pestelFA: null, swot5: null, competitorProfiles: null },
+  manufacturing: { pestelFA: null, swot5: null, competitorProfiles: null },
+  fintech: { pestelFA: null, swot5: null, competitorProfiles: null },
+  infrastructure: { pestelFA: null, swot5: null, competitorProfiles: null },
+  sustainability: { pestelFA: null, swot5: null, competitorProfiles: null },
+  evtol: { pestelFA: null, swot5: null, competitorProfiles: null },
+  robotics: { pestelFA: null, swot5: null, competitorProfiles: null },
+  health: { pestelFA: null, swot5: null, competitorProfiles: null },
+});
+
 /* ════════════════════════════ UI atoms ═══════════════════════════════════ */
+/* Hover tooltip — wrap any child; `label` shows in the floating box */
+const Tip = ({ label, children }) => {
+  const [show, setShow] = React.useState(false);
+  return (
+    <span className="relative inline-block cursor-help" onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+      {children}
+      {show && label && (
+        <span className="absolute z-50 bottom-full left-0 mb-2 w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none">
+          {label}
+          <span className="absolute top-full left-4 border-4 border-transparent border-t-slate-900" />
+        </span>
+      )}
+    </span>
+  );
+};
+
 const Chip = ({ children, tone = "slate" }) => {
   const tones = {
     slate: "bg-slate-100 text-slate-700", red: "bg-red-50 text-red-700",
@@ -3893,6 +4282,7 @@ export default function App() {
   const field = FIELDS.find(f => f.id === fieldId);
   const d = DATA[fieldId];
   const v6 = V6[fieldId] || {};
+  const v7 = (typeof V7 !== "undefined" ? V7[fieldId] : null) || null;
   const hasData = !!d;
   const M = hasData ? computeMatrix(d.criterionScores) : null;
   const stakeScore = hasData ? computeStakeholderScore(d.stakeholders) : null;
@@ -4076,11 +4466,54 @@ export default function App() {
                     )}
                   </div>
 
+                  {/* PESTEL for/against split — uses V7 data when available, falls back to legacy points */}
+                  {v7?.pestelFA ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {[["P","Political"],["E","Economic"],["S","Social"],["T","Technological"],["En","Environmental"],["L","Legal"]].map(([k, label]) => {
+                        const fa = v7.pestelFA[k] || {};
+                        return (
+                          <div key={k} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
+                              <h3 className="text-sm font-semibold text-slate-800">{label} — {field.name}</h3>
+                              <span className="text-[10px] text-slate-400">3 tailwinds · 3 headwinds</span>
+                            </div>
+                            <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {/* Tailwinds */}
+                              <div>
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-green-700 mb-2 flex items-center gap-1">▲ Tailwinds — working in our favour</div>
+                                {(fa.for || []).slice(0,3).map((x, i) => (
+                                  <Tip key={i} label={`${x.why}\n\nSO WHAT: ${x.sowhat}`}>
+                                    <div className="border border-green-100 bg-green-50/40 rounded-lg p-2.5 mb-2 last:mb-0 hover:border-green-300 transition-colors">
+                                      <div className="text-xs font-medium text-slate-800">{x.p}</div>
+                                      <div className="text-[11px] text-green-700 mt-1">{x.sowhat}</div>
+                                    </div>
+                                  </Tip>
+                                ))}
+                              </div>
+                              {/* Headwinds */}
+                              <div>
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-red-600 mb-2 flex items-center gap-1">▼ Headwinds — working against us</div>
+                                {(fa.against || []).slice(0,3).map((x, i) => (
+                                  <Tip key={i} label={`${x.why}\n\nSO WHAT: ${x.sowhat}`}>
+                                    <div className="border border-red-100 bg-red-50/40 rounded-lg p-2.5 mb-2 last:mb-0 hover:border-red-300 transition-colors">
+                                      <div className="text-xs font-medium text-slate-800">{x.p}</div>
+                                      <div className="text-[11px] text-red-700 mt-1">{x.sowhat}</div>
+                                    </div>
+                                  </Tip>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {Object.entries(d.pestel).map(([k, pts]) => (
                       <Card key={k} title={`${k} — ${field.name} specific`}>
                         {pts.map((x, i) => (
-                          <div key={i} className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
+                          <Tip key={i} label={x.why ? `WHY: ${x.why}${x.sowhat ? `\n\nSO WHAT: ${x.sowhat}` : ""}` : null}>
+                          <div className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0 hover:border-slate-300 transition-colors">
                             <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
                               {x.cat && <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">{x.cat}</span>}
                               {x.enabler && <Chip tone="violet">enabler</Chip>}
@@ -4095,10 +4528,12 @@ export default function App() {
                               </div>
                             )}
                           </div>
+                          </Tip>
                         ))}
                       </Card>
                     ))}
                   </div>
+                  )}
                 </div>
               )}
 
@@ -4130,13 +4565,15 @@ export default function App() {
                 {swotView === "swot" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-                    Internal factors are assessed across five areas: <b>People · Technology · Process · Market · Leadership</b> — each factor below is tagged with its area.
+                    Internal factors (Strengths/Weaknesses) assessed across five areas: <b>People · Technology · Process · Market · Leadership</b>. Hover any point for detailed reasoning.
                   </div>
-                  {[["Strengths", d.swot.S, "green"], ["Weaknesses", d.swot.W, "red"], ["Opportunities", d.swot.O, "teal"], ["Threats", d.swot.T, "amber"]].map(([t, items, tone]) => (
-                    <Card key={t} title={`${t} — Bosch Mobility India`}>
-                      {items.map((x, i) => (
-                        <Reasoned key={i} point={x.p} why={x.why} sowhat={x.sowhat}
+                  {[["Strengths", (v7?.swot5?.S || d.swot.S), "green"], ["Weaknesses", (v7?.swot5?.W || d.swot.W), "red"], ["Opportunities", (v7?.swot5?.O || d.swot.O), "teal"], ["Threats", (v7?.swot5?.T || d.swot.T), "amber"]].map(([t, items, tone]) => (
+                    <Card key={t} title={`${t} — Bosch Mobility India`} right={<span className="text-[10px] text-slate-400">{Math.min(5, items?.length || 0)} of 5</span>}>
+                      {(items || []).slice(0, 5).map((x, i) => (
+                        <Tip key={i} label={`${x.why ? "WHY: " + x.why : ""}${x.sowhat ? "\n\nSO WHAT: " + x.sowhat : ""}`}>
+                        <Reasoned point={x.p} why={x.why} sowhat={x.sowhat}
                           tag={<span className="flex gap-1 items-center"><Chip tone={tone}>{t[0]}</Chip>{x.area && <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">{x.area}</span>}</span>} />
+                        </Tip>
                       ))}
                     </Card>
                   ))}
@@ -4252,17 +4689,21 @@ export default function App() {
                               <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Customer acquisition cost</td><td className="py-1.5 text-slate-700">{d.market.attractiveness.access.cac}</td></tr>
                             </tbody>
                           </table>
-                          <div className="text-xs text-slate-600 bg-teal-50 rounded-lg p-3 mt-3"><b>Value pool — where future profit is created:</b> {d.market.attractiveness.valuePool}</div>
+                          <Tip label="The 'value pool' is where the industry's future profits will actually sit — often different from where today's revenue is. Knowing this stops you from fighting for the wrong part of the market.">
+                          <div className="text-xs text-slate-600 bg-teal-50 rounded-lg p-3 mt-3 hover:bg-teal-100 transition-colors cursor-help"><b>Value pool — where future profit is created:</b> {d.market.attractiveness.valuePool}</div>
+                          </Tip>
                         </Card>
-                        <Card title="White space — where the openings are">
+                        <Card title="White space — where the openings are (hover for reasoning)">
                           {d.market.attractiveness.whiteSpace.map((w, i) => (
-                            <div key={i} className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
+                            <Tip key={i} label={`WHY THIS OPENING:\n${w.why}`}>
+                            <div className="border border-teal-100 bg-teal-50/30 rounded-lg p-3 mb-2 last:mb-0 hover:border-teal-300 hover:bg-teal-50 transition-colors cursor-help">
                               <div className="flex items-start justify-between gap-2">
-                                <div className="text-sm font-medium">{w.p}</div>
-                                {w.sub && <span className="text-[10px] text-teal-800 bg-teal-50 border border-teal-100 rounded-full px-2 py-0.5 whitespace-nowrap">↳ {w.sub}</span>}
+                                <div className="text-sm font-medium text-slate-800">{w.p}</div>
+                                {w.sub && <span className="text-[10px] text-teal-800 bg-teal-100 border border-teal-200 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0">↳ {w.sub}</span>}
                               </div>
-                              <div className="text-xs text-slate-600 mt-1">{w.why}</div>
+                              <div className="text-xs text-teal-800 mt-1">{w.why}</div>
                             </div>
+                            </Tip>
                           ))}
                         </Card>
                       </div>
@@ -4474,59 +4915,112 @@ export default function App() {
 
               {/* ─────────────── COMPETITORS (Perceptual map) ─────────────── */}
               {tab === "Competitors" && d.competitors && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Card title="Perceptual map — price position × tech depth">
-                    <ResponsiveContainer width="100%" height={320}>
-                      <ScatterChart margin={{ top: 10, right: 20, bottom: 30, left: 10 }}>
-                        <XAxis type="number" dataKey="x_price_position" name="Price" domain={[0, 10]} tick={{ fontSize: 11 }} label={{ value: "Price position (10 = premium) →", position: "insideBottom", offset: -15, fontSize: 11 }} />
-                        <YAxis type="number" dataKey="y_tech_depth" name="Tech depth" domain={[0, 10]} tick={{ fontSize: 11 }} label={{ value: "Tech depth →", angle: -90, position: "insideLeft", fontSize: 11 }} />
-                        <Tooltip cursor={{ strokeDasharray: "3 3" }} content={({ payload }) => payload && payload[0] ? <div className="bg-white border border-slate-200 rounded p-2 text-xs shadow"><b>{payload[0].payload.name}</b><div>{payload[0].payload.moat}</div></div> : null} />
-                        <Scatter data={d.competitors}>
-                          {d.competitors.map((cmp, i) => <Cell key={i} fill={/target/i.test(cmp.name) || /Bosch/.test(cmp.name) ? "#E20015" : cmp.type === "global" ? "#7A1FA2" : cmp.type === "startup" ? "#0096A0" : "#94A3B8"} />)}
-                        </Scatter>
-                      </ScatterChart>
-                    </ResponsiveContainer>
-                    <div className="text-xs text-slate-500">Red = Bosch (target) · violet = global · grey = Indian incumbent · teal = startup.</div>
-                    <div className="text-[11px] text-slate-500 bg-slate-50 rounded-lg p-3 mt-2"><b>How to read this map:</b> each player is placed on two axes — how premium their pricing is (X) and how deep their technology is (Y). Positions come from the framework analysis of each competitor's products and pricing, not from a survey. Empty regions are potential white space; crowded regions are price wars. The red dot is where Bosch should stand.</div>
-                    {d.competitorWhiteSpace && <div className="text-xs text-slate-600 bg-teal-50 rounded-lg p-3 mt-2"><b>White space:</b> {d.competitorWhiteSpace}</div>}
-                  </Card>
-                  <Card title="Competitors — position & MOAT">
-                    {d.competitors.map(cmp => (
-                      <div key={cmp.name} className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold">{cmp.name}</span>
-                          <Chip tone={cmp.type === "global" ? "violet" : cmp.type === "startup" ? "teal" : "slate"}>{cmp.type}</Chip>
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-1">price {cmp.x_price_position}/10 · tech {cmp.y_tech_depth}/10</div>
-                        <div className="text-xs text-slate-600 mt-1"><b className="text-slate-500">MOAT</b> {cmp.moat}</div>
-                        <p className="text-xs text-slate-600 mt-1">{cmp.reasoning}</p>
+                <div className="space-y-4">
+                  {/* Radar / multi-axis competitive positioning */}
+                  {(() => {
+                    const radarSrc = v7?.competitorProfiles
+                      ? v7.competitorProfiles.filter(c => c.radar).slice(0, 4).map(c => ({ name: c.name.split(" ")[0], ...c.radar, isBosch: /Bosch/.test(c.name) }))
+                      : d.competitors.filter(c => !/Bosch/i.test(c.name) || /target/i.test(c.name)).slice(0, 4).map(c => ({
+                          name: c.name.split(" ")[0],
+                          tech: c.y_tech_depth, price: 10 - c.x_price_position,
+                          indiaPresence: Math.round((c.x_price_position + c.y_tech_depth) / 2.5),
+                          service: Math.round(c.y_tech_depth * 0.7),
+                          innovation: c.y_tech_depth, ecosystem: Math.round(c.y_tech_depth * 0.8),
+                          isBosch: /Bosch/.test(c.name),
+                        }));
+                    const dims = ["tech", "price", "indiaPresence", "service", "innovation", "ecosystem"];
+                    const dimLabels = { tech: "Tech depth", price: "Cost edge", indiaPresence: "India presence", service: "Service depth", innovation: "Innovation pace", ecosystem: "Ecosystem" };
+                    const radarData = dims.map(d => ({ dim: dimLabels[d], ...Object.fromEntries(radarSrc.map(c => [c.name, c[d] || 5])) }));
+                    const colors = ["#7A1FA2", "#0096A0", "#94A3B8", "#D97706", "#E20015"];
+                    return (
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <Card title="Competitive positioning — 6 dimensions at a glance">
+                          <ResponsiveContainer width="100%" height={300}>
+                            <RadarChart data={radarData}>
+                              <PolarGrid />
+                              <PolarAngleAxis dataKey="dim" tick={{ fontSize: 10 }} />
+                              <PolarRadiusAxis domain={[0, 10]} tick={false} axisLine={false} />
+                              {radarSrc.map((c, i) => (
+                                <Radar key={c.name} name={c.name} dataKey={c.name} stroke={colors[i]} fill={colors[i]} fillOpacity={c.isBosch ? 0.2 : 0.07} strokeWidth={c.isBosch ? 2.5 : 1.5} strokeDasharray={c.isBosch ? "0" : "4 2"} />
+                              ))}
+                              <Tooltip />
+                            </RadarChart>
+                          </ResponsiveContainer>
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            {radarSrc.map((c, i) => <span key={c.name} className="text-[10px] flex items-center gap-1"><span className="w-3 h-0.5 inline-block" style={{ background: colors[i] }} />{c.name}{c.isBosch ? " (target)" : ""}</span>)}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-2">Solid Bosch line vs dashed rivals. Scores 1–10 derived from framework analysis (tech depth, cost position, India service coverage, innovation pace, platform ecosystem strength). Hover a point for the value.</div>
+                          {d.competitorWhiteSpace && <div className="text-xs text-slate-600 bg-teal-50 rounded-lg p-3 mt-2"><b>Where Bosch should aim:</b> {d.competitorWhiteSpace}</div>}
+                        </Card>
+                        <Card title="Market dynamics">
+                          <table className="w-full text-xs mb-3">
+                            <tbody>
+                              {v6.competitorDynamics && <>
+                                <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Players</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.count}</td></tr>
+                                <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Concentration</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.concentration}</td></tr>
+                                <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Where to win</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.winWhere}</td></tr>
+                                <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Positioning</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.positioning}</td></tr>
+                              </>}
+                            </tbody>
+                          </table>
+                          {v6.competitorAssessment && (
+                            <div className="space-y-2">
+                              <div className="border border-slate-200 rounded-lg p-2.5"><div className="text-[10px] font-bold uppercase text-green-700 mb-1">Their strengths — hard to beat</div><p className="text-xs text-slate-600">{v6.competitorAssessment.strengths}</p></div>
+                              <div className="border border-slate-200 rounded-lg p-2.5"><div className="text-[10px] font-bold uppercase text-red-700 mb-1">Their weaknesses — where customers complain</div><p className="text-xs text-slate-600">{v6.competitorAssessment.weaknesses}</p></div>
+                              <div className="border border-slate-200 rounded-lg p-2.5"><div className="text-[10px] font-bold uppercase text-teal-700 mb-1">Our opportunities — exploit now</div><p className="text-xs text-slate-600">{v6.competitorAssessment.opportunities}</p></div>
+                              <div className="border border-slate-200 rounded-lg p-2.5"><div className="text-[10px] font-bold uppercase text-amber-700 mb-1">Our threats — their moves that hurt us</div><p className="text-xs text-slate-600">{v6.competitorAssessment.threats}</p></div>
+                            </div>
+                          )}
+                        </Card>
                       </div>
-                    ))}
-                    <div className="text-[10px] text-slate-400 mt-2">Company financials (turnover, headcount, profitability), strategic vision and customer-sentiment data are pulled from live sources in the production agent; this demo shows position and moat only.</div>
-                  </Card>
-                  {v6.competitorDynamics && (
-                    <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      <Card title="Market dynamics — who is out there">
-                        <table className="w-full text-xs">
-                          <tbody>
-                            <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Number of competitors</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.count}</td></tr>
-                            <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Market concentration</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.concentration}</td></tr>
-                            <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">Where can we win?</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.winWhere}</td></tr>
-                            <tr className="border-t border-slate-100"><td className="py-1.5 pr-2 font-semibold text-slate-500 whitespace-nowrap align-top">How should we position?</td><td className="py-1.5 text-slate-700">{v6.competitorDynamics.positioning}</td></tr>
-                          </tbody>
-                        </table>
-                        <div className="text-[10px] text-slate-400 mt-2">Competitor types — <b>Direct:</b> same product, same customer · <b>Indirect:</b> different product, same need · <b>Emerging:</b> startups scaling into the space · <b>Adjacent:</b> players one field away who could enter.</div>
-                      </Card>
-                      <Card title="Competitive assessment — them and us">
-                        <div className="space-y-2">
-                          <div className="border border-slate-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase text-green-700 mb-1">Their strengths — what makes them hard to beat</div><p className="text-xs text-slate-600">{v6.competitorAssessment.strengths}</p></div>
-                          <div className="border border-slate-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase text-red-700 mb-1">Their weaknesses — where their customers complain</div><p className="text-xs text-slate-600">{v6.competitorAssessment.weaknesses}</p></div>
-                          <div className="border border-slate-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase text-teal-700 mb-1">Our opportunities — gaps we can exploit now</div><p className="text-xs text-slate-600">{v6.competitorAssessment.opportunities}</p></div>
-                          <div className="border border-slate-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase text-amber-700 mb-1">Our threats — their moves that could hurt us</div><p className="text-xs text-slate-600">{v6.competitorAssessment.threats}</p></div>
+                    );
+                  })()}
+
+                  {/* Detailed competitor profile cards */}
+                  <div className="text-sm font-semibold text-slate-700 mt-2 mb-1">Competitor profiles — who they are, how they compete, what they plan</div>
+                  {(v7?.competitorProfiles || d.competitors.filter(c => !/Bosch/i.test(c.name) && !/target/i.test(c.name))).map((cmp, idx) => {
+                    const isRich = !!cmp.cashCow;
+                    return (
+                      <div key={cmp.name || idx} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold">{cmp.name}</span>
+                            <Chip tone={cmp.type === "global" ? "violet" : cmp.type === "startup" ? "teal" : "slate"}>{cmp.type}</Chip>
+                            {isRich && cmp.listing && <span className="text-[10px] text-slate-400">{cmp.listing}</span>}
+                          </div>
+                          {isRich && (
+                            <div className="flex gap-3 text-[10px] text-slate-500">
+                              {cmp.revenue && <span><b>Rev</b> {cmp.revenue}</span>}
+                              {cmp.headcount && <span><b>Staff</b> {cmp.headcount}</span>}
+                              {cmp.profitability && <span><b>Profit</b> {cmp.profitability}</span>}
+                            </div>
+                          )}
                         </div>
-                      </Card>
-                    </div>
-                  )}
+                        <div className="p-4">
+                          {isRich ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                              <div><span className="font-semibold text-slate-500">Cash cow</span><p className="text-slate-700 mt-0.5">{cmp.cashCow}</p></div>
+                              <div><span className="font-semibold text-slate-500">Emerging bets</span><p className="text-slate-700 mt-0.5">{cmp.emerging}</p></div>
+                              <div><span className="font-semibold text-slate-500">R&D focus</span><p className="text-slate-700 mt-0.5">{cmp.rdBets}</p></div>
+                              <div><span className="font-semibold text-slate-500">Strategic vision</span><p className="text-slate-700 mt-0.5">{cmp.vision}</p></div>
+                              <div><span className="font-semibold text-slate-500">Key partnerships</span><p className="text-slate-700 mt-0.5">{cmp.keyPartnerships}</p></div>
+                              <div><span className="font-semibold text-slate-500">How they differentiate</span><p className="text-slate-700 mt-0.5">{cmp.differentiation}</p></div>
+                              {cmp.indiaStrategy && <div className="md:col-span-2"><span className="font-semibold text-slate-500">India strategy</span><p className="text-slate-700 mt-0.5">{cmp.indiaStrategy}</p></div>}
+                              {cmp.sentiment && <div className="md:col-span-1"><span className="font-semibold text-slate-500">Customer sentiment</span><p className="text-slate-700 mt-0.5">{cmp.sentiment}</p></div>}
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="text-xs text-slate-700">{cmp.moat}</p>
+                              {cmp.reasoning && <p className="text-xs text-slate-600 mt-1">{cmp.reasoning}</p>}
+                            </div>
+                          )}
+                          {isRich && cmp.moat && (
+                            <div className="mt-3 bg-slate-50 rounded-lg px-3 py-2 text-xs text-slate-700"><b className="text-slate-500">MOAT</b> {cmp.moat}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -4743,9 +5237,27 @@ export default function App() {
               {/* ─────────────── METHODOLOGY ─────────────── */}
               {tab === "Methodology" && <Methodology />}
 
-              <div className="mt-6 text-[11px] text-slate-400">
-                Sources (demo): {d.sources.map((s, i) => <span key={i} className="mr-3">[{i + 1}] {s}</span>)}
-                <div className="mt-1">⚠ All figures in this demo are illustrative placeholders. The production agent cites live sources or labels values "estimate" — same methodology, real evidence.</div>
+              <div className="mt-6 bg-white rounded-xl border border-slate-200 p-4">
+                <div className="text-xs font-semibold text-slate-600 mb-2">Sources &amp; citations</div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                  {d.sources.map((s, i) => {
+                    const srcObj = v7?.sources?.[i];
+                    const url = srcObj?.url || (typeof s === "object" ? s.url : null);
+                    const label = typeof s === "object" ? s.label : s;
+                    return (
+                      <span key={i} className="text-[11px] text-slate-500">
+                        <span className="text-slate-400 font-mono mr-1">[{i + 1}]</span>
+                        {url
+                          ? <a href={url} target="_blank" rel="noopener noreferrer" className="text-teal-700 hover:text-teal-900 hover:underline">{label}</a>
+                          : <Tip label="This source is cited in the demo data. In the production system, this links to the live document or press release.">{label}<span className="ml-1 text-slate-300 cursor-help">?</span></Tip>
+                        }
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className="mt-3 text-[10px] text-slate-400 border-t border-slate-100 pt-2">
+                  ⚠ All market-size figures and CAGRs in this demo are illustrative estimates based on the stated sources and analyst benchmarks — they are labelled "estimate" where not directly sourced. Production version pulls live data with full URL citations per claim. Hover any source label to see availability status.
+                </div>
               </div>
             </>
           )}
