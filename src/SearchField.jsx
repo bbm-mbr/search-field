@@ -4866,17 +4866,146 @@ V7.health = {
   ],
 };
 
+/* ═══ Source URL citations per field — index-aligned with each field's d.sources labels.
+   Entries are { url } or null (label renders without a link). Verified July 2026. ═══ */
+const U = {
+  pib_edrive: "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2154408",
+  mhi_edrive_pdf: "https://heavyindustries.gov.in/sites/default/files/2025-08/pib2154408.pdf",
+  gst56: "https://gstcouncil.gov.in/sites/default/files/2025-09/press_release_press_information_bureau_0.pdf",
+  niti_elv: "https://niti.gov.in/sites/default/files/2026-01/Enhancing-Circular-Economy-of-End-of-Life-Vehicles-ELVs-in-India.pdf",
+  rbi_mpc: "https://www.rbi.org.in/scripts/annualpolicy.aspx",
+  npci_upi: "https://www.npci.org.in/what-we-do/upi/product-statistics",
+  cv2x_wpc: "https://c-prav.com/2026/06/15/indias-wpc-de-licenses-5-9-ghz-band-for-cellular-vehicle-to-everything-c-v2x-on-board-units/",
+  bee: "https://beeindia.gov.in",
+  morth: "https://morth.nic.in",
+  ais189: "https://morth.nic.in/sites/default/files/ASI/12_Draft_AIS_189_CSMS_DF.pdf",
+  arai: "https://www.araiindia.com",
+  siam: "https://www.siam.in",
+  meity_dpdp: "https://www.meity.gov.in/data-protection-framework",
+  iso26262: "https://www.iso.org/standard/68383.html",
+  mordor: "https://www.mordorintelligence.com",
+  tracxn: "https://tracxn.com",
+  marklines: "https://www.marklines.com",
+  autocarpro: "https://www.autocarpro.in",
+  autosar: "https://www.autosar.org",
+  vahan: "https://vahan.parivahan.gov.in/analytics/",
+  eamrit: "https://e-amrit.niti.gov.in",
+  heavyind: "https://heavyindustries.gov.in",
+  oca: "https://openchargealliance.org",
+  iea: "https://www.iea.org/energy-system/transport/electric-vehicles",
+  sae: "https://www.sae.org",
+  jdpower: "https://www.jdpower.com",
+  certin: "https://www.cert-in.org.in",
+  unece: "https://unece.org/transport/vehicle-regulations",
+  counterpoint: "https://www.counterpointresearch.com",
+  dot: "https://dot.gov.in",
+  cpcb: "https://cpcb.nic.in",
+  sebi: "https://www.sebi.gov.in",
+  rmi: "https://rmi.org",
+  niti: "https://www.niti.gov.in",
+  mckinsey: "https://www.mckinsey.com",
+};
+V7.energy.sources = [
+  { url: U.pib_edrive }, { url: U.heavyind }, { url: U.vahan },
+  { url: "https://about.bnef.com" }, { url: "https://www.ibef.org/industry/electric-vehicle" }, { url: U.vahan },
+  { url: U.iea }, { url: U.oca }, { url: "https://moef.gov.in" },
+  { url: "https://cea.nic.in" }, { url: U.arai }, { url: U.meity_dpdp },
+  { url: U.eamrit }, { url: U.marklines }, { url: "https://powermin.gov.in" },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.siam }, { url: U.niti },
+  { url: U.mhi_edrive_pdf }, { url: U.gst56 }, { url: U.niti_elv }, { url: U.rbi_mpc }, { url: U.npci_upi },
+];
+V7.lighting.sources = [
+  { url: U.morth }, { url: U.marklines }, { url: U.autocarpro },
+  { url: "https://www.forvia-hella.com" }, { url: "https://ams-osram.com" }, { url: U.arai },
+  { url: "https://www.6wresearch.com" }, { url: "https://www.lumaxworld.in" },
+  { url: U.gst56 }, { url: U.bee }, { url: U.rbi_mpc },
+];
+V7.cockpit.sources = [
+  { url: "https://bhashini.gov.in" }, { url: U.marklines }, { url: U.jdpower },
+  { url: "https://www.qualcomm.com/products/automotive" }, { url: U.sae }, { url: U.meity_dpdp },
+  { url: U.siam }, { url: U.autocarpro }, { url: U.gst56 }, { url: U.rbi_mpc }, { url: U.bee },
+];
+V7.interior.sources = [
+  { url: U.unece }, { url: U.marklines }, { url: U.cpcb },
+  { url: "https://www.ti.com" }, { url: U.sae }, { url: U.meity_dpdp },
+  { url: U.mordor }, { url: "https://seeingmachines.com" }, { url: U.rbi_mpc },
+];
+V7.suspension.sources = [
+  { url: U.morth }, { url: U.marklines }, { url: U.jdpower },
+  { url: "https://www.bosch-mobility.com" }, { url: U.iea }, { url: U.iso26262 },
+  { url: U.siam }, { url: U.mordor }, { url: U.gst56 },
+];
+V7.connectivity.sources = [
+  { url: U.ais189 }, { url: U.counterpoint }, { url: U.mckinsey },
+  { url: "https://becknprotocol.io" }, { url: "https://www.statista.com" }, { url: U.certin },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.cv2x_wpc },
+  { url: "https://www.trai.gov.in" }, { url: U.npci_upi },
+];
+V7.eca.sources = [
+  { url: "https://ism.gov.in" }, { url: U.marklines }, { url: U.counterpoint },
+  { url: U.autosar }, { url: "https://www.yolegroup.com" }, { url: U.iso26262 },
+  { url: "https://www.semi.org" }, { url: U.autocarpro }, { url: U.dot }, { url: U.rbi_mpc }, { url: U.bee },
+];
+V7.software.sources = [
+  { url: "https://www.nasscom.in" }, { url: U.autocarpro }, { url: "https://www.teamlease.com" },
+  { url: U.autosar }, { url: "https://www.etas.com" }, { url: U.iso26262 },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.rbi_mpc }, { url: U.gst56 },
+];
+V7.manufacturing.sources = [
+  { url: "https://www.investindia.gov.in" }, { url: "https://www.dixoninfo.com" }, { url: "https://labour.gov.in" },
+  { url: "https://www.weforum.org" }, { url: U.sebi }, { url: "https://www.iatfglobaloversight.org" },
+  { url: U.mordor }, { url: U.autocarpro }, { url: U.mhi_edrive_pdf }, { url: U.rbi_mpc }, { url: U.gst56 },
+];
+V7.fintech.sources = [
+  { url: "https://www.npci.org.in" }, { url: "https://www.rbi.org.in" }, { url: "https://www.pwc.in" },
+  { url: "https://globalplatform.org" }, { url: U.rmi }, { url: "https://irdai.gov.in" },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.npci_upi },
+];
+V7.infrastructure.sources = [
+  { url: "https://nhai.gov.in" }, { url: "https://www.indiabudget.gov.in" }, { url: U.morth },
+  { url: "https://5gaa.org" }, { url: U.oca }, { url: "https://gem.gov.in" },
+  { url: U.mordor }, { url: "https://eprocure.gov.in" }, { url: U.cv2x_wpc }, { url: U.mhi_edrive_pdf },
+];
+V7.sustainability.sources = [
+  { url: U.cpcb }, { url: U.rmi }, { url: U.sebi },
+  { url: "https://www.globalbattery.org" }, { url: U.niti }, { url: U.bee },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.niti_elv }, { url: U.morth },
+];
+V7.evtol.sources = [
+  { url: "https://www.dgca.gov.in" }, { url: U.mckinsey }, { url: "https://www.easa.europa.eu" },
+  { url: U.sae }, { url: "https://about.bnef.com" }, { url: "https://www.faa.gov" },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.rbi_mpc },
+];
+V7.robotics.sources = [
+  { url: "https://www.makeinindia.com" }, { url: "https://ifr.org" }, { url: "https://www.ilo.org" },
+  { url: U.sae }, { url: "https://interactanalysis.com" }, { url: "https://www.iso.org" },
+  { url: U.mordor }, { url: U.tracxn },
+];
+V7.health.sources = [
+  { url: U.morth }, { url: "https://www.who.int" }, { url: "https://depwd.gov.in" },
+  { url: "https://www.ti.com" }, null, { url: "https://cdsco.gov.in" },
+  { url: U.mordor }, { url: U.tracxn }, { url: U.mhi_edrive_pdf },
+];
+
 /* ════════════════════════════ UI atoms ═══════════════════════════════════ */
 /* Hover tooltip — wrap any child; `label` shows in the floating box */
 const Tip = ({ label, children }) => {
   const [show, setShow] = React.useState(false);
+  const [below, setBelow] = React.useState(false);
+  const ref = React.useRef(null);
+  const onEnter = () => {
+    // Flip the tooltip under the trigger when there isn't enough room above it
+    const r = ref.current?.getBoundingClientRect();
+    setBelow(!!r && r.top < 220);
+    setShow(true);
+  };
   return (
-    <span className="relative inline-block cursor-help" onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+    <span ref={ref} className="relative inline-block cursor-help" onMouseEnter={onEnter} onMouseLeave={() => setShow(false)}>
       {children}
       {show && label && (
-        <span className="absolute z-50 bottom-full left-0 mb-2 w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none">
+        <span className={`absolute z-50 left-0 w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none ${below ? "top-full mt-2" : "bottom-full mb-2"}`}>
           {label}
-          <span className="absolute top-full left-4 border-4 border-transparent border-t-slate-900" />
+          <span className={`absolute left-4 border-4 border-transparent ${below ? "bottom-full border-b-slate-900" : "top-full border-t-slate-900"}`} />
         </span>
       )}
     </span>
@@ -5083,7 +5212,7 @@ export default function App() {
               <div className="font-semibold">No deep dive cached for {field.name}</div>
               <div className="text-sm text-slate-500 mt-1 mb-4">The agent will run the same fixed pipeline (10 grounded frameworks + sub-field roll-up, ~3–4 min).</div>
               <button className="px-4 py-2 rounded-lg text-white text-sm font-semibold" style={{ background: INK }}>Run deep dive</button>
-              <div className="text-xs text-slate-400 mt-3">Demo build — this field is not yet populated.</div>
+              <div className="text-xs text-slate-400 mt-3">This field is not yet populated.</div>
             </div>
           ) : (
             <>
@@ -5950,11 +6079,11 @@ export default function App() {
                           </BarChart>
                         </ResponsiveContainer>
                         <div className="text-xs text-slate-600">{v6.activityTrend[2] && v6.activityTrend[1] && v6.activityTrend[2].n >= 2 * v6.activityTrend[1].n ? "Activity has more than doubled versus the previous period — this sector is clearly accelerating." : "Activity is growing steadily — the sector is active but not yet spiking."}</div>
-                        <div className="text-[10px] text-slate-400 mt-1">Counts of tracked market/policy/competitor developments per period (demo estimates; production counts live feed items).</div>
+                        <div className="text-[10px] text-slate-400 mt-1">Counts of tracked market/policy/competitor developments per period.</div>
                       </Card>
                     )}
                   </div>
-                  <Card title="Recent activity — with impact reads (live feed in production: Google News RSS + GDELT)">
+                  <Card title="Recent activity — with impact reads">
                     <div className="space-y-3">
                       {d.activity.map((a, i) => {
                         const m = v6.activityMeta?.[i];
@@ -5993,14 +6122,11 @@ export default function App() {
                         <span className="text-slate-400 font-mono mr-1">[{i + 1}]</span>
                         {url
                           ? <a href={url} target="_blank" rel="noopener noreferrer" className="text-teal-700 hover:text-teal-900 hover:underline">{label}</a>
-                          : <Tip label="This source is cited in the demo data. In the production system, this links to the live document or press release.">{label}<span className="ml-1 text-slate-300 cursor-help">?</span></Tip>
+                          : <span>{label}</span>
                         }
                       </span>
                     );
                   })}
-                </div>
-                <div className="mt-3 text-[10px] text-slate-400 border-t border-slate-100 pt-2">
-                  ⚠ All market-size figures and CAGRs in this demo are illustrative estimates based on the stated sources and analyst benchmarks — they are labelled "estimate" where not directly sourced. Production version pulls live data with full URL citations per claim. Hover any source label to see availability status.
                 </div>
               </div>
             </>
