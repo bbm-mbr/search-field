@@ -4990,22 +4990,32 @@ V7.health.sources = [
 /* ════════════════════════════ UI atoms ═══════════════════════════════════ */
 /* Hover tooltip — wrap any child; `label` shows in the floating box */
 const Tip = ({ label, children }) => {
-  const [show, setShow] = React.useState(false);
-  const [below, setBelow] = React.useState(false);
+  // Fixed-position tooltip: measured against the viewport on hover, so it can
+  // never be clipped by card borders, overflow containers or scroll areas.
+  const [pos, setPos] = React.useState(null);
   const ref = React.useRef(null);
   const onEnter = () => {
-    // Flip the tooltip under the trigger when there isn't enough room above it
     const r = ref.current?.getBoundingClientRect();
-    setBelow(!!r && r.top < 220);
-    setShow(true);
+    if (!r) return;
+    const w = 288; // matches w-72
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
+    const below = r.top < 280; // not enough room above the trigger → open downwards
+    setPos({
+      left, below,
+      top: below ? r.bottom + 8 : null,
+      bottom: below ? null : window.innerHeight - r.top + 8,
+      maxH: Math.max(120, (below ? window.innerHeight - r.bottom : r.top) - 24),
+    });
   };
   return (
-    <span ref={ref} className="relative inline-block cursor-help" onMouseEnter={onEnter} onMouseLeave={() => setShow(false)}>
+    <span ref={ref} className="relative inline-block cursor-help" onMouseEnter={onEnter} onMouseLeave={() => setPos(null)}>
       {children}
-      {show && label && (
-        <span className={`absolute z-50 left-0 w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none ${below ? "top-full mt-2" : "bottom-full mb-2"}`}>
+      {pos && label && (
+        <span
+          className="fixed z-[999] w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none whitespace-pre-line overflow-hidden"
+          style={{ left: pos.left, top: pos.top ?? "auto", bottom: pos.bottom ?? "auto", maxHeight: pos.maxH }}
+        >
           {label}
-          <span className={`absolute left-4 border-4 border-transparent ${below ? "bottom-full border-b-slate-900" : "top-full border-t-slate-900"}`} />
         </span>
       )}
     </span>
@@ -5345,7 +5355,7 @@ export default function App() {
                       {[["P","Political"],["E","Economic"],["S","Social"],["T","Technological"],["En","Environmental"],["L","Legal"]].map(([k, label]) => {
                         const fa = v7.pestelFA[k] || {};
                         return (
-                          <div key={k} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                          <div key={k} className="bg-white rounded-xl border border-slate-200 shadow-sm">
                             <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                               <h3 className="text-sm font-semibold text-slate-800">{label} — {field.name}</h3>
                               <span className="text-[10px] text-slate-400">3 tailwinds · 3 headwinds</span>
