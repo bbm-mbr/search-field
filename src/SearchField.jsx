@@ -15,7 +15,8 @@ import {
    · TAM/SAM full derivation chain with per-figure sources & cross-check
    ────────────────────────────────────────────────────────────────────────── */
 
-const GRAD = "linear-gradient(90deg,#7A1FA2 0%,#E20015 38%,#0096A0 72%,#5BAA32 100%)";
+// Official Bosch supergraphic (same stops as the Mobility Intelligence app)
+const GRAD = "linear-gradient(90deg,#9e2896 0%,#e20015 22%,#e20015 32%,#007bc0 55%,#00a8b0 78%,#78be20 100%)";
 const INK = "#0E1A2E";
 
 const FIELDS = [
@@ -5173,7 +5174,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F7F8FA", fontFamily: "'Segoe UI', system-ui, sans-serif", color: INK }}>
-      <div style={{ height: 4, background: GRAD }} />
+      {/* ── Bosch BSP chrome: supergraphic + brand header (as in Mobility Intelligence) ── */}
+      <div style={{ height: 6, flexShrink: 0, background: GRAD }} />
+      <div className="bg-white flex justify-between items-center shrink-0" style={{ padding: "9px 24px", borderBottom: "1px solid #d0d4d8" }}>
+        <img src="bosch/bosch-logo.png" alt="Bosch" style={{ height: 22, display: "block" }} />
+        <span style={{ fontSize: 11, color: "#2e3033", fontWeight: 600, letterSpacing: "0.02em" }}>Market &amp; Business Strategy · M/MBR-IN</span>
+      </div>
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4">
         <div>
           <div className="font-extrabold tracking-tight text-lg leading-none">Search-Field Intelligence</div>
@@ -6142,6 +6148,11 @@ export default function App() {
             </>
           )}
         </main>
+      </div>
+      {/* ── Bosch BSP dark footer (as in Mobility Intelligence) ── */}
+      <div className="flex justify-between items-center flex-wrap shrink-0" style={{ background: "#2e3033", color: "#c1c7cc", padding: "12px 24px", fontSize: 11, gap: 6 }}>
+        <span style={{ color: "#fff", fontWeight: 600 }}>© 2026 Search-Field Intelligence — created by MBS team @ M/MBR-IN</span>
+        <span style={{ fontSize: 10 }}>Bosch Mobility · India Market · BBM Strategy Agent · scores computed, not generated</span>
       </div>
     </div>
   );
