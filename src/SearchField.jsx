@@ -8,11 +8,13 @@ import {
 /* ──────────────────────────────────────────────────────────────────────────
    Bosch Mobility India — Search-Field Intelligence
    Scoring engine implements the Bosch BBM Search-Field Scoring Document:
-   PESTEL Index, SWOT Index, Market Attractiveness Score (MAS), Industry
-   Attractiveness Index (Porter's 5 Forces), Stakeholder Viability Index (SVI),
-   Competitive Landscape Index (CLI), Supply Chain Viability Index (SCVI) and
-   Technology Prognosis Score (TPS) — every index is computed live from the
-   underlying 1/3/5 inputs and shown with its full derivation, not authored.
+   PESTEL Index, SWOT Posture (IRI/EAI/SPI), Market Attractiveness (MAI),
+   Industry Attractiveness (IAI, Porter's 5 Forces), Competency Gap (CGI),
+   Stakeholder Viability (SVI), Competitive Posture (CPI), Supply Chain
+   Viability (SCVI) and Technology Prognosis (TPI) — all normalized −1..+1
+   and rolled up into one Master Growth Index (MGI) per field. Every number is
+   computed live from its underlying 1/3/5 (or Low/Medium/High) inputs and
+   shown with its full derivation, not authored.
    ────────────────────────────────────────────────────────────────────────── */
 
 // Official Bosch supergraphic (same stops as the Mobility Intelligence app)
@@ -143,28 +145,28 @@ function computeHorizonScore(h) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   V8 SCORING ENGINE — implements the Bosch BBM Search-Field Scoring Document.
-   Every framework below is an INDEPENDENT index with its own verdict; there is
-   no single combined "master" score. Bands marked "interpretive" are tiers the
-   source document doesn't explicitly define (it gives the matrix/formula and
-   named quadrants but not a summary traffic-light) — reasonable defaults,
-   trivially adjustable via the constants below.
+   V9 SCORING ENGINE — implements the Bosch BBM Search-Field Scoring Document
+   (v2, supersedes v1). Every component index is normalized to −1..+1 (+1 =
+   best) and rolls up into a single Master Growth Index (MGI) per field — v2,
+   unlike v1, explicitly defines that roll-up (see §"Final Decision").
+   Where the source document has an internal inconsistency, it is implemented
+   literally (not silently corrected) and flagged with a "DOC NOTE" comment.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-function pickBandMin(bands, score) { return bands.find(b => score >= b.min) || bands[bands.length - 1]; }
-function pickBandMax(bands, score) { return bands.find(b => score <= b.max) || bands[bands.length - 1]; }
+function pickBand(bands, score) { return bands.find(b => score >= b.min) || bands[bands.length - 1]; } // bands sorted desc by min — every index below is "higher = better"
 const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
 
-/* ---- 1. PESTEL Index — score = Impact × Certainty, Index = ΣTailwinds/ΣHeadwinds ---- */
+/* ---- 1. PESTEL Index — score = Impact × Certainty ---- */
+/* Index = (Tailwinds − Headwinds) / (Tailwinds + Headwinds), range −1..+1 (doc §1d) */
 const PESTEL_IMPACT_LABELS = {
   for: { 5: "SuperCharger", 3: "Steady Accelerator", 1: "Gentle Nudge" },
   against: { 5: "ShowStopper", 3: "Friction Point", 1: "Minor Speedbump" },
 };
 const PESTEL_CERTAINTY_LABELS = { 5: "Immediate / Active (0–2 yr)", 3: "Mid-Term / Emerging (2–5 yr)", 1: "Long-Term / Speculative (>5 yr)" };
 const PESTEL_BANDS = [
-  { v: "Macro-Accelerator", min: 1.2, color: "#16A34A", light: "green", m: "The macro-environment is highly cooperative — policy, economics and social trends are actively pulling this field into the mainstream. External friction is low. Deploy capital confidently." },
-  { v: "Transitional Gale", min: 0.8, color: "#D97706", light: "yellow", m: "A volatile environment: huge opportunities balanced by massive structural barriers. Gate investment and favour flexible, modular product architectures." },
-  { v: "High-Resistance Environment", min: 0, color: "#DC2626", light: "red", m: "You are sailing into a storm — the macro-environment is hostile even if Bosch's technology is brilliant. Shelve the project or wait for policy to shift." },
+  { v: "Macro-Accelerator", min: 0.3, color: "#16A34A", light: "green", m: "The macro-environment is highly cooperative — policy, economics and social trends are actively pulling this field into the mainstream. External friction is low. Deploy capital confidently." },
+  { v: "Transitional Gale", min: -0.3, color: "#D97706", light: "yellow", m: "A volatile environment: huge opportunities balanced by massive structural barriers. Gate investment and favour flexible, modular product architectures." },
+  { v: "High-Resistance Environment", min: -1.01, color: "#DC2626", light: "red", m: "You are sailing into a storm — the macro-environment is hostile even if Bosch's technology is brilliant. Shelve the project or wait for policy to shift." },
 ];
 function computePESTELIndex(pestelScores) {
   let tail = 0, head = 0, tailN = 0, headN = 0;
@@ -172,11 +174,14 @@ function computePESTELIndex(pestelScores) {
     (letter?.for || []).forEach(pt => { tail += pt.impact * pt.certainty; tailN++; });
     (letter?.against || []).forEach(pt => { head += pt.impact * pt.certainty; headN++; });
   });
-  const index = head > 0 ? +(tail / head).toFixed(2) : null;
-  return { tail, head, tailN, headN, index, band: index == null ? null : pickBandMin(PESTEL_BANDS, index) };
+  const index = (tail + head) > 0 ? +((tail - head) / (tail + head)).toFixed(2) : null;
+  return { tail, head, tailN, headN, index, band: index == null ? null : pickBand(PESTEL_BANDS, index) };
 }
 
-/* ---- 2. SWOT Index — score = Impact × Probability/Confidence, Index = Σ(S+O)/Σ(W+T) ---- */
+/* ---- 2. SWOT Posture — score = Impact × Probability/Confidence ---- */
+/* IRI = (Strength−Weakness)/(Strength+Weakness) · EAI = (Opportunity−Threat)/(Opportunity+Threat)
+   Plotted on a 2×2 quadrant, then SPI = 0.3×IRI + 0.7×EAI (doc §2d/e — supersedes the old
+   Σ(S+O)/Σ(W+T) ratio, which the source document itself marks superseded). */
 const SWOT_IMPACT_LABELS = {
   S: { 5: "Decisive Moat", 3: "Distinct Advantage", 1: "Standard Asset" },
   W: { 5: "Fatal Flaw", 3: "Significant Bottleneck", 1: "Operational Inconvenience" },
@@ -189,35 +194,43 @@ const SWOT_PROB_LABELS = {
   O: { 5: "Highly Probable / Guaranteed (>80%)", 3: "Probable / Trend-Driven (40–80%)", 1: "Speculative / Long-Shot (<40%)" },
   T: { 5: "Imminent / Active (>80%)", 3: "Moderate / Contingent (40–80%)", 1: "Unlikely / Theoretical (<40%)" },
 };
-const SWOT_BANDS = [
-  { v: "Strategic Pioneer", min: 1.5, color: "#16A34A", light: "green", stance: "Aggressive Play / Invest to Lead", m: "Strengths are active and validated, aligning with high-probability, high-margin trends; weaknesses and threats are weak." },
-  { v: "Operational Scaler", min: 1.1, color: "#0EA5A4", light: "teal", stance: "Calculated Bets / Partner or Frugalize", m: "The opportunity is attractive, but Bosch faces real internal bottlenecks or imminent competitive threats." },
-  { v: "Vulnerable Explorer", min: 0.8, color: "#D97706", light: "yellow", stance: "Defensive Only / Niche Entry", m: "Balanced on a knife-edge — entering exposes Bosch to high risk, playing on weaknesses rather than strengths." },
-  { v: "Portfolio Distractor", min: 0, color: "#DC2626", light: "red", stance: "De-prioritize / Divest / Kill", m: "The market is speculative/low-margin or threats are overwhelming, while weaknesses are structural and costly to fix." },
+const SWOT_QUADRANTS = [
+  { key: "I", name: "Aggressive Growth", cond: (iri, eai) => iri >= 0 && eai >= 0, mandate: "INVEST TO LEAD", action: "Perfect alignment — decisive internal advantage in a highly attractive market. Top-priority Core Bet: maximum resources, speed-to-market." },
+  { key: "II", name: "Turnaround or Partner", cond: (iri, eai) => iri < 0 && eai >= 0, mandate: "BUY OR BUILD", action: "A massive opportunity Bosch is internally unprepared for. Market too good to ignore — either invest to fix the weakness or acquire/partner for the missing capability." },
+  { key: "III", name: "Divest or Exit", cond: (iri, eai) => iri < 0 && eai < 0, mandate: "KILL THE PROJECT", action: "Hostile market and internal weakness together — a Portfolio Distractor. De-prioritize or divest immediately; resources here are wasted." },
+  { key: "IV", name: "Diversify or Defend", cond: (iri, eai) => iri >= 0 && eai < 0, mandate: "HARVEST VALUE", action: "World-class capability in a stagnant or threatened market. No major new investment — defend the position, harvest as a cash cow, diversify capability elsewhere." },
 ];
-function computeSWOTIndex(swotScores) {
+const SPI_BANDS = [
+  { v: "High Priority / Core Bet", min: 0.4, color: "#16A34A", light: "green", m: "A powerful combination of high external attractiveness and strong internal readiness — a clear right-to-win in a favourable market. Invest to dominate." },
+  { v: "Contested / Situational Play", min: -0.4, color: "#D97706", light: "yellow", m: "A balanced or conflicting picture. A slightly positive score is usually a Growth Bet (EAI>IRI, close capability gaps via Buy-or-Build first); a slightly negative score is usually a Harvest Play (IRI>EAI, defend a niche/cash-cow with minimal new spend)." },
+  { v: "Low Priority / Divest", min: -1.01, color: "#DC2626", light: "red", m: "A toxic combination of low market attractiveness and significant internal weakness. De-prioritize and reallocate; cease funding and plan an exit if Bosch already has presence here." },
+];
+function computeSWOTPosture(swotScores) {
   const sum = arr => (arr || []).reduce((a, p) => a + p.impact * p.probability, 0);
   const S = sum(swotScores?.S), W = sum(swotScores?.W), O = sum(swotScores?.O), T = sum(swotScores?.T);
-  const index = (W + T) > 0 ? +((S + O) / (W + T)).toFixed(2) : null;
+  const iri = (S + W) > 0 ? +((S - W) / (S + W)).toFixed(2) : null;
+  const eai = (O + T) > 0 ? +((O - T) / (O + T)).toFixed(2) : null;
+  const spi = (iri != null && eai != null) ? +(0.3 * iri + 0.7 * eai).toFixed(2) : null;
+  const quadrant = (iri != null && eai != null) ? SWOT_QUADRANTS.find(q => q.cond(iri, eai)) : null;
   const strategies = [
     { k: "SO", label: "Strengths → Opportunities (Attack)", v: S + O },
     { k: "ST", label: "Strengths → Threats (Defend)", v: S + T },
     { k: "WO", label: "Weaknesses → Opportunities (Improve)", v: W + O },
     { k: "WT", label: "Weaknesses → Threats (Survive)", v: W + T },
   ].sort((a, b) => b.v - a.v);
-  return { S, W, O, T, index, band: index == null ? null : pickBandMin(SWOT_BANDS, index), strategies };
+  return { S, W, O, T, iri, eai, spi, quadrant, band: spi == null ? null : pickBand(SPI_BANDS, spi), strategies };
 }
 
-/* ---- 3. Market Attractiveness Score (MAS) ---- */
-/* MAS = 0.35×ScaleVelocity + 0.2×S-Curve + 0.2×RevenueQuality + 0.25×Profitability */
+/* ---- 3. Market Attractiveness Score (MAS) → Market Attractiveness Index (MAI) ---- */
+/* MAS = 0.35×ScaleVelocity + 0.2×S-Curve + 0.2×RevenueQuality + 0.25×Profitability (1..5)
+   MAI = (MAS − 3) / 2, range −1..+1 (doc §3f) */
 const SCURVE_LABELS = { 5: "Early Adoption — the sweet spot", 4: "Early Majority — high-volume growth", 3: "Innovation — highly speculative", 2: "Late Majority — commoditised", 1: "Sunset / Decline — do not enter" };
 const REVENUE_QUALITY_LABELS = { 5: "XaaS / Recurring Dominant (>50% of LCV)", 3: "Hybrid / Standard Tier-1 (HW+SW, AMC)", 1: "Commodity Hardware / HaaS" };
 const PROFITABILITY_LABELS = { 5: "Premium Margins (>45% GM incl. SG&A)", 3: "Standard Automotive Margins (25–45%)", 1: "Low / Squeezed Margins (<25%)" };
-const MAS_BANDS = [ // interpretive
-  { v: "Highly Attractive", min: 4.0, color: "#16A34A", light: "green" },
-  { v: "Attractive", min: 3.0, color: "#0EA5A4", light: "teal" },
-  { v: "Moderate", min: 2.0, color: "#D97706", light: "yellow" },
-  { v: "Weak", min: 0, color: "#DC2626", light: "red" },
+const MAI_BANDS = [
+  { v: "Tier-1 / Aspiration Anchor Market", min: 0.4, color: "#16A34A", light: "green", code: "GO", m: "The market itself is a powerful growth engine — massive profit potential, high growth, strong revenue quality. Must-play arena; if Right-to-Win is low, default to Buy or Partner, not Avoid." },
+  { v: "Tier-2 / Standard Automotive Market", min: -0.4, color: "#D97706", light: "yellow", code: "PROCEED WITH CAUTION", m: "Viable but standard — lacks the scale/profitability to be an Aspiration Anchor on its own. Contingent bet: only proceed with an exceptionally high Right-to-Win." },
+  { v: "Tier-3 / Portfolio Distractor Market", min: -1.01, color: "#DC2626", light: "red", code: "NO-GO", m: "A value trap — low profit potential, slow growth, commoditised revenue. Avoid and reallocate, even with world-class capability." },
 ];
 function samScoreFromUSD(samUSD) { return samUSD > 500e6 ? 5 : samUSD > 100e6 ? 3 : 1; }
 function cagrScoreFromPct(cagrPct) { return cagrPct > 20 ? 5 : cagrPct >= 10 ? 3 : 1; }
@@ -226,45 +239,101 @@ function computeMAS(m) {
   const cagrScore = cagrScoreFromPct(m.cagrPct);
   const scaleVelocity = (samScore + cagrScore) / 2;
   const mas = +(0.35 * scaleVelocity + 0.2 * m.scurveScore + 0.2 * m.revenueQualityScore + 0.25 * m.profitabilityScore).toFixed(2);
-  return { ...m, samScore, cagrScore, scaleVelocity, mas, band: pickBandMin(MAS_BANDS, mas) };
+  const mai = +((mas - 3) / 2).toFixed(2);
+  return { ...m, samScore, cagrScore, scaleVelocity, mas, mai, band: pickBand(MAI_BANDS, mai) };
 }
 
 /* ---- 4. Industry Attractiveness Index (IAI) — Porter's 5 Forces, sub-factor averaged ---- */
-/* 1 = Structurally Attractive (Blue Ocean) · 5 = Structurally Unattractive (Red Ocean) */
-const IAI_BANDS = [ // interpretive — PDF gives only the 1–5 endpoints
-  { v: "Structurally Attractive (Blue Ocean)", max: 2.0, color: "#16A34A", light: "green" },
-  { v: "Moderate Structure", max: 3.5, color: "#D97706", light: "yellow" },
-  { v: "Structurally Unattractive (Red Ocean)", max: 5.01, color: "#DC2626", light: "red" },
+/* Raw IAI = avg of 5 forces, 1 (attractive/Blue Ocean) .. 5 (unattractive/Red Ocean).
+   Normalized IAI = (3 − rawIAI) / 2, range −1..+1, +1 = best (doc §4). */
+const IAI_BANDS = [
+  { v: "Structurally Attractive Industry (Blue Ocean)", min: 0.4, color: "#16A34A", light: "green", code: "GO", m: "Low rivalry, high entry barriers, weak buyer/supplier power, low substitute threat — supports high margins and defensible leadership. High-confidence investment." },
+  { v: "Moderately Competitive Industry (Choppy Waters)", min: -0.4, color: "#D97706", light: "yellow", code: "PROCEED WITH CAUTION", m: "A typical, balanced dynamic — one or two forces exert real pressure. Execution-dependent bet: proceed only with a high Right-to-Win." },
+  { v: "Structurally Unattractive Industry (Red Ocean)", min: -1.01, color: "#DC2626", light: "red", code: "NO-GO", m: "Cut-throat rivalry, powerful buyers, low entry barriers, ready substitutes. Avoid mass-market entry; only a highly specialised, insulated niche play." },
 ];
 function computeIAI(iaiScores) {
   // iaiScores: { "New entrants":[7 nums 1|3|5], "Buyer power":[6], "Supplier power":[5], "Substitutes":[4], "Rivalry":[6] }
   const forceAvgs = Object.fromEntries(Object.entries(iaiScores || {}).map(([k, v]) => [k, +avg(v).toFixed(2)]));
   const vals = Object.values(forceAvgs);
-  const iai = vals.length ? +avg(vals).toFixed(2) : null;
-  return { forceAvgs, iai, band: iai == null ? null : pickBandMax(IAI_BANDS, iai) };
+  const iaiRaw = vals.length ? +avg(vals).toFixed(2) : null;
+  const iai = iaiRaw == null ? null : +((3 - iaiRaw) / 2).toFixed(2);
+  return { forceAvgs, iaiRaw, iai, band: iai == null ? null : pickBand(IAI_BANDS, iai) };
 }
 
-/* ---- 5. Stakeholder Viability Index (SVI) ---- */
-/* SVI = (Alignment + Bosch Influence) − (Conflict + Complexity), range −2..+2 */
+/* ---- 5. Competency Gap Index (CGI) — new module, doc §5 ---- */
+const COMPETENCY_AREAS = [
+  { k: "rdInfra", label: "R&D Infra" },
+  { k: "ip", label: "IP" },
+  { k: "manufacturing", label: "Manufacturing" },
+  { k: "supplyChain", label: "Supply Chain" },
+  { k: "g2m", label: "Go-To-Market (G2M)" },
+  { k: "talent", label: "Talent" },
+  { k: "organization", label: "Organization" },
+];
+const COMPETENCY_LEVEL_LABELS = {
+  1: "Beginner — theoretical knowledge, standard and easily acquired on the open market",
+  2: "Experienced Personnel — applies knowledge, adapts to new situations, sufficiently available on the market",
+  3: "Specialist — strategic importance, independently solves complex/new problems, only partially available on the market",
+  4: "Champion — a distinguishing feature; sets the professional/methodical standard at company or industry level",
+};
+/* The document asks for sector-specific weights (summing to 100%) but gives no numbers —
+   these are our defined defaults, reused across similarly-shaped fields rather than
+   15 bespoke sets. Field→profile mapping lives in V9_COMPETENCY_PROFILE below. */
+const COMPETENCY_WEIGHT_PROFILES = {
+  softwareDigital: { rdInfra: 0.15, ip: 0.20, manufacturing: 0.05, supplyChain: 0.05, g2m: 0.15, talent: 0.25, organization: 0.15 },
+  hardwareMechatronic: { rdInfra: 0.15, ip: 0.15, manufacturing: 0.25, supplyChain: 0.20, g2m: 0.10, talent: 0.10, organization: 0.05 },
+  dataPlatform: { rdInfra: 0.10, ip: 0.20, manufacturing: 0.05, supplyChain: 0.05, g2m: 0.25, talent: 0.20, organization: 0.15 },
+  hybrid: { rdInfra: 0.15, ip: 0.15, manufacturing: 0.15, supplyChain: 0.15, g2m: 0.15, talent: 0.15, organization: 0.10 },
+};
+const CGI_BANDS = [
+  { v: "Core Strength / Natural Fit", min: 0.4, color: "#16A34A", light: "green", m: "Bosch possesses a significant competency surplus — uniquely positioned to win. Invest aggressively to leverage this internal advantage." },
+  { v: "Manageable Fit", min: -0.4, color: "#D97706", light: "yellow", m: "A slight advantage or on-par with market needs — solid investment area with targeted upskilling, hiring, or a small acquisition to close gaps (especially Talent and IP)." },
+  { v: "Fatal Flaw / Unnatural Fit", min: -1.01, color: "#DC2626", light: "red", m: "The competency gap is too large and systemic — a costly, multi-year struggle against our own internal structure. Avoid and reallocate." },
+];
+function computeCGI(competency) {
+  // competency: { profile: "softwareDigital"|"hardwareMechatronic"|"dataPlatform"|"hybrid", areas: { rdInfra:{required,current}, ... } }
+  if (!competency?.areas) return null;
+  const weights = COMPETENCY_WEIGHT_PROFILES[competency.profile] || COMPETENCY_WEIGHT_PROFILES.hybrid;
+  let weightedGapSum = 0;
+  const rows = COMPETENCY_AREAS.map(({ k, label }) => {
+    const a = competency.areas[k] || { required: 2, current: 2 };
+    const gap = a.current - a.required;
+    const w = weights[k] ?? 0;
+    weightedGapSum += gap * w;
+    return { k, label, required: a.required, current: a.current, gap, weight: w };
+  });
+  const cgi = +(weightedGapSum / 3).toFixed(2);
+  return { rows, weights, cgi, band: pickBand(CGI_BANDS, cgi) };
+}
+
+/* ---- 6. Stakeholder Viability Index (SVI) — BIM/TES/TET/VSF cascade, doc §6 ---- */
+const STAKEHOLDER_CATEGORIES = [
+  "Government & Regulatory", "Customers & End-Users", "Supply Chain & Ecosystem Partners",
+  "Internal Bosch Stakeholders", "Financial & Investment Community", "Public & Media",
+];
 const SVI_BANDS = [
-  { v: "Favorable Political Landscape", min: 0.5, color: "#16A34A", light: "green", m: "Green Light. Strong allies, low conflict, and Bosch has influence where it counts." },
-  { v: "Contested but Navigable", min: 0, color: "#D97706", light: "yellow", m: "Yellow Light. A balanced field of proponents and opponents — needs a dedicated stakeholder-management strategy." },
-  { v: "Hostile Political Landscape", min: -2, color: "#DC2626", light: "red", m: "Red Light. Powerful opposition, high complexity, low Bosch influence — an uphill political battle." },
+  { v: "Favorable Ecosystem", min: 0.3, color: "#16A34A", light: "green", m: "Strong, highly aligned stakeholder support with minimal volatility — relationship leverage (BIM) is amplifying allies and neutralising minor opposition. Accelerate & scale; lock in early proponent integrations." },
+  { v: "Contested / Volatile", min: -0.3, color: "#D97706", light: "yellow", m: "A balanced or unpredictable landscape — proponents/opponents evenly matched, or a large share of power sits with undecided Neutrals. Gated funding + targeted lobbying to convert Neutrals; negotiate with detractors before spending CapEx." },
+  { v: "Hostile Ecosystem", min: -1.01, color: "#DC2626", light: "red", m: "High-power opposition dominates and Bosch has little leverage — severe risk of regulatory blockage or market lockout. De-prioritize / divest; seek an insulated niche or exit the space entirely." },
 ];
 function computeSVI(stakeholders) {
   if (!stakeholders?.length) return null;
-  const TP = stakeholders.reduce((a, s) => a + s.power, 0);
-  if (TP === 0) return null;
-  const alignment = +(stakeholders.filter(s => s.stance === 1).reduce((a, s) => a + s.power, 0) / TP).toFixed(2);
-  const conflict = +(stakeholders.filter(s => s.stance === -1).reduce((a, s) => a + s.power, 0) / TP).toFixed(2);
-  const keyStakeholders = stakeholders.filter(s => s.power === 5).length;
-  const complexity = +(keyStakeholders / stakeholders.length).toFixed(2);
-  const boschInfluence = +(stakeholders.reduce((a, s) => a + s.power * s.boschInfluence, 0) / (TP * 5)).toFixed(2);
-  const svi = +((alignment + boschInfluence) - (conflict + complexity)).toFixed(2);
-  return { alignment, conflict, complexity, boschInfluence, svi, TP, keyStakeholders, band: pickBandMin(SVI_BANDS, svi) };
+  const totalPower = stakeholders.reduce((a, s) => a + s.power, 0);
+  if (totalPower === 0) return null;
+  let TES = 0, TET = 0, neutralPower = 0;
+  stakeholders.forEach(s => {
+    const bim = (s.boschInfluence - 1) / 4; // 0.00..1.00
+    if (s.stance === 1) TES += s.power * (1 + bim * 0.5);
+    else if (s.stance === -1) TET += s.power * (1 - bim * 0.5);
+    else neutralPower += s.power;
+  });
+  const baseSVI = (TES + TET) > 0 ? (TES - TET) / (TES + TET) : 0;
+  const vsf = 1 - (neutralPower / totalPower); // 1.00 if no neutrals
+  const svi = +(baseSVI * vsf).toFixed(2);
+  return { TES: +TES.toFixed(2), TET: +TET.toFixed(2), baseSVI: +baseSVI.toFixed(2), vsf: +vsf.toFixed(2), neutralPower, totalPower, svi, band: pickBand(SVI_BANDS, svi) };
 }
 
-/* ---- 6. Competitor Threat Level + Bosch Strategic Advantage → CLI ---- */
+/* ---- 7. Competitor Threat Level + Bosch Strategic Advantage → Strategic Value Score → CPI ---- */
 const THREAT_MATRIX = {
   High: { High: { s: 5, label: "Apex Predator" }, Medium: { s: 4, label: "Incumbent at Risk" }, Low: { s: 3, label: "Fading Giant" } },
   Medium: { High: { s: 4, label: "Rising Star" }, Medium: { s: 3, label: "Steady Competitor" }, Low: { s: 2, label: "Stagnant Player" } },
@@ -277,45 +346,88 @@ const ADVANTAGE_MATRIX = {
   Low: { High: { s: 2, label: "Capability Challenge" }, Medium: { s: 1, label: "Losing Proposition" }, Low: { s: 1, label: "Avoid" } },
 };
 function boschAdvantage(strengths, gapSignificance) { return ADVANTAGE_MATRIX[strengths]?.[gapSignificance] || null; }
-const CLI_BANDS = [
-  { v: "Favorable Landscape", max: 0.8, color: "#16A34A", light: "green", stance: "Invest to Dominate / Market Consolidation" },
-  { v: "Contested Landscape", max: 1.5, color: "#D97706", light: "yellow", stance: "Targeted Attack / Niche Domination" },
-  { v: "Hostile Landscape", max: 999, color: "#DC2626", light: "red", stance: 'Avoid Direct Confrontation / Find a "Side Door"' },
+/* Strategic Value Score = Advantage + Advantage×(5−Threat)/5, range 1..9 (doc §7 lookup table —
+   verified this formula exactly reproduces all 25 named cells of the source table below). */
+const SVS_LABELS = {
+  1: { 5: "Unwinnable War", 4: "Supplier Play Only", 3: "Dangerous Ground", 2: "Losing Proposition", 1: "Wasteland" },
+  2: { 5: "Retreat & Defend", 4: "High-Risk Gambit", 3: "Tough Slog", 2: "Capability Challenge", 1: "Low-Priority Play" },
+  3: { 5: "Guerrilla Warfare", 4: "Calculated Skirmish", 3: "Standard Battle", 2: "Opportunity Knocks", 1: "Untapped Potential" },
+  4: { 5: "Strategic Standoff", 4: "Focused Attack", 3: "Lead the Pack", 2: "Build the Platform", 1: "Easy Win" },
+  5: { 5: "Battle of Titans", 4: "Targeted Takedown", 3: "Market Rollup", 2: "Blitz & Dominate", 1: "Create the Market" },
+};
+const CPI_BANDS = [
+  { v: "Advantaged", min: 0.2, color: "#16A34A", light: "green", m: "Bosch holds a clear competitive edge (Blitz & Dominate / Create the Market / Easy Win territory). Invest aggressively to lead." },
+  { v: "Contested", min: -0.2, color: "#D97706", light: "yellow", m: "Competitive forces are evenly matched (Battle of Titans / Lead the Pack / Standard Battle territory). Proceed with targeted differentiation." },
+  { v: "Hostile", min: -1.01, color: "#DC2626", light: "red", m: "Competitor threat dominates our strategic position (Unwinnable War / Supplier Play Only / Wasteland territory). Avoid mass-market entry; seek a niche or divest." },
 ];
-function computeCLI(competitorThreatScores, advantageScore) {
-  if (!competitorThreatScores?.length || !advantageScore) return null;
-  const avgThreat = +avg(competitorThreatScores).toFixed(2);
-  const cli = +(avgThreat / advantageScore).toFixed(2);
-  return { avgThreat, advantageScore, cli, band: pickBandMax(CLI_BANDS, cli) };
+function computeCPI(avgThreatScore, advantageScore) {
+  if (!avgThreatScore || !advantageScore) return null;
+  const svs = +(advantageScore + advantageScore * (5 - avgThreatScore) / 5).toFixed(2);
+  const cpi = +((svs - 5) / 4).toFixed(2);
+  const label = SVS_LABELS[advantageScore]?.[Math.round(avgThreatScore)] || null;
+  return { avgThreatScore, advantageScore, svs, cpi, label, band: pickBand(CPI_BANDS, cpi) };
 }
 
-/* ---- 7. Supply Chain Viability Index (SCVI) ---- */
+/* ---- 8. Supply Chain Viability Index (SCVI) — doc §8 ---- */
+/* Raw SCVS from the matrix (1..5), normalized SCVI = (SCVS − 3) / 2, range −1..+1. */
 const SCVI_MATRIX = {
   High: { High: { s: 5, label: "Strategic Asset" }, Medium: { s: 4, label: "Managed Ecosystem" }, Low: { s: 3, label: "Missed Opportunity" } },
   Medium: { High: { s: 4, label: "Advantaged Position" }, Medium: { s: 3, label: "Standard Sourcing" }, Low: { s: 2, label: "High-Risk Sourcing" } },
   Low: { High: { s: 2, label: "Co-Development Risk" }, Medium: { s: 1, label: "Extreme Dependency" }, Low: { s: 1, label: "Unviable" } },
 };
-function computeSCVI(maturity, control) { return SCVI_MATRIX[maturity]?.[control] || null; }
-const SCVI_BANDS = [ // interpretive
-  { v: "Strong", min: 4, color: "#16A34A", light: "green" },
-  { v: "Viable", min: 3, color: "#0EA5A4", light: "teal" },
-  { v: "At Risk", min: 2, color: "#D97706", light: "yellow" },
-  { v: "No-Go", min: 0, color: "#DC2626", light: "red" },
+const SCVI_BANDS = [
+  { v: "Resilient / Localized", min: 0.4, color: "#16A34A", light: "green", m: "Highly secure, cost-optimized, localized supply chain — low exposure to import duties and shipping shocks. Approve CapEx for localized assembly; integrate suppliers into early platform planning." },
+  { v: "Manageable Friction", min: -0.4, color: "#D97706", light: "yellow", m: "Standard automotive supply chain with isolated, manageable risks. Condition funding on active localization roadmaps; build buffer stock for high-risk imports; qualify secondary suppliers." },
+  { v: "Severe Vulnerability", min: -1.01, color: "#DC2626", light: "red", m: "A fragile global supply chain — single-source monopolies, high tariffs, long lead times. Halt scaling; redesign with localized components, or evaluate a JV to secure IP." },
 ];
+function computeSCVI(maturity, control) {
+  const m = SCVI_MATRIX[maturity]?.[control];
+  if (!m) return null;
+  const scvi = +((m.s - 3) / 2).toFixed(2);
+  return { scvs: m.s, label: m.label, scvi, band: pickBand(SCVI_BANDS, scvi) };
+}
 
-/* ---- 8. Technology Prognosis Score (TPS) ---- */
+/* ---- 9. Technology Prognosis Index (TPI) — doc §9 ---- */
+/* Raw TPS from the matrix (1..5), normalized TPI = (TPS − 3) / 2, range −1..+1. */
 const TPS_MATRIX = {
   High: { High: { s: 4, label: "Disruptive Incumbent" }, Medium: { s: 5, label: "Growth Frontier" }, Low: { s: 3, label: "High-Potential Bet" } },
   Medium: { High: { s: 3, label: "Cash Cow" }, Medium: { s: 4, label: "Strategic Bet" }, Low: { s: 2, label: "Watch & Wait" } },
   Low: { High: { s: 2, label: "Legacy Tech" }, Medium: { s: 1, label: "Niche Trap" }, Low: { s: 1, label: "Academic Curiosity" } },
 };
-function computeTPS(velocity, commReadiness) { return TPS_MATRIX[velocity]?.[commReadiness] || null; }
-const TPS_BANDS = [ // interpretive
-  { v: "Priority Investment", min: 4, color: "#16A34A", light: "green" },
-  { v: "Solid Opportunity", min: 3, color: "#0EA5A4", light: "teal" },
-  { v: "Lower Priority", min: 2, color: "#D97706", light: "yellow" },
-  { v: "Avoid", min: 0, color: "#DC2626", light: "red" },
+const TPI_BANDS = [
+  { v: "Future-Proof / Standardized", min: 0.4, color: "#16A34A", light: "green", m: "Highly mature or firmly positioned in the high-growth S-curve phase — obsolescence risk is extremely low with a stable 10+ year roadmap. Lock in as the core platform baseline; approve full-scale development." },
+  { v: "Transitional / Emerging", min: -0.4, color: "#D97706", light: "yellow", m: "In transition — an emerging, unproven standard with integration hurdles, or a mature tech beginning a slow decline. Gated pilot funding; design with modular interfaces to allow tech swaps if standards shift." },
+  { v: "Obsolete / Highly Volatile", min: -1.01, color: "#DC2626", light: "red", m: "Either sunset-phase or too early/unproven with severe integration risk. Halt plans to lock this into volume product lines; evaluate alternative tech stacks or delay entry." },
 ];
+function computeTPI(velocity, commReadiness) {
+  const m = TPS_MATRIX[velocity]?.[commReadiness];
+  if (!m) return null;
+  const tpi = +((m.s - 3) / 2).toFixed(2);
+  return { tps: m.s, label: m.label, tpi, band: pickBand(TPI_BANDS, tpi) };
+}
+
+/* ---- 10. Final Decision — Master Growth Index (MGI), doc "Final Decision" ---- */
+/* Market Potential = 0.65×MAI + 0.35×PI(normalized PESTEL Index)
+   Right to Win = 0.4×CGI + 0.35×SPI + 0.25×CPI
+   Execution Viability = 0.45×SCVI + 0.4×SVI + 0.2×TPI
+     DOC NOTE: these three weights sum to 1.05, not 1.00, in the source document —
+     implemented exactly as written rather than silently rebalanced; Execution
+     Viability can theoretically reach ±1.05 as a result.
+   MGI = 0.4×MarketPotential + 0.35×RightToWin + 0.25×ExecutionViability */
+const MGI_BANDS = [
+  { v: "Core Bet (Tier-1)", min: 0.3, color: "#16A34A", light: "green", m: "INVEST TO LEAD. Highly attractive market, decisive competitive fit, low execution friction. Maximum capital, engineering headcount, accelerated time-to-market." },
+  { v: "Horizon Play (Tier-2)", min: -0.3, color: "#D97706", light: "yellow", m: "PARTNER & GATE. Viable but contested — typically a competency gap (CGI) or supply-chain friction (SCVI). Milestone-gated funding; seek JVs/local partners to mitigate specific risks." },
+  { v: "Portfolio Distractor (Tier-3)", min: -1.06, color: "#DC2626", light: "red", m: "DIVEST / AVOID. Hostile market, critical competency deficit, or unviable supply corridor. Halt R&D funding; reallocate engineers to Tier-1 Core Bets." },
+];
+function computeMGI({ mai, pi, cgi, spi, cpi, scvi, svi, tpi }) {
+  const vals = [mai, pi, cgi, spi, cpi, scvi, svi, tpi];
+  if (vals.some(v => v == null)) return null;
+  const marketPotential = +(0.65 * mai + 0.35 * pi).toFixed(2);
+  const rightToWin = +(0.4 * cgi + 0.35 * spi + 0.25 * cpi).toFixed(2);
+  const executionViability = +(0.45 * scvi + 0.4 * svi + 0.2 * tpi).toFixed(2);
+  const mgi = +(0.4 * marketPotential + 0.35 * rightToWin + 0.25 * executionViability).toFixed(2);
+  return { marketPotential, rightToWin, executionViability, mgi, band: pickBand(MGI_BANDS, mgi) };
+}
 
 /* ═══ Shared framework references (same checklist for every field) ═══ */
 const PORTER_FRAMEWORK = {
@@ -5097,11 +5209,11 @@ V8.energy = {
     "Rivalry": [5, 1, 5, 3, 3, 5],
   },
   stakeholders: [
-    { name: "MoHI / PM E-DRIVE / FAME Programme Office", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage MoHI through industry consultations but has no control over central scheme design or timelines." },
-    { name: "ACC PLI awardees (Ola Electric, Rajesh Exports, Reliance NEU)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch is pursuing a pack/BMS partnership, not yet a signed JV or contracted supply relationship — real potential, no control today." },
-    { name: "2W/3W OEMs (Ola, Ather, Hero, TVS)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch is an established Tier-1 supplier across these OEM platforms with existing engineering relationships — direct commercial influence even though the BMS sourcing decision itself is contested." },
-    { name: "Discoms & fleet operators", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can build pilot relationships and BD channels with discoms/fleets but has no control over their procurement or tariff decisions." },
-    { name: "Chinese JV BMS entrants (CATL India, BYD)", power: 5, stance: -1, boschInfluence: 1, boschInfluenceWhy: "A direct competitor — Bosch has no ability to change CATL/BYD's pricing or India-entry strategy." },
+    { name: "MoHI / PM E-DRIVE / FAME Programme Office", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage MoHI through industry consultations but has no control over central scheme design or timelines." },
+    { name: "ACC PLI awardees (Ola Electric, Rajesh Exports, Reliance NEU)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch is pursuing a pack/BMS partnership, not yet a signed JV or contracted supply relationship — real potential, no control today." },
+    { name: "2W/3W OEMs (Ola, Ather, Hero, TVS)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch is an established Tier-1 supplier across these OEM platforms with existing engineering relationships — direct commercial influence even though the BMS sourcing decision itself is contested." },
+    { name: "Discoms & fleet operators", category: "Customers & End-Users", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can build pilot relationships and BD channels with discoms/fleets but has no control over their procurement or tariff decisions." },
+    { name: "Chinese JV BMS entrants (CATL India, BYD)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: -1, boschInfluence: 1, boschInfluenceWhy: "A direct competitor — Bosch has no ability to change CATL/BYD's pricing or India-entry strategy." },
   ],
   competitors: [
     { name: "CATL (India JV entry via CALB/SVOLT channel)", marketPosition: "High", futureMomentum: "High", why: "Global cost/scale leader (35-37% global EV battery share) entering India via JV, with aggressive R&D bets (condensed battery, sodium-ion, solid-state) and a vision to become the world's largest energy company." },
@@ -5164,11 +5276,11 @@ V8.lighting = {
     "Rivalry": [3, 3, 5, 5, 5, 3],
   },
   stakeholders: [
-    { name: "MoRTH / BNCAP", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage MoRTH/BNCAP through technical consultations but has no control over safety-rating criteria or timelines." },
-    { name: "PV & 2W OEMs", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Deep existing OEM relationships in ADAS/body electronics create access, but lighting-specific sourcing decisions run through separate commodity teams Bosch doesn't yet own." },
-    { name: "Lighting Tier-1s (Lumax, Uno Minda, Varroc, Fiem)", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "No existing partnership or co-development agreement exists today — Bosch has no established channel to influence these incumbents yet." },
-    { name: "Bosch internal (Mobility BUs)", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Internal Bosch business units — direct organisational control over resourcing and roadmap alignment." },
-    { name: "End consumers", power: 5, stance: 1, boschInfluence: 1, boschInfluenceWhy: "Bosch has no direct consumer channel — influence flows only indirectly through OEM product decisions." },
+    { name: "MoRTH / BNCAP", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage MoRTH/BNCAP through technical consultations but has no control over safety-rating criteria or timelines." },
+    { name: "PV & 2W OEMs", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Deep existing OEM relationships in ADAS/body electronics create access, but lighting-specific sourcing decisions run through separate commodity teams Bosch doesn't yet own." },
+    { name: "Lighting Tier-1s (Lumax, Uno Minda, Varroc, Fiem)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "No existing partnership or co-development agreement exists today — Bosch has no established channel to influence these incumbents yet." },
+    { name: "Bosch internal (Mobility BUs)", category: "Internal Bosch Stakeholders", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Internal Bosch business units — direct organisational control over resourcing and roadmap alignment." },
+    { name: "End consumers", category: "Customers & End-Users", power: 5, stance: 1, boschInfluence: 1, boschInfluenceWhy: "Bosch has no direct consumer channel — influence flows only indirectly through OEM product decisions." },
   ],
   competitors: [
     { name: "Lumax Industries", marketPosition: "High", futureMomentum: "Medium", why: "30-year entrenched OEM relationships across Maruti/Honda/Toyota with ARAI homologation depth, but smart-ECU development only started in 2024 and is criticised for slow tech-upgrade cycles." },
@@ -5230,10 +5342,10 @@ V8.cockpit = {
     "Rivalry": [5, 1, 3, 3, 3, 5],
   },
   stakeholders: [
-    { name: "PV OEMs (Maruti, Hyundai, Tata, M&M)", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch has deep existing Tier-1 relationships, but per the SWOT the cockpit buying decision is moving to CDO/software organisations where Bosch must build fresh credibility." },
-    { name: "Qualcomm / MediaTek", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can negotiate a preferred-silicon alliance for roadmap access, but has no control over Qualcomm/MediaTek's own roadmap or pricing." },
-    { name: "Bhashini / MeitY", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can integrate and engage with the open Bhashini API but has no control over the government platform's roadmap or availability." },
-    { name: "Consumer-tech buyers (OEM digital teams)", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "These CDO-level buyers benchmark against phone UX, a persona foreign to Bosch's traditional Tier-1 procurement relationships — limited influence until the UX-capability gap is closed." },
+    { name: "PV OEMs (Maruti, Hyundai, Tata, M&M)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch has deep existing Tier-1 relationships, but per the SWOT the cockpit buying decision is moving to CDO/software organisations where Bosch must build fresh credibility." },
+    { name: "Qualcomm / MediaTek", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can negotiate a preferred-silicon alliance for roadmap access, but has no control over Qualcomm/MediaTek's own roadmap or pricing." },
+    { name: "Bhashini / MeitY", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can integrate and engage with the open Bhashini API but has no control over the government platform's roadmap or availability." },
+    { name: "Consumer-tech buyers (OEM digital teams)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "These CDO-level buyers benchmark against phone UX, a persona foreign to Bosch's traditional Tier-1 procurement relationships — limited influence until the UX-capability gap is closed." },
   ],
   competitors: [
     { name: "Visteon Corporation", marketPosition: "High", futureMomentum: "High", why: "A pure-play cockpit specialist ($3B scale) with an existing Maruti production relationship and an active Tata AVINYA bid — deep, focused investment (SmartCore, AI personalisation) makes it the most aggressive contender." },
@@ -5295,10 +5407,10 @@ V8.interior = {
     "Rivalry": [3, 1, 3, 1, 3, 5],
   },
   stakeholders: [
-    { name: "MoRTH / BNCAP / Global NCAP", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby via SIAM/industry engagement on DMS/CPD timelines but cannot control regulatory mandate schedules." },
-    { name: "PV OEMs", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already supplies sensing/actuator content to all major India OEMs with deep engineering relationships, giving direct access into RFQs." },
-    { name: "Seat Tier-1s (Adient, Lear, TS Tech)", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Potential sensing-supply partnership, but Bosch cannot control their sourcing decisions or in-house sensing integration plans." },
-    { name: "Indian air-quality agencies (CPCB)", power: 3, stance: 1, boschInfluence: 1, boschInfluenceWhy: "CPCB data validates Bosch's air-quality narrative but Bosch has essentially no ability to influence agency actions." },
+    { name: "MoRTH / BNCAP / Global NCAP", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby via SIAM/industry engagement on DMS/CPD timelines but cannot control regulatory mandate schedules." },
+    { name: "PV OEMs", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already supplies sensing/actuator content to all major India OEMs with deep engineering relationships, giving direct access into RFQs." },
+    { name: "Seat Tier-1s (Adient, Lear, TS Tech)", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Potential sensing-supply partnership, but Bosch cannot control their sourcing decisions or in-house sensing integration plans." },
+    { name: "Indian air-quality agencies (CPCB)", category: "Government & Regulatory", power: 3, stance: 1, boschInfluence: 1, boschInfluenceWhy: "CPCB data validates Bosch's air-quality narrative but Bosch has essentially no ability to influence agency actions." },
   ],
   competitors: [
     { name: "Valeo Thermal Systems India", marketPosition: "High", futureMomentum: "Medium", why: "Deepest India HVAC installed base and Maruti/Hyundai relationships mark it a leader, but restructuring concerns temper its momentum to adaptive-and-stable rather than aggressive." },
@@ -5359,9 +5471,9 @@ V8.suspension = {
     "Rivalry": [3, 3, 3, 1, 5, 1],
   },
   stakeholders: [
-    { name: "Premium PV OEMs (BMW India, Hyundai N, M&M XUV)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already supplies ESP/iBooster to these OEMs, giving direct engineering-level access to extend into suspension control." },
-    { name: "ZF / Tenneco / BWI", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Potential coopetition partners for VMM software licensing, but Bosch cannot direct their independent hardware commercial strategy." },
-    { name: "Bosch ADAS BU (internal)", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Internal Bosch business unit — direct organizational control over the road-preview data sharing that makes the entry thesis work." },
+    { name: "Premium PV OEMs (BMW India, Hyundai N, M&M XUV)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already supplies ESP/iBooster to these OEMs, giving direct engineering-level access to extend into suspension control." },
+    { name: "ZF / Tenneco / BWI", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Potential coopetition partners for VMM software licensing, but Bosch cannot direct their independent hardware commercial strategy." },
+    { name: "Bosch ADAS BU (internal)", category: "Internal Bosch Stakeholders", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Internal Bosch business unit — direct organizational control over the road-preview data sharing that makes the entry thesis work." },
   ],
   competitors: [
     { name: "ZF Friedrichshafen (CDC / Air Suspension)", marketPosition: "High", futureMomentum: "High", why: "MagneRide is the world's most-deployed adaptive damping tech (5M+ units); heavy R&D into next-gen MR dampers and India-cost CDC marks aggressive momentum." },
@@ -5462,10 +5574,10 @@ V8.eca = {
     "Rivalry": [3,1,1,3,5,3],
   },
   stakeholders: [
-    { name: "MeitY / ISM (India Semiconductor Mission)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage/lobby ISM through industry participation and qualification partnerships but has no control over government policy." },
-    { name: "PV/2W/CV OEMs (E/E architecture teams)", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Deep engineering relationships let Bosch pitch co-development, but the architecture decision remains the OEM's sovereign call — no control." },
-    { name: "SoC vendors (Qualcomm, NVIDIA, MediaTek)", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Global silicon giants set their own roadmaps; Bosch is one of many automotive customers/coopetition partners with little sway." },
-    { name: "Indian chip-design GCCs (Qualcomm, NXP, Intel India)", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue acqui-hire/partnership discussions via DLI incentives but has no structural control over GCC talent allocation." },
+    { name: "MeitY / ISM (India Semiconductor Mission)", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage/lobby ISM through industry participation and qualification partnerships but has no control over government policy." },
+    { name: "PV/2W/CV OEMs (E/E architecture teams)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Deep engineering relationships let Bosch pitch co-development, but the architecture decision remains the OEM's sovereign call — no control." },
+    { name: "SoC vendors (Qualcomm, NVIDIA, MediaTek)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Global silicon giants set their own roadmaps; Bosch is one of many automotive customers/coopetition partners with little sway." },
+    { name: "Indian chip-design GCCs (Qualcomm, NXP, Intel India)", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue acqui-hire/partnership discussions via DLI incentives but has no structural control over GCC talent allocation." },
   ],
   competitors: [
     { name: "Continental (VDX domain controller)", marketPosition: "High", futureMomentum: "Medium", why: "Full E/E architecture breadth and domain-controller leadership make it the closest global peer, though restructuring-related R&D-continuity concerns temper its momentum." },
@@ -5508,10 +5620,10 @@ V8.software = {
     "Rivalry": [5,3,3,3,1,5],
   },
   stakeholders: [
-    { name: "Indian OEM CDOs / SW organisations", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue and pitch this emerging buying persona but doesn't control the buying decision — the CDO relationship is still being built." },
-    { name: "KPIT Technologies", power: 3, stance: 0, boschInfluence: 1, boschInfluenceWhy: "An independent competitor/potential partner; Bosch has no control or strong lobbying position over their strategy." },
-    { name: "Eclipse SDV / AUTOSAR consortium", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Bosch is a founding/co-leading member actively shaping the Eclipse SDV agenda — deep partnership-level influence." },
-    { name: "Bosch ETAS (internal)", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Wholly-owned internal Bosch IP asset — full control." },
+    { name: "Indian OEM CDOs / SW organisations", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue and pitch this emerging buying persona but doesn't control the buying decision — the CDO relationship is still being built." },
+    { name: "KPIT Technologies", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 1, boschInfluenceWhy: "An independent competitor/potential partner; Bosch has no control or strong lobbying position over their strategy." },
+    { name: "Eclipse SDV / AUTOSAR consortium", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Bosch is a founding/co-leading member actively shaping the Eclipse SDV agenda — deep partnership-level influence." },
+    { name: "Bosch ETAS (internal)", category: "Internal Bosch Stakeholders", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Wholly-owned internal Bosch IP asset — full control." },
   ],
   competitors: [
     { name: "KPIT Technologies", marketPosition: "Medium", futureMomentum: "High", why: "Strong AUTOSAR/services player with BMW-validated credibility and 14% margins, aggressively expanding India OEM SDV middleware work." },
@@ -5554,10 +5666,10 @@ V8.manufacturing = {
     "Rivalry": [5,3,5,5,5,5],
   },
   stakeholders: [
-    { name: "Global Tier-1s / OEMs (China+1 customers)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can win their business through certified capacity but does not control their sourcing decisions — a customer relationship, not direct control." },
-    { name: "Dixon Technologies / Kaynes / Syrma", power: 3, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Direct commodity-EMS competitors; Bosch has no lobbying or control channel over their strategy." },
-    { name: "MoLEM / Make-in-India (PLI)", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage PLI consultations and industry bodies but does not control scheme design or incentive allocation." },
-    { name: "Plant workforce unions", power: 3, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch directly manages labour relations with its own plant workforce through established HR/union engagement channels — a direct, controllable relationship." },
+    { name: "Global Tier-1s / OEMs (China+1 customers)", category: "Customers & End-Users", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can win their business through certified capacity but does not control their sourcing decisions — a customer relationship, not direct control." },
+    { name: "Dixon Technologies / Kaynes / Syrma", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Direct commodity-EMS competitors; Bosch has no lobbying or control channel over their strategy." },
+    { name: "MoLEM / Make-in-India (PLI)", category: "Government & Regulatory", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage PLI consultations and industry bodies but does not control scheme design or incentive allocation." },
+    { name: "Plant workforce unions", category: "Internal Bosch Stakeholders", power: 3, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch directly manages labour relations with its own plant workforce through established HR/union engagement channels — a direct, controllable relationship." },
   ],
   competitors: [
     { name: "Siemens India (Digital Industries)", marketPosition: "High", futureMomentum: "High", why: "India's most comprehensive factory-automation platform with 40-year presence and the deepest PLC installed base, aggressively pushing AI/digital-twin/MES into EV gigafactories." },
@@ -5599,10 +5711,10 @@ V8.fintech = {
     "Rivalry": [1,3,3,1,3,5],
   },
   stakeholders: [
-    { name: "NPCI (UPI / FASTag / AA)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "NPCI's rails are the platform Bosch builds on, but Bosch can only engage/lobby via sandbox and certification participation — no control over NPCI's own roadmap." },
-    { name: "RBI / IRDAI", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "National financial regulators set the licensing perimeter independent of Bosch's automotive relationships; Bosch has essentially no direct channel to influence RBI/IRDAI policy." },
-    { name: "Banks & insurers (HDFC, ICICI, Bajaj Allianz)", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "These are the natural deep-partnership targets for Bosch's UBI/data products — a direct commercial relationship Bosch actively negotiates and shapes." },
-    { name: "PV OEMs (platform teams)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already sits inside OEM cockpit/SdV platform deals as a strategic Tier-1 — direct, deep engineering relationship, not just influence." },
+    { name: "NPCI (UPI / FASTag / AA)", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "NPCI's rails are the platform Bosch builds on, but Bosch can only engage/lobby via sandbox and certification participation — no control over NPCI's own roadmap." },
+    { name: "RBI / IRDAI", category: "Government & Regulatory", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "National financial regulators set the licensing perimeter independent of Bosch's automotive relationships; Bosch has essentially no direct channel to influence RBI/IRDAI policy." },
+    { name: "Banks & insurers (HDFC, ICICI, Bajaj Allianz)", category: "Financial & Investment Community", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "These are the natural deep-partnership targets for Bosch's UBI/data products — a direct commercial relationship Bosch actively negotiates and shapes." },
+    { name: "PV OEMs (platform teams)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already sits inside OEM cockpit/SdV platform deals as a strategic Tier-1 — direct, deep engineering relationship, not just influence." },
   ],
   competitors: [
     { name: "Acko Insurance (tech-native UBI insurer)", marketPosition: "Medium", futureMomentum: "High", why: "A well-funded ($450M raised), credible digital-native UBI insurer with OEM-embedded distribution — a solid contender, not yet a dominant leader, but aggressively R&D-heavy (innovation 9/10)." },
@@ -5645,10 +5757,10 @@ V8.infrastructure = {
     "Rivalry": [5,3,3,3,5,5],
   },
   stakeholders: [
-    { name: "NHAI / MoRTH", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "NHAI drives MLFF policy and tendering directly; Bosch can shape technical standards via pilot/consortium engagement but has no control over NHAI's own tendering decisions." },
-    { name: "Smart city / urban traffic bodies (MoHUA)", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "MoHUA co-drives Smart Cities/V2X pilots; Bosch can propose technology standards through SPV engagement but cannot control programme priorities or funding." },
-    { name: "Indian system integrators (BEL, L&T, Tata Projects)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "These are the potential direct consortium partners — Bosch actively negotiates structured technology-provider agreements with them, a relationship it directly shapes." },
-    { name: "Fleet operators & CPOs", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Commercial charging-map data customers Bosch can pitch and price to, but Bosch has no control over their broader fleet or CPO strategy decisions." },
+    { name: "NHAI / MoRTH", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "NHAI drives MLFF policy and tendering directly; Bosch can shape technical standards via pilot/consortium engagement but has no control over NHAI's own tendering decisions." },
+    { name: "Smart city / urban traffic bodies (MoHUA)", category: "Government & Regulatory", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "MoHUA co-drives Smart Cities/V2X pilots; Bosch can propose technology standards through SPV engagement but cannot control programme priorities or funding." },
+    { name: "Indian system integrators (BEL, L&T, Tata Projects)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "These are the potential direct consortium partners — Bosch actively negotiates structured technology-provider agreements with them, a relationship it directly shapes." },
+    { name: "Fleet operators & CPOs", category: "Customers & End-Users", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Commercial charging-map data customers Bosch can pitch and price to, but Bosch has no control over their broader fleet or CPO strategy decisions." },
   ],
   competitors: [
     { name: "Siemens India (Mobility / Smart Cities)", marketPosition: "High", futureMomentum: "Medium", why: "A 40-year embedded government relationship across NHAI, Delhi Metro and Smart Cities makes it the dominant incumbent brand, but 'premium pricing and long delivery timelines' point to steady rather than aggressive evolution." },
@@ -5691,10 +5803,10 @@ V8.sustainability = {
     "Rivalry": [3,3,3,3,3,5],
   },
   stakeholders: [
-    { name: "MoEFCC / CPCB (EPR enforcement)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "MoEFCC/CPCB set and enforce EPR mandates independently; Bosch can engage as an industry participant shaping traceability standards but cannot control enforcement decisions." },
-    { name: "Battery recyclers (Attero, Lohum, Epsilon)", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Recyclers are potential alliance partners Bosch can pitch data/diagnostics partnerships to, but they are simultaneously investing in competing in-house diagnostics — Bosch influences via commercial proposition, not control." },
-    { name: "OEMs / EV makers (battery producers)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch's existing Tier-1 OEM relationships give it direct engagement channels to pitch EPR-traceability and compliance services as an extension of the existing supply relationship." },
-    { name: "Second-life storage operators", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch's diagnostics platform is positioned as their 'quality gateway', giving Bosch real influence over standards, though not direct control over their business operations." },
+    { name: "MoEFCC / CPCB (EPR enforcement)", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "MoEFCC/CPCB set and enforce EPR mandates independently; Bosch can engage as an industry participant shaping traceability standards but cannot control enforcement decisions." },
+    { name: "Battery recyclers (Attero, Lohum, Epsilon)", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Recyclers are potential alliance partners Bosch can pitch data/diagnostics partnerships to, but they are simultaneously investing in competing in-house diagnostics — Bosch influences via commercial proposition, not control." },
+    { name: "OEMs / EV makers (battery producers)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch's existing Tier-1 OEM relationships give it direct engagement channels to pitch EPR-traceability and compliance services as an extension of the existing supply relationship." },
+    { name: "Second-life storage operators", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch's diagnostics platform is positioned as their 'quality gateway', giving Bosch real influence over standards, though not direct control over their business operations." },
   ],
   competitors: [
     { name: "Attero Recycling", marketPosition: "High", futureMomentum: "High", why: "'India's only industrial-scale Li-ion battery recycler' with OEM EPR contracts (Tata Motors, MG Motor) is a dominant niche leader, and it is aggressively scaling capacity 5x while expanding into EPR compliance and second-life certification — directly encroaching on Bosch's targeted data layer." },
@@ -5831,9 +5943,9 @@ V8.evtol = {
     "Rivalry": [3, 3, 3, 3, 5, 5],
   },
   stakeholders: [
-    { name: "DGCA / MoCA (drone/UAM framework)", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage DGCA's UAM working group as a technical contributor but has no control over India's aviation regulatory timeline." },
-    { name: "Global eVTOL primes (Joby, Archer, Wisk)", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue supplier conversations with primes but has no established component-supply contract or control over their sourcing decisions yet." },
-    { name: "Cargo/medical logistics operators", power: 3, stance: 1, boschInfluence: 1, boschInfluenceWhy: "Bosch has no existing relationship with India's cargo/medical UAM operators; influence here would have to be built from zero." },
+    { name: "DGCA / MoCA (drone/UAM framework)", category: "Government & Regulatory", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage DGCA's UAM working group as a technical contributor but has no control over India's aviation regulatory timeline." },
+    { name: "Global eVTOL primes (Joby, Archer, Wisk)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue supplier conversations with primes but has no established component-supply contract or control over their sourcing decisions yet." },
+    { name: "Cargo/medical logistics operators", category: "Customers & End-Users", power: 3, stance: 1, boschInfluence: 1, boschInfluenceWhy: "Bosch has no existing relationship with India's cargo/medical UAM operators; influence here would have to be built from zero." },
   ],
   competitors: [
     { name: "ePlane Company", marketPosition: "Low", futureMomentum: "Medium", why: "India's only indigenous eVTOL prototype with a flying demonstrator and IIT Madras backing, but ~$5M raised and ~80 headcount keep it a niche, early-stage player pursuing DGCA certification." },
@@ -5976,10 +6088,10 @@ V8.robotics = {
     "Rivalry": [5, 3, 5, 3, 3, 5],
   },
   stakeholders: [
-    { name: "Logistics & e-commerce operators (Flipkart/Amazon/Meesho warehouses)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue direct commercial supply relationships with these operators but doesn't control their automation investment decisions." },
-    { name: "Industrial manufacturers (auto plants, pharma)", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Bosch's own manufacturing plants are reference customers, giving genuinely deep, direct engineering-level influence over this stakeholder group." },
-    { name: "Campus operators (IT parks, airports, hospitals)", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can propose pilot partnerships (e.g. the planned Infosys Pune pilot) but has no control over a campus operator's adoption decision." },
-    { name: "MoLEM / Make-in-India", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby through industry bodies for automation-friendly policy but has no control over how government schemes are designed." },
+    { name: "Logistics & e-commerce operators (Flipkart/Amazon/Meesho warehouses)", category: "Customers & End-Users", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue direct commercial supply relationships with these operators but doesn't control their automation investment decisions." },
+    { name: "Industrial manufacturers (auto plants, pharma)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Bosch's own manufacturing plants are reference customers, giving genuinely deep, direct engineering-level influence over this stakeholder group." },
+    { name: "Campus operators (IT parks, airports, hospitals)", category: "Customers & End-Users", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can propose pilot partnerships (e.g. the planned Infosys Pune pilot) but has no control over a campus operator's adoption decision." },
+    { name: "MoLEM / Make-in-India", category: "Government & Regulatory", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby through industry bodies for automation-friendly policy but has no control over how government schemes are designed." },
   ],
   competitors: [
     { name: "Geek+ (warehouse AMR)", marketPosition: "High", futureMomentum: "High", why: "Largest India AMR installed base (200+ references) with $200M raised and a $2B valuation, aggressively scaling India sales/service and AI fleet-optimisation R&D." },
@@ -6122,10 +6234,10 @@ V8.health = {
     "Rivalry": [3, 3, 3, 3, 1, 5],
   },
   stakeholders: [
-    { name: "MoRTH / TRAI (e-call mandate)", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby via technical working groups but does not control the mandate's timing or final design." },
-    { name: "CDSCO (medical device regulator)", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Bosch has essentially no influence over CDSCO's classification criteria; the explicit strategy is to stay below the threshold, not to lobby it." },
-    { name: "PV OEMs (safety/connectivity teams)", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "OEMs are Bosch's direct commercial customers with existing platform-supply relationships across connectivity and sensing — a deep, ongoing engineering partnership." },
-    { name: "Medical-device partners (GE Healthcare, Philips, domestic medtech)", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue and help shape co-development partnerships with medtech players but doesn't control their clinical roadmap or priorities." },
+    { name: "MoRTH / TRAI (e-call mandate)", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can lobby via technical working groups but does not control the mandate's timing or final design." },
+    { name: "CDSCO (medical device regulator)", category: "Government & Regulatory", power: 5, stance: 0, boschInfluence: 1, boschInfluenceWhy: "Bosch has essentially no influence over CDSCO's classification criteria; the explicit strategy is to stay below the threshold, not to lobby it." },
+    { name: "PV OEMs (safety/connectivity teams)", category: "Customers & End-Users", power: 5, stance: 0, boschInfluence: 5, boschInfluenceWhy: "OEMs are Bosch's direct commercial customers with existing platform-supply relationships across connectivity and sensing — a deep, ongoing engineering partnership." },
+    { name: "Medical-device partners (GE Healthcare, Philips, domestic medtech)", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can pursue and help shape co-development partnerships with medtech players but doesn't control their clinical roadmap or priorities." },
   ],
   competitors: [
     { name: "Ziqitza Health Care (ZHL)", marketPosition: "High", futureMomentum: "Medium", why: "India's largest private ambulance network with government contracts across 10+ states — a market leader in emergency response, expanding telematics incrementally rather than pursuing next-gen bets." },
@@ -6267,6 +6379,516 @@ V7.health.sources = [
   { url: U.mordor }, { url: U.tracxn }, { url: U.mhi_edrive_pdf },
 ];
 
+V8.energy.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 4, current: 3 },
+    supplyChain: { required: 4, current: 2 }, g2m: { required: 3, current: 3 }, talent: { required: 4, current: 2 }, organization: { required: 2, current: 3 },
+  },
+  narrative: "The most binding constraint is Talent and Supply Chain, not manufacturing or IP: India has fewer than 3,000 trained BMS engineers against a 25,000+ requirement by 2028, and cell chemistry remains import-dependent even as ACC-PLI capacity ramps. Close the gap via targeted BMS-engineer hiring/upskilling and multi-year offtake agreements with ACC-PLI cell makers, rather than trying to build cell manufacturing in-house.",
+};
+
+DATA.energy.activity = [
+  { d: "Aug 04, 2026", t: "PM E-DRIVE crosses 26.5 lakh EV sales milestone; ₹2,322 Cr of ₹10,900 Cr scheme outlay utilised to date", s: "ANI / PIB" },
+  { d: "Aug 05, 2026", t: "6,562 EV chargers approved under PM E-DRIVE — none yet installed, exposing execution lag in the scheme's charging pillar", s: "Fuel Cells Works" },
+  { d: "Jul 22, 2026", t: "India's public charging network reaches 52,718 stations, including 16,561 fast chargers", s: "PIB / Ministry of Power" },
+  { d: "Jul 15, 2026", t: "Ola Electric's gigafactory scales toward 20 GWh cell capacity under the ACC-PLI programme", s: "Economic Times" },
+  { d: "Jul 10, 2026", t: "Industry report flags India's BMS-engineer shortage: fewer than 3,000 trained professionals versus a projected 25,000+ need by 2028", s: "DIYguru / Samarth EV" },
+];
+
+DATA.energy.verdict.aiAnalyst = {
+  whereWeWin: [
+    "PS-ESB battery-management software and power-electronics IP are already proven Bosch India assets, directly reusable for BMS and charging-management products without new R&D",
+    "The 10,000-strong workshop network is a distribution moat no pure-play BMS startup or Chinese entrant can replicate for aftermarket, retrofit and battery-health services",
+    "Regulatory tailwinds (PM E-DRIVE extended to FY28, ACC-PLI cell capacity ramping) are structurally certain, not speculative — policy is building this market, not just consumer demand",
+    "AIS-156 safety certification is a real moat: it favours established, certified Tier-1s like Bosch over unproven local BMS startups",
+  ],
+  exposure: [
+    "India's BMS engineering talent pool is critically thin (~3,000 trained vs 25,000+ needed by 2028), and Bosch competes for the same scarce talent as OEMs and startups",
+    "Cell chemistry remains structurally import-dependent from China even as ACC-PLI capacity ramps, leaving Bosch's supply chain exposed to pricing and geopolitical risk it doesn't control",
+    "Large 2W/3W OEMs are increasingly building BMS in-house, shrinking the merchant Tier-1 market Bosch can sell into",
+    "PM E-DRIVE's charging pillar shows real execution lag (6,562 chargers approved, zero installed as of August 2026) — policy announcements aren't yet funded, built infrastructure on schedule",
+  ],
+  narrative: "Energy is one of the strongest-positioned fields in Bosch India's portfolio: a $2.4B SAM growing near 28% CAGR, anchored by PM E-DRIVE's extension to FY28 and an ACC-PLI cell ecosystem finally reaching gigafactory scale. Bosch's power-electronics IP, PS-ESB battery software and the workshop network give it a genuine right-to-win in BMS, charging management and battery-health services — exactly the layers where AIS-156 certification favours an established Tier-1 over an unproven startup. The single biggest constraint is not market size or technology but people: India's BMS engineering talent pool is critically undersupplied relative to 2028 demand, and Bosch will compete directly with OEMs, PLI cell makers and Chinese entrants for the same scarce pool. Execution risk also shows up in PM E-DRIVE's charging pillar, where approvals are running well ahead of actual installations. On balance this is a Core Bet field: market and policy tailwinds are about as strong as they get in this portfolio, and Bosch's asset base is a genuine structural advantage rather than a stretch.",
+  bottomLine: "INVEST — energy combines a policy-backed, high-growth market with Bosch's strongest asset-reuse story in the portfolio; the priority action is a dedicated BMS-talent pipeline, not new technology development.",
+};
+
+V8.lighting.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 2 }, manufacturing: { required: 4, current: 1 },
+    supplyChain: { required: 3, current: 2 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The dominant gap is Manufacturing — Bosch has no optics/photometrics production capability and has deliberately chosen not to build one, capping the field's fit ceiling by design. Close it not by building lamp manufacturing but by locking a durable co-development partnership with an established lamp Tier-1 so Bosch supplies the control/software layer exclusively into their optics.",
+};
+
+DATA.lighting.activity = [
+  { d: "Aug 03, 2026", t: "India automotive LED lighting market reaches $1.78B in 2026, growing at 6.42% CAGR toward $2.43B by 2031", s: "Mordor Intelligence" },
+  { d: "Jul 28, 2026", t: "Adaptive-matrix and pixel headlamp technology reaches the ₹15–20 lakh price segment as semiconductor and optical costs fall", s: "Mordor Intelligence" },
+  { d: "Jul 20, 2026", t: "Uno Minda expands LED module output capacity in Haryana and Indonesia on the back of diversified OEM lighting orders", s: "Company filings" },
+  { d: "Jul 12, 2026", t: "OEMs increasingly favour glare-free adaptive-matrix high beams to meet 2026 ADAS mandate requirements without energy-consumption penalties", s: "Industry analysis" },
+  { d: "Jul 05, 2026", t: "Bosch continues to expand its aftermarket bulbs & lighting-systems range across LED, halogen and xenon for the India vehicle parc", s: "Bosch Aftermarket India" },
+];
+
+DATA.lighting.verdict.aiAnalyst = {
+  whereWeWin: [
+    "The control/software layer — camera-fused adaptive beam control, OTA personalisation — is the only part of the lighting stack with real growth and margin, and no lamp Tier-1 in India owns real software capability there",
+    "BNCAP's safety-rating push toward adaptive lighting features creates a regulation-pulled adoption curve Bosch's control ECUs and sensing assets are already positioned for",
+    "Falling semiconductor and optical costs are pulling matrix/pixel lighting into the ₹15–20L segment, widening Bosch's addressable control-layer market beyond ultra-premium",
+    "Partnership economics (Bosch control + a lamp maker's optics) let Bosch capture the highest-margin slice without owning the lowest-margin commodity hardware business",
+  ],
+  exposure: [
+    "Bosch has zero optics/photometrics manufacturing and no existing OEM lighting-commodity relationship — every deal starts from a cold relationship with the OEM's lighting buyer",
+    "Uno Minda and other lighting Tier-1s are themselves investing in electronics and control capability, threatening to disintermediate Bosch's software-only entry point",
+    "The addressable SAM ($0.62B) is the smallest slice of a market that remains ~68% commoditised hardware revenue Bosch deliberately avoids",
+    "No signed co-development agreement exists yet with any lamp Tier-1 — the entire strategy depends on a partnership that hasn't been secured",
+  ],
+  narrative: "Lighting is a moderate, partnership-dependent opportunity rather than a core bet: the overall India automotive lighting market is large and steadily growing (~6% CAGR), but roughly two-thirds of that revenue is commoditised hardware Bosch has explicitly chosen not to compete in. The real opportunity — camera-fused adaptive control and OTA lighting personalisation — is genuine and regulation-pulled by BNCAP, but it's also the smallest slice of the market and entirely dependent on securing a co-development partnership with an established lamp maker Bosch does not yet have. Competitively, Uno Minda's own move into electronics narrows the window before the control layer gets absorbed by the incumbent lighting Tier-1s themselves. This is a field worth pursuing through partnership rather than platform investment — the technology fit is real, but the commercial path runs through one signed relationship that doesn't exist yet.",
+  bottomLine: "PARTNER — pursue a co-development agreement with one lighting Tier-1 (Uno Minda is the strongest fit) before committing further engineering investment; do not attempt to enter lighting hardware.",
+};
+
+V8.cockpit.competency = {
+  profile: "softwareDigital",
+  areas: {
+    rdInfra: { required: 4, current: 4 }, ip: { required: 3, current: 3 }, manufacturing: { required: 3, current: 2 },
+    supplyChain: { required: 4, current: 2 }, g2m: { required: 3, current: 3 }, talent: { required: 4, current: 3 }, organization: { required: 3, current: 3 },
+  },
+  narrative: "Supply Chain is the binding constraint, not capability: cockpit SoC is entirely Qualcomm/MediaTek-dominated with no India fabrication option this decade, and Bosch has no allocation leverage over its single most critical input. Close this via the proposed 'Strategic SoC' alliance — a formal multi-year roadmap-access agreement — rather than attempting backward integration into silicon.",
+};
+
+DATA.cockpit.activity = [
+  { d: "Jul 30, 2026", t: "Qualcomm and Tata Electronics finalise India manufacturing of Qualcomm Automotive Modules at the Jagiroad, Assam semiconductor facility", s: "Tata Electronics" },
+  { d: "Jul 22, 2026", t: "Qualcomm's multi-year GenAI collaboration with Google reaches production integration in Snapdragon Cockpit platforms for on-device personalisation", s: "Qualcomm / Edge AI Vision" },
+  { d: "Jul 15, 2026", t: "Qualcomm expands automotive partnerships post-CES 2026, pushing agentic AI and software-defined cockpit platforms to global automakers", s: "Digitimes" },
+  { d: "Jul 08, 2026", t: "Twin-display digital cockpits continue moving down-market into the ₹10L price segment as content-per-vehicle rises", s: "Industry analysis" },
+  { d: "Jun 30, 2026", t: "India cockpit software talent demand accelerates as OEM CDO organisations take over buying decisions from traditional procurement", s: "Industry analysis" },
+];
+
+DATA.cockpit.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Cockpit HPC, AAOS integration and ASIL-certified safety-critical rendering give Bosch the highest competency-fit score in the portfolio — this plays directly into existing Bosch India software-org scale",
+    "Bhashini's free 22-language government API lets Bosch build a genuinely India-first vernacular voice assistant no global competitor can replicate as cheaply outside India",
+    "A $2.1B SAM growing 14% CAGR with an explicit, stated OEM ask — mid-size OEMs publicly lack the software headcount to self-integrate a cockpit stack — is rare demand pull with no incumbent owning the answer",
+    "Tata Electronics' new India-based Qualcomm module manufacturing (Assam) marginally de-risks the SoC supply chain over time, an early positive signal for the 'Strategic SoC' alliance strategy",
+  ],
+  exposure: [
+    "Cockpit SoC remains entirely Qualcomm/MediaTek-controlled with no India fabrication option this decade — Bosch has no leverage over its single most critical, highest-value input",
+    "The cockpit buying decision is shifting from traditional Tier-1 procurement to OEM CDO/software organisations, a persona Bosch's classic account relationships don't yet reach",
+    "Consumer-electronics-grade UX expectations are rising fast, and Bosch's traditional automotive-supplier UX polish lags what OEM digital teams now benchmark against",
+    "Visteon and Desay SV are both investing aggressively in this exact space, with Visteon holding an active Tata AVINYA bid Bosch does not",
+  ],
+  narrative: "Cockpit is the strongest-fit field in Bosch India's portfolio on pure competency terms — HPC, AAOS and safety-critical rendering directly extend existing Bosch India software-organisation scale, and the $2.1B SAM at 14% CAGR is large enough to matter on its own. The vernacular-AI opportunity via Bhashini is a genuinely India-unique differentiator no global cockpit competitor can replicate as cheaply. The real risk isn't technology or market size — it's supply-chain leverage and buyer-relationship reach: Bosch has no control over Qualcomm/MediaTek's SoC roadmap or pricing, and the buying decision is migrating to OEM CDO organisations that don't yet know Bosch as a software partner. Visteon's active bid pipeline, including Tata AVINYA, shows the competitive window is open now, not indefinitely. This is a field to invest in aggressively on the product side while urgently building the CDO-level relationship and locking a formal SoC roadmap-access agreement.",
+  bottomLine: "INVEST — cockpit is Bosch India's best competency fit in the portfolio; the two must-fix actions are a formal Qualcomm/MediaTek roadmap-access alliance and a dedicated OEM-CDO relationship-building push.",
+};
+
+V8.interior.competency = {
+  profile: "hybrid",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 3, current: 2 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "Sensing and actuator competencies (radar, MEMS, EM actuators) transfer directly from Bosch's existing DNA, but the field's largest volume pool — complete seating systems — sits entirely outside Bosch's asset base and isn't worth building. Close the real gap (OEM interior-systems commercial relationships, weaker than Bosch's braking/ADAS accounts) through dedicated account management rather than new engineering investment.",
+};
+
+DATA.interior.activity = [
+  { d: "Aug 01, 2026", t: "MoRTH's November 2025 gazette notification finalises mandatory DDAW (driver drowsiness/attention warning) for buses and trucks from October 2027", s: "MoRTH / Autocar India" },
+  { d: "Jul 25, 2026", t: "Bharat NCAP voluntary safety-rating incentives continue pulling driver-monitoring-system adoption into premium passenger cars", s: "BNCAP" },
+  { d: "Jul 18, 2026", t: "CES 2026 signals industry-wide shift from driver-only DMS to full-cabin AI-driven occupant monitoring (child presence, medical emergencies)", s: "Anyverse / CES 2026" },
+  { d: "Jul 10, 2026", t: "India cabin air-quality sensor market gains traction as urban AQI concerns drive OEM interest in in-cabin purification features", s: "DataInsights Market" },
+  { d: "Jul 02, 2026", t: "Global Euro NCAP 2026 in-cabin monitoring compliance push sets a template India OEMs are expected to follow in coming BNCAP cycles", s: "Anyverse" },
+];
+
+DATA.interior.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Radar-fused occupant sensing and MEMS actuator IP are proven, in-house Bosch assets that transfer directly — no new core technology investment is required to enter",
+    "MoRTH's finalised October 2027 DDAW mandate for buses/trucks plus BNCAP's voluntary passenger-car incentive create two separate, real regulatory pull mechanisms rather than one speculative one",
+    "Non-contact radar sensing sidesteps the wearable-dependency and camera-privacy objections that slow competing DMS approaches, a genuine India-relevant differentiator",
+    "Bosch's strong in-house control over camera/radar component sourcing (multiple competitive vendors, no single-source dependency) is a real supply-chain advantage over fragmented smaller players",
+  ],
+  exposure: [
+    "Complete seating — the largest single volume pool in the interior-systems field — sits entirely outside Bosch's asset base and would require an acquisition or licensing deal, not organic build",
+    "Valeo Thermal and Subros dominate the India HVAC/interior-comfort relationship with OEMs; Bosch's account depth in interior systems is materially behind its braking/ADAS relationships",
+    "Camera CMOS and 60GHz radar chips remain imported, creating a partial supply-chain dependency even though Bosch's own MEMS/radar IP is domestic",
+    "BNCAP's driver-monitoring incentive remains voluntary for passenger cars — unlike the finalised commercial-vehicle mandate, this pull is not yet legally guaranteed",
+  ],
+  narrative: "Interior systems is a genuine, if partial, right-to-win field: Bosch's sensing and actuator competencies map directly onto two real regulatory anchors — a finalised October 2027 DDAW mandate for commercial vehicles and BNCAP's voluntary passenger-car incentive — without requiring new core R&D. The field's $1.1B aggregate SAM is real, but a large share of it (complete seating systems) is structurally outside anything Bosch would build, so the addressable opportunity is meaningfully smaller than the headline number. Competitively, Bosch's actual account depth in interior systems lags its braking and ADAS relationships, and established players like Valeo and Subros hold the incumbent OEM trust Bosch would need to build from a colder start. This is a selectively attractive field: pursue occupant monitoring and cabin air quality aggressively — both regulation-pulled and asset-matched — and stay out of seating and comfort-hardware entirely.",
+  bottomLine: "SELECTIVE INVEST — lead with occupant monitoring and cabin air quality where Bosch's sensing IP and the DDAW/BNCAP mandates align; do not pursue seating or HVAC hardware.",
+};
+
+V8.suspension.competency = {
+  profile: "softwareDigital",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 1, current: 1 },
+    supplyChain: { required: 2, current: 2 }, g2m: { required: 3, current: 3 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "Because Bosch has deliberately chosen a software-only entry (VMM control licensing, no damper hardware), the field's competency profile is strong across the board — the one visible gap is Manufacturing, which is intentionally not being closed since the strategy explicitly avoids owning damper hardware. The real execution risk is not competency but market timing: the addressable SAM is the smallest in the portfolio and depends on OEMs adopting Bosch's software inside a broader SdV platform deal.",
+};
+
+DATA.suspension.activity = [
+  { d: "Jul 28, 2026", t: "ZF's sMOTION active chassis damper reaches serial production on Porsche Panamera and Taycan platforms globally", s: "ZF Press" },
+  { d: "Jul 20, 2026", t: "ZF unveils CES 2026 software-based Active Noise Reduction for vehicle chassis, targeting 2028 series production", s: "Autocar Professional" },
+  { d: "Jul 12, 2026", t: "Global active-suspension suppliers increasingly position software/control layers as the differentiator over hardware alone", s: "Industry analysis" },
+  { d: "Jul 05, 2026", t: "India's premium SUV segment growth continues to expand the addressable base for semi-active and adaptive damping systems", s: "Industry analysis" },
+  { d: "Jun 28, 2026", t: "Rising EV battery mass continues to drive OEM interest in active body-control software to manage ride quality in heavier platforms", s: "Industry analysis" },
+];
+
+DATA.suspension.verdict.aiAnalyst = {
+  whereWeWin: [
+    "ESP/iBooster production across every major India OEM makes Bosch the established chassis-safety incumbent — suspension control is a natural software extension of existing trust, not new territory",
+    "The deliberate software-only strategy (licence/royalty inside SdV platform deals, no hardware) is margin-positive by design in a field where hardware margins are thin and contested",
+    "Bosch's ADAS camera and navigation data (shared with the ECA field) enable predictive/preview damping features that hardware-only competitors like Gabriel India cannot replicate without a software partner",
+    "Rising EV battery mass is creating a genuine, growing engineering need for active body-control software that Bosch's VMM competency directly addresses",
+  ],
+  exposure: [
+    "At $220M SAM — the smallest addressable pool of any search field in the portfolio — suspension cannot be a meaningful standalone revenue driver even at high market share",
+    "ZF's sMOTION is already in global serial production (Porsche) while Bosch's India suspension-software play remains pre-commercial, a real time-to-market gap",
+    "Damper hardware is entirely sourced from global Tier-1 partners (ZF, Tenneco, BWI) that Bosch depends on and does not control",
+    "India's commercial maturity for active suspension remains at the 'Innovation' stage — premium-only — meaning near-term volume is inherently limited regardless of technology readiness",
+  ],
+  narrative: "Suspension is a deliberately narrow, software-only play riding on Bosch's existing chassis-safety trust rather than a broad market opportunity — at $220M SAM it is the smallest addressable pool in the portfolio, and India commercial maturity remains premium-only. The strategy is sound precisely because it's narrow: license VMM control software into SdV platform deals rather than compete on damper hardware, where global players like ZF are already in serial production and Bosch has no manufacturing intent. The genuine driver is EV battery mass creating new demand for active body-control software Bosch is well-positioned to answer with existing ADAS sensor data. This is a Horizon Play, not a Core Bet: worth pursuing opportunistically inside larger SdV deals, but not worth dedicated standalone investment given the market's current size.",
+  bottomLine: "WATCH / OPPORTUNISTIC — attach suspension software to existing SdV platform deals rather than pursue it as a standalone investment; the addressable market is too small today to justify dedicated resourcing.",
+};
+
+V8.connectivity.competency = {
+  profile: "softwareDigital",
+  areas: {
+    rdInfra: { required: 4, current: 4 }, ip: { required: 3, current: 3 }, manufacturing: { required: 2, current: 2 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 3 }, talent: { required: 4, current: 3 }, organization: { required: 3, current: 3 },
+  },
+  narrative: "Connectivity is the most balanced competency profile in the portfolio — the only meaningful gap is Talent, where cybersecurity and cloud-native engineers are in fierce demand across every India tech sector, not just automotive. Close it through a dedicated cybersecurity-engineering hiring track ahead of the October 2026 AIS-189 compliance deadline, rather than waiting for organic growth.",
+};
+
+DATA.connectivity.activity = [
+  { d: "Aug 01, 2026", t: "India finalises mandatory cybersecurity rules (Rules 125-T, 125-U) for connected/autonomous vehicles — L3+ ADAS models must comply from October 2026", s: "Swarajya / Autoguide India" },
+  { d: "Jul 20, 2026", t: "TRAI's consultation paper on the V2X regulatory framework (released April 30, 2026) closes its public comment period", s: "TRAI" },
+  { d: "Jul 12, 2026", t: "India proposes mandatory V2V communication technology for all new cars, two-wheelers, buses and commercial vehicles from October 2028", s: "Autopunditz" },
+  { d: "Jul 05, 2026", t: "AIS-189 interpretation guidance confirms telematics, location and in-vehicle biometric data fall under DPDP Act privacy obligations", s: "Vayavya Labs" },
+  { d: "Jun 28, 2026", t: "OTA software-update capability compliance deadlines extend in phases through October 2029 across all vehicle categories", s: "Industry analysis" },
+];
+
+DATA.connectivity.verdict.aiAnalyst = {
+  whereWeWin: [
+    "The finalised October 2026 cybersecurity compliance deadline (Rules 125-T/125-U) converts a previously discretionary purchase into a mandatory one — exactly where Bosch's CSMS/SUMS certification readiness becomes a hard requirement",
+    "End-to-end device-to-cloud stack (embedded connectivity hardware + mobility cloud + cybersecurity engineering) matches or exceeds requirement across 4 of 5 competency dimensions — the strongest fit in the portfolio alongside cockpit",
+    "A $2.6B SAM growing 22% CAGR is large enough on its own to matter, and whitespace items (managed vehicle SOC for CERT-In's 6-hour clock, federated mobility-data exchange) have no automotive incumbent yet",
+    "Multi-cloud and dual-sourced telecom carriage give Bosch genuine supply-chain flexibility that hyperscaler-locked competitors lack",
+  ],
+  exposure: [
+    "Cybersecurity and cloud-native engineering talent is in fierce demand across every India tech sector, not just automotive, making retention as hard as hiring",
+    "Tata Elxsi and Reliance Jio are both structurally strong rivals — Jio's telecom scale and Tata Elxsi's margin profile are advantages Bosch cannot easily replicate",
+    "The V2V mandate (October 2028) and OTA compliance phases (through October 2029) are real but multi-year — near-term revenue depends on the narrower CSMS/SUMS compliance wedge, not the full connected-vehicle vision",
+    "AIS-189's explicit tie to DPDP Act privacy obligations adds real compliance complexity to every telematics and biometric data product Bosch ships",
+  ],
+  narrative: "Connectivity is now one of the two strongest fields in Bosch India's portfolio, and the case has gotten materially more concrete: India has finalised mandatory cybersecurity rules with an October 2026 compliance deadline for advanced-ADAS vehicles, converting Bosch's CSMS/SUMS certification readiness from a competitive nice-to-have into a hard regulatory requirement. At a $2.6B SAM growing 22% CAGR, with recurring-revenue-dominant economics and a genuinely under-served compliance and data-exchange whitespace, this field combines near-term mandate-driven demand with long-term platform economics. The principal competitive risk is Tata Elxsi and Reliance Jio, both structurally advantaged in different ways, and the deeper V2V/OTA mandate wave doesn't land until 2028–2029, so near-term execution must focus on the narrower compliance wedge rather than the full connected-vehicle vision. This is a Core Bet field with a hard near-term deadline attached.",
+  bottomLine: "INVEST — lead every commercial conversation with the October 2026 CSMS/SUMS compliance deadline; this is the fastest-closing, most mandate-certain revenue wedge in the portfolio.",
+};
+
+V8.eca.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 4, current: 4 }, ip: { required: 3, current: 3 }, manufacturing: { required: 3, current: 3 },
+    supplyChain: { required: 4, current: 2 }, g2m: { required: 3, current: 3 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The binding constraint is Supply Chain, specifically foundry-fabricated SoC access — Bosch has world-class zonal-architecture and MEMS competency but no leverage over the silicon it depends on. ISM 2.0's July 2026 approval (₹1,27,500 Cr outlay) is a structural tailwind, but real fab capacity is still years from automotive-grade output, so the gap closes through qualification partnerships with ISM-approved fabs, not organic silicon manufacturing.",
+};
+
+DATA.eca.activity = [
+  { d: "Jul 15, 2026", t: "Union Cabinet approves India Semiconductor Mission 2.0 framework spanning chip design, fabrication, packaging and talent development", s: "PIB / IMPRI" },
+  { d: "Jul 18, 2026", t: "12 semiconductor manufacturing units now approved under ISM with over ₹1.64 lakh Cr cumulative committed investment", s: "India Semiconductor Mission" },
+  { d: "Aug 01, 2026", t: "First batch of the ISM–NAMTECH manufacturing-leadership talent programme begins, targeting the automotive-chip skills pipeline", s: "NAMTECH" },
+  { d: "Jul 20, 2026", t: "Automotive electronics named a priority growth vertical under the expanded India Semiconductor Mission 2.0 scope", s: "Invest India" },
+  { d: "Jul 08, 2026", t: "Zonal E/E architecture transition continues to reshape OEM electronics sourcing as AIS-189 compliance requirements bite", s: "Industry analysis" },
+];
+
+DATA.eca.verdict.aiAnalyst = {
+  whereWeWin: [
+    "ECU/MEMS franchise businesses and zonal architecture leadership are core Bosch DNA — a decisive competency moat that doesn't depend on the fab-access gap being solved",
+    "ISM 2.0's ₹1,27,500 Cr July 2026 approval and automotive electronics being named a priority vertical create a multi-year policy tailwind for India-qualified silicon partners like Bosch",
+    "AIS-189's mandatory CSMS requirement (October 2026 deadline for L3+ vehicles) makes Bosch's certified ECA platform the compliance-ready answer OEMs need now, not eventually",
+    "Tata AVINYA and Mahindra INGLO SdV platform programmes are actively defining their ECA architecture today — a live, narrow window Bosch can still win",
+  ],
+  exposure: [
+    "On the single most critical, highest-value input — foundry-fabricated SoCs — Bosch remains one of many customers with no allocation leverage, and ISM 2.0 fab capacity is still years from automotive-grade volume",
+    "Continental's full E/E architecture breadth and domain-controller leadership make it the closest global peer with comparable scale",
+    "KPIT Technologies is expanding aggressively into India OEM ECA software with credible BMW-validated middleware credentials",
+    "Prior ECA programme struggles at US/European OEMs have made conservative India OEM engineering leadership genuinely cautious about full ECA commitments",
+  ],
+  narrative: "ECA is a structurally strong field for Bosch built on real, durable competency — ECU/MEMS franchise businesses and zonal architecture leadership are decisive moats regardless of the silicon-supply-chain gap. The macro environment has also gotten more favourable: ISM 2.0's July 2026 approval names automotive electronics a priority vertical, and AIS-189's October 2026 CSMS deadline converts Bosch's certification-ready platform into a hard requirement for every new OEM programme. The live opportunity is time-limited, though — Tata AVINYA and Mahindra INGLO are defining their ECA architecture right now, and KPIT is moving fast to win the same design-in windows. The one gap that doesn't close on Bosch's own timeline is SoC supply-chain leverage, which depends on India's fab ecosystem maturing over several more years. This is a Core Bet field where the near-term priority is winning the live OEM design-in windows before they close, not waiting for the supply chain to resolve itself.",
+  bottomLine: "INVEST — assign the strongest India ECA technical resources to the live Tata AVINYA and Mahindra INGLO design-in windows now; treat SoC supply-chain risk as a multi-year background factor, not a blocker.",
+};
+
+V8.software.competency = {
+  profile: "softwareDigital",
+  areas: {
+    rdInfra: { required: 4, current: 4 }, ip: { required: 3, current: 3 }, manufacturing: { required: 1, current: 1 },
+    supplyChain: { required: 3, current: 4 }, g2m: { required: 3, current: 3 }, talent: { required: 4, current: 3 }, organization: { required: 3, current: 3 },
+  },
+  narrative: "Software's only real gap is Talent depth in frontier specialisations (GenAI-for-engineering, Adaptive AUTOSAR) — the broader India software delivery ecosystem is a genuine Bosch structural advantage, not a constraint. Close the specialisation gap through targeted senior hiring in GenAI-assisted tooling rather than broad-based recruitment.",
+};
+
+DATA.software.activity = [
+  { d: "Jul 25, 2026", t: "JSW Motors and Tata Elxsi launch JNEXT — the JSW NextGen Technology Center in Pune for SDV and AI-powered mobility engineering", s: "Tata Elxsi" },
+  { d: "Jul 18, 2026", t: "Tata Elxsi reports continued surge in SDV engagement deal volume across its transportation business", s: "Tata Elxsi" },
+  { d: "Jul 10, 2026", t: "KPIT Technologies positioned to benefit from India's planned V2V communication mandate (AIS-230) by October 2028", s: "Sahi.com" },
+  { d: "Jul 02, 2026", t: "Tata Elxsi Avenir cloud-agnostic SDV framework expands AUTOSAR Classic and Adaptive compliance support for India OEMs", s: "Tata Elxsi" },
+  { d: "Jun 25, 2026", t: "Tata Elxsi deepens its Mercedes-Benz R&D India partnership on SDV and vehicle software engineering", s: "Tata Elxsi" },
+];
+
+DATA.software.verdict.aiAnalyst = {
+  whereWeWin: [
+    "AUTOSAR AP certification, the ETAS toolchain and the largest India automotive-software workforce are franchise-level Bosch DNA assets no India-based competitor can match in breadth",
+    "India is now the global delivery hub for this field's core inputs — talent, cloud, open-source foundations — giving Bosch the most mature, localised supply base of any field in the portfolio",
+    "A $2.8B SAM growing 24% CAGR with the strongest revenue-quality mix in the portfolio (55% licensing, rising GenAI/data monetisation) makes this the single largest addressable pool Bosch can realistically win",
+    "A certified GenAI-assisted toolchain and full SDV stacks for mid-size OEMs remain explicitly unclaimed white space even as competitors like Tata Elxsi and KPIT win large deals elsewhere",
+  ],
+  exposure: [
+    "Tata Elxsi's new JNEXT centre with JSW Motors and its deepening Mercedes-Benz R&D India partnership show the strongest India competitor winning marquee SDV engagements at real scale, not standing still",
+    "KPIT Technologies carries BMW-validated credibility and is expanding aggressively into the same India OEM SDV middleware space Bosch is targeting",
+    "The 35% T&M-services slice of Bosch's software revenue is explicitly thin-margin, diluting the blended economics even where the licensing business is strong",
+    "Frontier specialisation talent (GenAI-for-engineering, Adaptive AUTOSAR) remains genuinely scarce even within India's otherwise deep software talent pool",
+  ],
+  narrative: "Software is the largest and, on revenue-quality grounds, the most attractive field in Bosch India's portfolio — a $2.8B SAM growing 24% CAGR, anchored by AUTOSAR AP certification and the ETAS toolchain, in a market where India is now the global delivery hub rather than just a cost centre. The white space is real and specific: certified GenAI-assisted toolchains and full SDV stacks for mid-size OEMs remain unclaimed even as the largest deals go to Tata Elxsi and KPIT. Those two competitors are the genuine threat here, not weak positioning — Tata Elxsi's new JNEXT centre with JSW Motors and its deepening Mercedes-Benz R&D India relationship show a competitor winning at real scale, and KPIT's BMW-validated credibility gives it a comparable trust asset. The path to winning is the mid-size-OEM segment the two India champions are less focused on, plus the GenAI-tooling layer where nobody has established leadership yet. This is unambiguously a Core Bet field.",
+  bottomLine: "INVEST — the largest, best-positioned field in the portfolio; focus commercial effort on mid-size OEMs and GenAI-assisted tooling where Tata Elxsi and KPIT haven't yet established leadership.",
+};
+
+V8.manufacturing.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 4, current: 3 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The real gap is Go-To-Market, not engineering: Bosch has certified quality systems and Industry 4.0 digitalisation practice, but selling external contract manufacturing capacity (an EMS/MaaS commercial model) is a genuinely new business motion Bosch hasn't built. Close it by hiring a dedicated EMS business-development lead rather than routing this through existing automotive-component sales channels.",
+};
+
+DATA.manufacturing.activity = [
+  { d: "Aug 01, 2026", t: "India's PLI scheme now spans 14 sectors with over $24B committed investment; auto components drove ₹67,690 Cr under auto PLI with a 184% FY27 budget jump", s: "PIB / RealShePower" },
+  { d: "Jul 22, 2026", t: "Electronics EMS receives ₹2.16 lakh Cr committed investment under PLI Electronics as global manufacturers pursue China+1 diversification", s: "KPMG India" },
+  { d: "Jul 20, 2026", t: "India's auto component exports exceed $21B in FY2024-25, reinforcing India's position as a China+1 manufacturing destination", s: "Industry analysis" },
+  { d: "Jul 12, 2026", t: "PLI-driven manufacturing has created over 14.39 lakh direct and indirect jobs, with electronics and auto components as major contributors", s: "RealShePower" },
+  { d: "Jul 05, 2026", t: "China+1 diversification continues to drive large-scale engineering job creation in India manufacturing, estimated near 50 lakh new roles", s: "Dheya Insights" },
+];
+
+DATA.manufacturing.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Certified quality systems (IATF 16949) and Industry 4.0 digitalisation practice are core Bosch DNA that directly serve the China+1 EMS opportunity",
+    "PLI's ₹67,690 Cr auto-component commitment and a 184% FY27 budget jump show real, growing government capital behind India's manufacturing scale-up",
+    "The certified-niche strategy — automotive-grade EMS plus deployable I4.0 digitalisation solutions — targets exactly the premium segment global brands need as they diversify away from China",
+    "A rising 15% digitalisation-solutions licence revenue stream, explicitly the field's margin engine, gives Bosch a path to better economics than pure commodity EMS",
+  ],
+  exposure: [
+    "Commodity EMS margins (3-5%) sit structurally below Bosch's hurdle rate, and this remains the dominant characterisation of the broader field even as the certified niche performs better",
+    "Dixon Technologies, Kaynes and Syrma are direct, well-capitalised competitors already winning China+1 EMS volume at scale",
+    "The commercial GTM motion needed to sell external contract manufacturing (EMS/MaaS) is genuinely new capability Bosch hasn't built, not an extension of existing automotive-component sales",
+    "Automotive-qualified sub-assembly supply remains a concentrated bottleneck even as general electronics components localise quickly under PLI",
+  ],
+  narrative: "Manufacturing sits in a large, PLI-charged market — 14 sectors, over $24B committed investment, and real China+1 momentum — but most of that opportunity is commodity EMS margin territory Bosch's economics don't support. The defensible slice is narrower and specific: certified automotive-grade contract manufacturing bundled with I4.0 digitalisation solutions, where quality systems and digital-twin practice are genuine Bosch DNA and the emerging licence-revenue stream is explicitly the margin engine. Dixon, Kaynes and Syrma are already winning China+1 EMS volume at scale, and Bosch has no realistic path to compete with them on commodity terms. The binding constraint isn't manufacturing capability, it's a genuinely new go-to-market motion — selling external contract capacity — that doesn't yet exist inside Bosch's commercial organisation. This is a Horizon Play: pursue the certified niche deliberately, build the EMS GTM motion as a first step, and stay out of the commodity segment entirely.",
+  bottomLine: "PARTNER & GATE — build a dedicated EMS/MaaS go-to-market motion focused on certified automotive-grade capacity bundled with I4.0 digitalisation; do not compete for commodity EMS volume against Dixon, Kaynes or Syrma.",
+};
+
+V8.fintech.competency = {
+  profile: "dataPlatform",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 2 }, manufacturing: { required: 2, current: 2 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 2 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The consistent theme across IP, G2M and Talent is that fintech execution — licensed financial services, insurtech partnerships — sits outside Bosch's traditional Tier-1 operating model, even though vehicle-side data and trust assets are strong. Close it by hiring from India's insurtech/fintech sector directly rather than developing the capability internally.",
+};
+
+DATA.fintech.activity = [
+  { d: "Aug 10, 2026", t: "UPI's 2026 roadmap pushes toward 'invisible' payments and super-app functionality, with insurance premium payments now supported up to ₹5-10 lakh per transaction", s: "Onmanorama / Stashfin" },
+  { d: "Jul 28, 2026", t: "NPCI enables FASTag recharge directly through BHIM UPI, deepening UPI-vehicle payment rail integration", s: "Deccan Herald" },
+  { d: "Jul 15, 2026", t: "UPI AUTOPAY recurring-mandate functionality expands to cover insurance, EMI and subscription payments at scale", s: "NPCI" },
+  { d: "Jul 08, 2026", t: "RBI/NPCI's raised UPI transaction limits for insurance premiums pull major insurers (LIC, HDFC Life, ICICI Prudential) into UPI-native payment flows", s: "Billcut" },
+  { d: "Jun 30, 2026", t: "India's digital-payment infrastructure maturity strengthens the case for automotive-grade UPI/Aadhaar identity integration in-vehicle", s: "Industry analysis" },
+];
+
+DATA.fintech.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Vehicle-side trust and data assets (secure elements, HSM competence, driving-behaviour telemetry) are decisive Bosch strengths no fintech-native competitor can replicate",
+    "NPCI's 2026 push toward UPI 'super-app' functionality and higher insurance-payment limits (up to ₹10L) creates real rails Bosch products can plug into rather than build from scratch",
+    "UPI AUTOPAY's expansion to insurance and EMI recurring payments gives Bosch a proven, government-built mechanism for in-vehicle subscription and usage-based-insurance billing",
+    "No automotive-grade UPI implementation exists yet — a genuine, unclaimed segment gap in an otherwise crowded fintech landscape",
+  ],
+  exposure: [
+    "The field's core execution — licensed financial services, insurer/bank partnerships — sits entirely outside Bosch's traditional Tier-1 operating model, the most bimodal competency profile in the portfolio",
+    "Acko and ICICI Lombard both have direct, established insurer relationships and regulatory licences Bosch would need years to replicate",
+    "At $0.6B SAM, this is a modest opportunity that depends entirely on partnership execution, not organic product-led growth",
+    "RBI/IRDAI set the licensing perimeter for financial products independent of Bosch's automotive relationships, and Bosch has essentially no direct channel to influence that policy",
+  ],
+  narrative: "Fintech is a genuine but narrow opportunity that depends more on partnership execution than product capability: Bosch's vehicle-side trust assets (secure elements, telemetry, HSM competence) are real and differentiated, and NPCI's 2026 UPI roadmap — higher insurance-payment limits, AUTOPAY expansion, FASTag-UPI integration — is actively building the rails an automotive-grade payment and usage-based-insurance product could plug into. But the $0.6B SAM is modest, and the actual execution (bank/insurer partnerships, regulatory navigation) sits outside Bosch's traditional operating model entirely. Competitors like Acko and ICICI Lombard already hold the licences and relationships Bosch would need years to build. This is a partnership-dependent Horizon Play: pursue the automotive-grade UPI/identity white space through a named insurer or bank partnership, not as a standalone product build.",
+  bottomLine: "PARTNER — pursue one named bank or insurer partnership to build automotive-grade UPI/usage-based-insurance products; do not attempt to build licensed financial-services capability internally.",
+};
+
+V8.infrastructure.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 3, current: 3 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The gap is Go-To-Market: winning India's B2G infrastructure tenders (NHAI, Smart Cities) requires a consortium-and-relationship model fundamentally different from Bosch's direct-sales Tier-1 playbook. NHAI's MLFF rollout — expanding to 17 fee plazas across nine states by September 2026 — is real and moving fast, so the priority is building consortium partnerships with Indian system integrators now, not waiting for the B2G relationship to mature organically.",
+};
+
+DATA.infrastructure.activity = [
+  { d: "Aug 05, 2026", t: "NHAI plans to expand MLFF barrier-less tolling to 17 fee plazas across nine states, targeting go-live by September 2026", s: "PSU Watch / Fox Mandal" },
+  { d: "Jul 20, 2026", t: "NHAI's barrier-less MLFF tolling system at the NH-48 Chorayasi plaza is projected to save ₹285 Cr in fuel and cut CO2 emissions by 81,000 tonnes annually", s: "The Tribune / Angel One" },
+  { d: "Jul 12, 2026", t: "India's first MLFF deployment combines FASTag RFID, ANPR cameras and LiDAR sensors as an early vehicle-to-infrastructure use case", s: "HOAI / ID Solutions" },
+  { d: "Jul 04, 2026", t: "MoRTH drafts a V2V communication mandate (AIS-230) for all new Category L, M and N vehicles from October 2028", s: "Business Standard" },
+  { d: "Jun 28, 2026", t: "NHAI's AI-powered barrier-less toll booths are projected to save ₹7,000 Cr in infrastructure costs nationally", s: "Trak.in" },
+];
+
+DATA.infrastructure.verdict.aiAnalyst = {
+  whereWeWin: [
+    "NHAI's MLFF rollout is not a pilot anymore — it's expanding to 17 fee plazas across nine states with a hard September 2026 go-live target, giving Bosch's GNSS-tolling heritage and automotive V2X assets a concrete, funded deployment window",
+    "The MLFF transition genuinely resets incumbency in tolling technology — 'technology decides,' not existing relationships — which favours a technically capable entrant over legacy vendors coasting on incumbency",
+    "Bosch manufactures OBU/RSU assembly in-house at existing India plants, giving real cost and speed leverage competitors sourcing globally don't have",
+    "The V2V mandate (AIS-230, October 2028) adds a second, multi-year structural tailwind behind the tolling opportunity",
+  ],
+  exposure: [
+    "Winning India's B2G infrastructure tenders requires a consortium-and-relationship model Bosch's direct-sales Tier-1 playbook isn't built for — this is the field's most foreign go-to-market motion",
+    "Siemens India carries a 40-year embedded government relationship across NHAI, Delhi Metro and Smart Cities that is very hard to out-relationship in the near term",
+    "L1 lowest-bid procurement structurally squeezes margins across the B2G-majority revenue base, explicitly flagged in the field's own market analysis",
+    "C-V2X roadside-unit electronics remain a supply bottleneck with limited certified India vendors even as OBU-side manufacturing is strong",
+  ],
+  narrative: "Infrastructure has moved from policy-stage to execution-stage in the last few months: NHAI's MLFF barrier-less tolling is expanding fast, with a hard September 2026 target across 17 fee plazas, and India's GNSS-tolling and automotive V2X heritage give Bosch a real technical right-to-win as the technology transition resets who owns the incumbency. The risk isn't technology, it's go-to-market — winning B2G tenders requires a consortium relationship model Bosch doesn't naturally run, and Siemens India's 40-year embedded government relationship is a real incumbency advantage even under a technology reset. L1 lowest-bid procurement will keep squeezing margins across the bulk of the B2G revenue base regardless of who wins. This is a field where market timing is now urgent and favourable, but Bosch needs a consortium partner fast to actually capture the MLFF window before it closes.",
+  bottomLine: "INVEST WITH A PARTNER — move now to secure a consortium relationship with an Indian system integrator to bid into the active MLFF rollout; the September 2026 deployment window is closing.",
+};
+
+V8.sustainability.competency = {
+  profile: "dataPlatform",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 3 }, manufacturing: { required: 2, current: 2 },
+    supplyChain: { required: 3, current: 3 }, g2m: { required: 3, current: 2 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The field is deliberately structured around Bosch's data/certification layer, not physical recycling capital — the one real gap is Go-To-Market, since selling EPR-traceability-as-a-service through the workshop network is a new commercial motion distinct from component sales. NITI Aayog's January 2026 circular-economy reports and the growing battery-scrap security narrative strengthen the case for moving now.",
+};
+
+DATA.sustainability.activity = [
+  { d: "Jan 22, 2026", t: "NITI Aayog releases three Circular Economy reports (ELVs, waste tyres, lithium-ion batteries) at the International Material Recycling Conference in Jaipur", s: "NITI Aayog" },
+  { d: "Jul 25, 2026", t: "Ace Green Recycling finalises its Mundra, Gujarat site for India's largest battery-recycling facility, targeting 10,000 tonnes/year LFP capacity by 2026", s: "S&P Global / AutoTech Insight" },
+  { d: "Jul 20, 2026", t: "India's battery-scrap security emerges as the sector's next major challenge as near-100% cell-import dependence persists", s: "Autocar Professional" },
+  { d: "Jul 10, 2026", t: "India's battery-recycling market reaches ₹17,000 Cr scale with EPR compliance driving Attero and Lohum capacity expansion", s: "DIYguru" },
+  { d: "Jul 02, 2026", t: "V-VMP and SASCI Scheme funding accelerate Registered Vehicle Scrapping Facility (RVSF) rollout nationally", s: "Kar Parivartan" },
+];
+
+DATA.sustainability.verdict.aiAnalyst = {
+  whereWeWin: [
+    "The 10,000-workshop network and BMS/battery-diagnostics data are hard-to-replicate assets that map directly onto the field's real need — trusted collection points plus certified battery-health and traceability data",
+    "NITI Aayog's January 2026 circular-economy reports and the ₹17,000 Cr battery-recycling market scale confirm this is now a funded, policy-anchored opportunity rather than a speculative one",
+    "India's near-100% cell-import dependence is creating an explicit 'battery-scrap security' narrative that elevates traceability and certified-data services from a compliance nicety to a strategic priority",
+    "The field is deliberately structured to avoid capital-heavy physical recycling — Bosch's data/certification layer captures software-like margins while Attero and others take the capital risk",
+  ],
+  exposure: [
+    "Attero Recycling is 'India's only industrial-scale Li-ion battery recycler' with OEM EPR contracts already in place, and is actively expanding into the same EPR-compliance and certification data layer Bosch is targeting",
+    "Ace Green Recycling's new Mundra facility and Lohum's capacity expansion show real capital flowing into physical recycling — competitors are moving to build the same data/traceability moat from the recycling side",
+    "Selling EPR-traceability-as-a-service through the workshop network is a genuinely new commercial motion, not a natural extension of component sales",
+    "The near-term addressable pool ($0.5B SAM) remains the smallest of the technology-adjacent fields even as the underlying policy and market signals strengthen",
+  ],
+  narrative: "Sustainability has moved from a speculative bet to a real, policy-anchored opportunity: NITI Aayog's January 2026 circular-economy reports and a ₹17,000 Cr battery-recycling market confirm genuine scale, and India's near-100% cell-import dependence has elevated battery-scrap traceability from compliance nicety to strategic priority. Bosch's approach — the workshop network plus BMS/diagnostics data, deliberately avoiding capital-heavy physical recycling — is the right structural choice, capturing software-like margins while Attero and Ace Green Recycling take the capital risk on the physical side. The competitive risk is that those same physical-recycling players are moving up the value chain into the exact data and certification layer Bosch is targeting, so the window to establish the data-layer position is open now but not indefinitely. At $0.5B SAM this remains the smallest near-term pool among the technology-adjacent fields, but the growth rate and policy backing are among the strongest in the portfolio.",
+  bottomLine: "INVEST — move now to launch EPR-traceability-as-a-service through the workshop network before Attero or Ace Green Recycling establish the data-layer position from the recycling side.",
+};
+
+V8.evtol.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 3, current: 2 }, manufacturing: { required: 3, current: 1 },
+    supplyChain: { required: 3, current: 1 }, g2m: { required: 3, current: 1 }, talent: { required: 3, current: 2 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The binding constraints are Manufacturing and Supply Chain — aerospace-grade component supply is described as 'very limited' in India and the qualified supplier base is effectively nonexistent, a gap Bosch's automotive-grade manufacturing doesn't translate into directly. Sarla Aviation's August 2026 DGCA Design Organisation Approval — the fastest in Indian aviation history — shows the regulatory and prime-integrator path is opening faster than the component supply chain; Bosch's near-term opportunity is as a subsystem supplier to primes like Sarla or ePlane, not a certified aircraft manufacturer.",
+};
+
+DATA.evtol.activity = [
+  { d: "Aug 10, 2026", t: "Sarla Aviation becomes the first Indian eVTOL company to receive DGCA Design Organisation Approval — the fastest DOA in Indian aviation history", s: "Tech Times" },
+  { d: "Aug 08, 2026", t: "India pushes electric air-taxi flight testing through 2026, targeting commercial operations by 2028", s: "Republic World" },
+  { d: "Jul 15, 2026", t: "Sarla Aviation's Shunya prototype completes 500+ flight tests and 18 hours of flight time, demonstrating India's first distributed-propulsion wing system", s: "Forbes India" },
+  { d: "Jul 20, 2026", t: "The ePlane Company advances its e200X toward type certification, expecting certified flight tests to begin by mid-2027", s: "Business Standard" },
+  { d: "Jul 05, 2026", t: "India's Civil Aviation Minister confirms a 2028 target for commercial electric air-taxi launch as urban mobility policy attention builds", s: "The Core" },
+];
+
+DATA.evtol.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Propulsion, sensing and BMS competencies transfer genuinely from Bosch's automotive base, even if the aerospace-certification layer does not",
+    "Sarla Aviation's record-fast DGCA Design Organisation Approval shows India's eVTOL regulatory path is now real and moving, not indefinitely speculative",
+    "A subsystem-supplier role to certified primes (Sarla, ePlane) avoids the aerospace-certification capability gap entirely while still capturing automotive-adjacent technology value",
+    "Being an early, credible India automotive-grade subsystem partner now positions Bosch ahead of the 2028 commercial-launch window the primes are racing toward",
+  ],
+  exposure: [
+    "Aerospace-qualified component supply in India is described as 'very limited' and the domestic eVTOL supply chain is effectively nonexistent — a structurally nascent, high-risk position",
+    "Bosch has zero aviation regulatory relationships and no DO-178C/DO-254 certification expertise, a categorical capability gap versus automotive",
+    "At an $80M SAM by 2030, this remains speculative-scale even in the base case, with real risk the market never reaches volume",
+    "Joby Aviation's India exploration brings a globally certified, $1B+-funded competitor into the same early conversations Bosch would be having",
+  ],
+  narrative: "eVTOL remains a genuinely early-stage, option-value field rather than a near-term business, but the ground has shifted meaningfully with Sarla Aviation's August 2026 DGCA Design Organisation Approval — the fastest in Indian aviation history — showing the regulatory and prime-integrator path opening faster than expected. Bosch's realistic entry point is as a subsystem supplier (propulsion, sensing, BMS) to certified primes like Sarla or ePlane, not as an aircraft manufacturer, since the aerospace-certification and India supply-chain gaps are categorical rather than incremental. At an $80M SAM this cannot be a near-term revenue driver, and Joby Aviation's India exploration brings a globally certified, deep-pocketed competitor into the same early conversations. This is a deliberate option-preservation bet: engage now as a subsystem partner to the fastest-moving Indian primes, at low committed capital, to be positioned if the 2028 commercial-launch target holds.",
+  bottomLine: "WATCH / OPTION-PRESERVE — pursue a subsystem-supply conversation with Sarla Aviation or ePlane now at low committed capital; do not pursue certified-aircraft-level investment.",
+};
+
+V8.robotics.competency = {
+  profile: "hardwareMechatronic",
+  areas: {
+    rdInfra: { required: 4, current: 4 }, ip: { required: 3, current: 3 }, manufacturing: { required: 3, current: 3 },
+    supplyChain: { required: 3, current: 4 }, g2m: { required: 3, current: 3 }, talent: { required: 3, current: 3 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "Robotics is a genuinely strong competency fit — sensor, actuator and real-time safety-compute competencies match or exceed requirement across the board, reinforced by an unusually favourable self-supply position on MEMS/camera/compute inputs. There is no single dominant gap; the priority is execution speed, not capability-building, given India's warehouse-automation market is now $2.8B and growing 18.6% CAGR with fast-moving competitors already scaling.",
+};
+
+DATA.robotics.activity = [
+  { d: "Jul 25, 2026", t: "Hikrobot India unveils the Hikpad AMR — described as a first-of-its-kind launch for India's smart logistics space — at Automation Expo 2026, Mumbai", s: "TechnoSports" },
+  { d: "Jul 22, 2026", t: "India's warehouse automation market reaches $2.8B in 2026, forecast to scale to $13B by 2035 at 18.6% CAGR", s: "OpenPR / MarkWide Research" },
+  { d: "Jul 15, 2026", t: "India's robotics market grows 17% YoY, the fastest growth rate among the world's top-10 robotics markets", s: "Robotics Center of Silicon Valley" },
+  { d: "Jul 08, 2026", t: "Addverb Technologies and GreyOrange deepen BIS-certified AMR product lines as domestic manufacturing scales", s: "Industry analysis" },
+  { d: "Jun 30, 2026", t: "Humanoid robotics platforms (e.g. Agility Robotics' Digit) continue advancing warehouse box-handling and manipulation capability globally", s: "Industry analysis" },
+];
+
+DATA.robotics.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Sensor, actuator and real-time safety-compute competencies match or exceed requirement across every dimension — the strongest, most complete competency fit of any field in the portfolio alongside cockpit and connectivity",
+    "An unusually favourable self-supply position on MEMS, cameras and compute modules gives Bosch real cost and speed leverage most AMR competitors lack",
+    "The robotics-SdV convergence thesis lets a single engineering investment serve both the robotics and software fields simultaneously, improving the effective return",
+    "India's robotics market is growing 17% YoY — the fastest among the world's top-10 markets — inside a warehouse-automation expansion from $2.8B toward $13B by 2035",
+  ],
+  exposure: [
+    "Geek+ already has the largest India AMR installed base (200+ references) with $200M raised and a $2B valuation, an entrenched incumbent lead",
+    "Hikrobot India's new Hikpad AMR launch at Automation Expo 2026 shows a well-resourced global player actively entering the same India smart-logistics segment",
+    "GreyOrange and Addverb are both deepening BIS-certified domestic product lines, narrowing any localisation advantage Bosch might otherwise hold",
+    "Humanoid robotics remains a longer-horizon, less certain bet globally even as the broader AMR/warehouse-automation segment matures faster",
+  ],
+  narrative: "Robotics is one of the strongest-fit fields in Bosch India's portfolio — sensor, actuator and safety-compute competencies match or exceed requirement across every dimension, reinforced by a genuinely favourable self-supply position on MEMS, camera and compute inputs that most competitors lack. The market backdrop has strengthened further: India's robotics market is now growing 17% YoY, the fastest among the world's top-10, inside a warehouse-automation market moving from $2.8B to a forecast $13B by 2035. The competitive field is real, though — Geek+'s entrenched 200+-reference installed base, Hikrobot's new India product launch, and GreyOrange/Addverb's deepening domestic BIS-certified lines mean this is a contested field even with strong Bosch fundamentals, not an open field. The robotics-SdV convergence thesis is a genuine efficiency lever, letting the same engineering investment serve two fields. This is a Core Bet: the competency fit and market growth both justify aggressive investment, with execution speed as the deciding factor against fast-moving incumbents.",
+  bottomLine: "INVEST — robotics has the strongest all-round competency fit in the portfolio; the priority is execution speed against Geek+, Hikrobot and GreyOrange, not further capability-building.",
+};
+
+V8.health.competency = {
+  profile: "hybrid",
+  areas: {
+    rdInfra: { required: 3, current: 3 }, ip: { required: 2, current: 2 }, manufacturing: { required: 2, current: 2 },
+    supplyChain: { required: 3, current: 2 }, g2m: { required: 3, current: 3 }, talent: { required: 2, current: 2 }, organization: { required: 2, current: 2 },
+  },
+  narrative: "The clearest gap is Talent, specifically medical-device regulatory and clinical-validation expertise, where Bosch's automotive engineering base has essentially no bench strength. The PM RAHAT scheme's ERSS 112 integration (₹1.5 lakh cashless golden-hour cover) is a real, funded policy anchor that strengthens the eCall business case — close the talent gap by partnering with a clinical/medtech player rather than hiring standalone medical expertise Bosch would rarely use elsewhere.",
+};
+
+DATA.health.activity = [
+  { d: "Aug 06, 2026", t: "Government launches the PM RAHAT scheme, offering ₹1.5 lakh cashless emergency treatment for road accident victims, integrated with ERSS 112", s: "India.com" },
+  { d: "Jul 28, 2026", t: "SOS/eCall emergency features become near-standard across new Indian cars, automatically sharing crash location without driver input", s: "DriveSpark" },
+  { d: "Jul 20, 2026", t: "112 emergency helpline continues demonstrating real-world crash-response effectiveness across Indian states", s: "State Police / Babushahi" },
+  { d: "Jul 12, 2026", t: "India's weekly road-accident tracking data continues to underscore the scale of the golden-hour response opportunity", s: "Roads Transporter" },
+  { d: "Jul 05, 2026", t: "Industry webinar highlights continued momentum toward a formal eCall mandate for India passenger cars", s: "Autocar Professional" },
+];
+
+DATA.health.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Telematics platform and GPS crash-detection already deployed via AIS-140 make eCall a near-zero-incremental-cost software extension, not new hardware development",
+    "PM RAHAT's ₹1.5 lakh cashless golden-hour cover, newly integrated with ERSS 112, gives the eCall business case a funded, government-backed anchor it didn't have before",
+    "SOS/eCall features are now becoming near-standard in new Indian cars, showing market pull has moved from early-adopter to mainstream expectation",
+    "DMS camera fatigue-sensing hardware already in production gives Bosch a software-only path into wellness/health monitoring without new sensor investment",
+  ],
+  exposure: [
+    "Medical-device regulatory and clinical-validation competency is close to absent in Bosch's automotive engineering base — a categorical gap, not an incremental one",
+    "112's real-world effectiveness still depends on local ambulance and police response capacity that varies significantly by state and remains outside Bosch's control",
+    "CDSCO medical-device classification risk means any product making a diagnostic (not wellness) claim faces a regulatory path Bosch has no experience navigating",
+    "Health remains the smallest, most mandate-dependent field in the portfolio — without a formal eCall mandate, the commercial anchor is thinner than in other fields",
+  ],
+  narrative: "Health has a stronger case than it did a review cycle ago: PM RAHAT's ₹1.5 lakh cashless golden-hour cover, now integrated with ERSS 112, and the mainstreaming of SOS/eCall features in new cars both show real policy and market momentum behind the field's core wedge. Bosch's existing AIS-140 telematics and DMS camera hardware make eCall and fatigue/wellness monitoring genuinely low-incremental-cost extensions rather than new product bets. The constraint is capability, not opportunity: medical-device regulatory and clinical-validation competency is close to absent in Bosch's automotive engineering base, and this is a categorical gap a clinical or medtech partnership closes far faster than internal hiring would. At the smallest SAM in the portfolio and without a hard eCall mandate yet, health remains a Horizon Play rather than a Core Bet, but the wedge — eCall integrated with PM RAHAT and 112 — is real, funded, and worth pursuing now.",
+  bottomLine: "PARTNER & GATE — pursue the eCall/PM RAHAT wedge now via a clinical/medtech partnership for the regulatory gap; do not scale beyond eCall and wellness monitoring without a formal mandate.",
+};
+
 /* ════════════════════════════ UI atoms ═══════════════════════════════════ */
 /* Hover tooltip — wrap any child; `label` shows in the floating box */
 const Tip = ({ label, children }) => {
@@ -6391,79 +7013,7 @@ const Gauge = ({ score, label }) => {
 };
 
 /* Methodology — identical for every field; shown both as a tab and inline */
-const Methodology = ({ compact }) => (
-  <div className={compact ? "" : "max-w-3xl"}>
-    {!compact && (
-      <p className="text-sm text-slate-600 mb-4">
-        The pipeline, formula, weights and confidence rubric below are <b>fixed and identical for every
-          search field and sub-field</b>. Only the inputs (web evidence, playbook passages, Bosch mapping)
-        change — never the method. Scores and the verdict are <b>computed in code</b>; the LLM writes
-        reasoning and may adjust the final score by at most ±0.5 with a stated justification.
-      </p>
-    )}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card title="1 · Fixed analysis pipeline (every run)">
-        <ol className="text-sm space-y-1.5 list-decimal list-inside text-slate-700">
-          <li>Targeted web searches per framework (free sources, India-scoped)</li>
-          <li>Playbook RAG — methodology passages injected into the prompt</li>
-          <li>Grounded framework analysis → strict JSON with per-claim citations</li>
-          <li>Each in-matrix framework returns <b>score (1–10)</b> + <b>confidence</b> per rubric</li>
-          <li>Decision matrix computed → verdict band → LLM reasoning (clamped ±0.5)</li>
-        </ol>
-      </Card>
-      <Card title="2 · Score formula (deterministic)">
-        <div className="text-xs font-mono bg-slate-50 rounded-lg p-3 text-slate-700 leading-relaxed">
-          eff_weight<sub>i</sub> = weight<sub>i</sub> × max(conf<sub>i</sub>, 0.2)<br />
-          contribution<sub>i</sub> = score<sub>i</sub> × eff_weight<sub>i</sub><br />
-          <b>weighted_score = Σ contribution / Σ eff_weight</b><br />
-          verdict_confidence = Σ(conf<sub>i</sub> × weight<sub>i</sub>) / Σ weight<sub>i</sub>
-        </div>
-        <p className="text-xs text-slate-500 mt-2">Low-confidence criteria automatically count less. The LLM never sets the score or the confidence — both are arithmetic over the criterion outputs.</p>
-      </Card>
-      <Card title="3 · Criterion weights (config, same for all fields)">
-        <table className="w-full text-sm">
-          <tbody>
-            {WEIGHTS.map(w => (
-              <tr key={w.id} className="border-t border-slate-100 first:border-0">
-                <td className="py-1.5">{w.c}<div className="text-[10px] text-slate-400">{w.f}</div></td>
-                <td className="text-right font-semibold">{w.w.toFixed(2)}</td>
-              </tr>
-            ))}
-            <tr className="border-t-2 border-slate-200 font-bold"><td className="py-1.5">Total</td><td className="text-right">1.00</td></tr>
-          </tbody>
-        </table>
-        <p className="text-xs text-slate-500 mt-2">Weights live in <code>criteria.json</code> — changing them is a governance decision, applied to all fields at once.</p>
-      </Card>
-      <Card title="4 · Confidence rubric (evidence quality, not enthusiasm)">
-        <table className="w-full text-sm">
-          <tbody>
-            {RUBRIC.map(r => (
-              <tr key={r.range} className="border-t border-slate-100 first:border-0">
-                <td className="py-1.5 font-mono text-xs whitespace-nowrap pr-3">{r.range}</td>
-                <td className="text-xs text-slate-600">{r.m}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-      <div className="md:col-span-2">
-        <Card title="5 · Verdict bands (fixed thresholds on the weighted score)">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {BANDS.map(b => (
-              <div key={b.v} className="border border-slate-200 rounded-lg p-3">
-                <div className="font-bold text-sm">{b.v}</div>
-                <div className="text-xs text-slate-400">score ≥ {b.min}</div>
-                <div className="text-xs text-slate-600 mt-1">{b.m}</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-    </div>
-  </div>
-);
-
-const TABS = ["PESTEL", "SWOT", "Market", "Attractiveness", "Competency", "Stakeholders", "Competitors", "Suppliers", "3 Horizons", "Recent Activity", "Methodology", "Recommendation"];
+const TABS =["PESTEL", "SWOT", "Market", "Attractiveness", "Competency", "Stakeholders", "Competitors", "Suppliers", "3 Horizons", "Recent Activity", "AI Analyst"];
 
 export default function App() {
   const [fieldId, setFieldId] = useState("lighting");
@@ -6480,19 +7030,21 @@ export default function App() {
   const hasData = !!d;
   const hScore = hasData ? computeHorizonScore(d.horizons) : null;
 
-  /* ── V8 index engine — each framework independent, no combined master score ── */
+  /* ── V9 index engine — every component index normalized −1..+1, rolling up into one MGI ── */
   const pestelIdx = v8?.pestel ? computePESTELIndex(v8.pestel) : null;
-  const swotIdx = v8?.swot ? computeSWOTIndex(v8.swot) : null;
+  const swotIdx = v8?.swot ? computeSWOTPosture(v8.swot) : null;
   const masResult = v8?.market ? computeMAS(v8.market) : null;
   const iaiResult = v8?.iai ? computeIAI(v8.iai) : null;
+  const cgiResult = v8?.competency ? computeCGI(v8.competency) : null;
   const sviResult = v8?.stakeholders?.length ? computeSVI(v8.stakeholders) : null;
   const competitorThreats = v8?.competitors?.length ? v8.competitors.map(c => ({ ...c, ...competitorThreat(c.marketPosition, c.futureMomentum) })) : null;
   const advantageResult = v8?.boschStrength && v8?.marketGapSignificance ? boschAdvantage(v8.boschStrength, v8.marketGapSignificance) : null;
-  const cliResult = competitorThreats && advantageResult ? computeCLI(competitorThreats.map(c => c.s), advantageResult.s) : null;
+  const cpiResult = competitorThreats?.length && advantageResult ? computeCPI(avg(competitorThreats.map(c => c.s)), advantageResult.s) : null;
   const scviResult = v8?.supplyChainMaturity && v8?.boschControl ? computeSCVI(v8.supplyChainMaturity, v8.boschControl) : null;
-  const scviBand = scviResult ? pickBandMin(SCVI_BANDS, scviResult.s) : null;
-  const tpsResult = v8?.techVelocity && v8?.commReadiness ? computeTPS(v8.techVelocity, v8.commReadiness) : null;
-  const tpsBand = tpsResult ? pickBandMin(TPS_BANDS, tpsResult.s) : null;
+  const tpiResult = v8?.techVelocity && v8?.commReadiness ? computeTPI(v8.techVelocity, v8.commReadiness) : null;
+  const mgiResult = (masResult && pestelIdx && cgiResult && swotIdx && cpiResult && scviResult && sviResult && tpiResult)
+    ? computeMGI({ mai: masResult.mai, pi: pestelIdx.index, cgi: cgiResult.cgi, spi: swotIdx.spi, cpi: cpiResult.cpi, scvi: scviResult.scvi, svi: sviResult.svi, tpi: tpiResult.tpi })
+    : null;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#F7F8FA", fontFamily: "'Segoe UI', system-ui, sans-serif", color: INK }}>
@@ -6563,38 +7115,105 @@ export default function App() {
                 ))}
               </div>
 
-              {/* ─────────────── RECOMMENDATION — 8 independent indices, per the Bosch BBM Search-Field Scoring Document ─────────────── */}
-              {tab === "Recommendation" && (
+              {/* ─────────────── AI ANALYST — Master Growth Index + 9 component indices, per the Bosch BBM Search-Field Scoring Document v2 ─────────────── */}
+              {tab === "AI Analyst" && (
                 <div className="space-y-4">
+                  {mgiResult && (
+                    <div className="bg-white rounded-xl border-2 shadow-sm p-5" style={{ borderColor: mgiResult.band.color }}>
+                      <div className="flex flex-wrap items-center gap-5">
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Master Growth Index (MGI)</div>
+                          <div className="text-4xl font-extrabold" style={{ color: mgiResult.band.color }}>{mgiResult.mgi}</div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-full inline-block" style={{ background: mgiResult.band.color }} />
+                            <span className="text-base font-bold" style={{ color: mgiResult.band.color }}>{mgiResult.band.v}</span>
+                          </div>
+                          <div className="text-xs text-slate-500 max-w-xl mt-1">{mgiResult.band.m}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                        <Tip label={`0.65 × MAI (${masResult.mai}) + 0.35 × PESTEL Index (${pestelIdx.index})`}>
+                          <div className="border border-slate-200 rounded-lg p-3 cursor-help">
+                            <div className="text-[10px] font-bold uppercase text-slate-400">Market Potential <span className="font-normal normal-case">(40% weight)</span></div>
+                            <div className="text-xl font-bold mt-0.5">{mgiResult.marketPotential}</div>
+                            <div className="text-[10px] text-slate-400">0.65×MAI + 0.35×PESTEL Index</div>
+                          </div>
+                        </Tip>
+                        <Tip label={`0.4 × CGI (${cgiResult.cgi}) + 0.35 × SPI (${swotIdx.spi}) + 0.25 × CPI (${cpiResult.cpi})`}>
+                          <div className="border border-slate-200 rounded-lg p-3 cursor-help">
+                            <div className="text-[10px] font-bold uppercase text-slate-400">Right to Win <span className="font-normal normal-case">(35% weight)</span></div>
+                            <div className="text-xl font-bold mt-0.5">{mgiResult.rightToWin}</div>
+                            <div className="text-[10px] text-slate-400">0.4×CGI + 0.35×SPI + 0.25×CPI</div>
+                          </div>
+                        </Tip>
+                        <Tip label={`0.45 × SCVI (${scviResult.scvi}) + 0.4 × SVI (${sviResult.svi}) + 0.2 × TPI (${tpiResult.tpi})`}>
+                          <div className="border border-slate-200 rounded-lg p-3 cursor-help">
+                            <div className="text-[10px] font-bold uppercase text-slate-400">Execution Viability <span className="font-normal normal-case">(25% weight)</span></div>
+                            <div className="text-xl font-bold mt-0.5">{mgiResult.executionViability}</div>
+                            <div className="text-[10px] text-slate-400">0.45×SCVI + 0.4×SVI + 0.2×TPI</div>
+                          </div>
+                        </Tip>
+                      </div>
+                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1 mt-3">MGI = 0.4×{mgiResult.marketPotential} + 0.35×{mgiResult.rightToWin} + 0.25×{mgiResult.executionViability} = {mgiResult.mgi}</div>
+                    </div>
+                  )}
+
                   <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                    Every index below is <b>independent</b> — the scoring document defines no single combined score. Each is computed live from its own 1/3/5 (or Low/Medium/High) inputs; hover a verdict for the formula.
+                    The 9 component indices below feed the MGI above. Each is computed live from its own 1/3/5 (or Low/Medium/High) inputs — hover a verdict for the formula, click "detail" to see the full working.
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <IndexCard title="PESTEL Index" score={pestelIdx?.index} scoreMax={null} band={pestelIdx?.band}
-                      formula={pestelIdx ? `Index = ΣTailwinds (${pestelIdx.tail}) ÷ ΣHeadwinds (${pestelIdx.head}), from ${pestelIdx.tailN + pestelIdx.headN} scored points (impact × certainty)` : null}
+                      formula={pestelIdx ? `Index = (Tailwinds ${pestelIdx.tail} − Headwinds ${pestelIdx.head}) ÷ (Tailwinds + Headwinds), from ${pestelIdx.tailN + pestelIdx.headN} scored points (impact × certainty)` : null}
                       tabTarget="PESTEL" onGoTo={setTab} />
-                    <IndexCard title="SWOT Index" score={swotIdx?.index} scoreMax={null} band={swotIdx?.band}
-                      formula={swotIdx ? `Index = (S ${swotIdx.S} + O ${swotIdx.O}) ÷ (W ${swotIdx.W} + T ${swotIdx.T}), from impact × probability` : null}
+                    <IndexCard title="SWOT Posture (SPI)" score={swotIdx?.spi} scoreMax={null} band={swotIdx?.band}
+                      formula={swotIdx ? `0.3×IRI(${swotIdx.iri}) + 0.7×EAI(${swotIdx.eai}) — Quadrant ${swotIdx.quadrant?.key}: ${swotIdx.quadrant?.name}` : null}
                       tabTarget="SWOT" onGoTo={setTab} />
-                    <IndexCard title="Market Attractiveness (MAS)" score={masResult?.mas} scoreMax={5} band={masResult?.band}
-                      formula={masResult ? `0.35×ScaleVelocity(${masResult.scaleVelocity}) + 0.2×S-Curve(${masResult.scurveScore}) + 0.2×RevQuality(${masResult.revenueQualityScore}) + 0.25×Profitability(${masResult.profitabilityScore})` : null}
+                    <IndexCard title="Market Attractiveness (MAI)" score={masResult?.mai} scoreMax={null} band={masResult?.band}
+                      formula={masResult ? `MAS ${masResult.mas} → (MAS−3)÷2. MAS = 0.35×ScaleVelocity(${masResult.scaleVelocity}) + 0.2×S-Curve(${masResult.scurveScore}) + 0.2×RevQuality(${masResult.revenueQualityScore}) + 0.25×Profitability(${masResult.profitabilityScore})` : null}
                       tabTarget="Market" onGoTo={setTab} />
-                    <IndexCard title="Industry Attractiveness (IAI)" score={iaiResult?.iai} scoreMax={5} band={iaiResult?.band}
-                      formula={iaiResult ? `Avg of 5 Porter forces: ${Object.entries(iaiResult.forceAvgs).map(([k, v]) => `${k} ${v}`).join(" · ")} — 1=Blue Ocean, 5=Red Ocean` : null}
+                    <IndexCard title="Industry Attractiveness (IAI)" score={iaiResult?.iai} scoreMax={null} band={iaiResult?.band}
+                      formula={iaiResult ? `Raw IAI ${iaiResult.iaiRaw} → (3−raw)÷2. Avg of 5 Porter forces: ${Object.entries(iaiResult.forceAvgs).map(([k, v]) => `${k} ${v}`).join(" · ")}` : null}
                       tabTarget="Attractiveness" onGoTo={setTab} />
+                    <IndexCard title="Competency Gap (CGI)" score={cgiResult?.cgi} scoreMax={null} band={cgiResult?.band}
+                      formula={cgiResult ? `Σ(Gap×Weight)÷3 across 7 competency areas — ${cgiResult.rows.map(r => `${r.label} gap ${r.gap > 0 ? "+" : ""}${r.gap}`).join(", ")}` : null}
+                      tabTarget="Competency" onGoTo={setTab} />
                     <IndexCard title="Stakeholder Viability (SVI)" score={sviResult?.svi} scoreMax={null} band={sviResult?.band}
-                      formula={sviResult ? `(Alignment ${sviResult.alignment} + Bosch Influence ${sviResult.boschInfluence}) − (Conflict ${sviResult.conflict} + Complexity ${sviResult.complexity})` : null}
+                      formula={sviResult ? `Base SVI (${sviResult.baseSVI}) × VSF (${sviResult.vsf}) — TES ${sviResult.TES} vs TET ${sviResult.TET}` : null}
                       tabTarget="Stakeholders" onGoTo={setTab} />
-                    <IndexCard title="Competitive Landscape (CLI)" score={cliResult?.cli} scoreMax={null} band={cliResult ? { ...cliResult.band, v: `${cliResult.band.v} — ${cliResult.band.stance}` } : null}
-                      formula={cliResult ? `Avg competitor threat (${cliResult.avgThreat}) ÷ Bosch Strategic Advantage (${cliResult.advantageScore}) — lower is more favourable` : null}
+                    <IndexCard title="Competitive Posture (CPI)" score={cpiResult?.cpi} scoreMax={null} band={cpiResult ? { ...cpiResult.band, v: `${cpiResult.band.v} — ${cpiResult.label}` } : null}
+                      formula={cpiResult ? `Strategic Value Score ${cpiResult.svs} → (SVS−5)÷4. Advantage ${cpiResult.advantageScore} vs avg threat ${cpiResult.avgThreatScore}` : null}
                       tabTarget="Competitors" onGoTo={setTab} />
-                    <IndexCard title="Supply Chain Viability (SCVI)" score={scviResult?.s} scoreMax={5} band={scviBand ? { ...scviBand, v: `${scviBand.v} — ${scviResult.label}` } : null}
-                      formula={scviResult ? `Matrix position: Supply Chain Maturity × Bosch Control & Leverage → "${scviResult.label}"` : null}
+                    <IndexCard title="Supply Chain Viability (SCVI)" score={scviResult?.scvi} scoreMax={null} band={scviResult ? { ...scviResult.band, v: `${scviResult.band.v} — ${scviResult.label}` } : null}
+                      formula={scviResult ? `SCVS ${scviResult.scvs} → (SCVS−3)÷2. Matrix: Supply Chain Maturity × Bosch Control & Leverage → "${scviResult.label}"` : null}
                       tabTarget="Suppliers" onGoTo={setTab} />
-                    <IndexCard title="Technology Prognosis (TPS)" score={tpsResult?.s} scoreMax={5} band={tpsBand ? { ...tpsBand, v: `${tpsBand.v} — ${tpsResult.label}` } : null}
-                      formula={tpsResult ? `Matrix position: Technological Velocity × Commercialization Readiness → "${tpsResult.label}"` : null}
+                    <IndexCard title="Technology Prognosis (TPI)" score={tpiResult?.tpi} scoreMax={null} band={tpiResult ? { ...tpiResult.band, v: `${tpiResult.band.v} — ${tpiResult.label}` } : null}
+                      formula={tpiResult ? `TPS ${tpiResult.tps} → (TPS−3)÷2. Matrix: Technological Velocity × Commercialization Readiness → "${tpiResult.label}"` : null}
                       tabTarget="3 Horizons" onGoTo={setTab} />
                   </div>
+
+                  {d.verdict.aiAnalyst && (
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                      <div className="text-sm font-bold text-slate-800 mb-3">AI Analyst — where Bosch wins &amp; the comprehensive recommendation</div>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-green-700 mb-1.5">Where we win</div>
+                          <ul className="text-sm space-y-1.5">
+                            {d.verdict.aiAnalyst.whereWeWin.map((r, i) => <li key={i} className="flex gap-2"><span className="text-green-600">▸</span><span>{r}</span></li>)}
+                          </ul>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-red-700 mb-1.5">Where we're exposed</div>
+                          <ul className="text-sm space-y-1.5">
+                            {d.verdict.aiAnalyst.exposure.map((r, i) => <li key={i} className="flex gap-2"><span className="text-red-600">▸</span><span>{r}</span></li>)}
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="mt-4 text-sm text-slate-700 leading-relaxed bg-slate-50 rounded-lg p-4">{d.verdict.aiAnalyst.narrative}</div>
+                      <div className="mt-3 text-xs text-teal-800 bg-teal-50 rounded-lg p-3"><b>Bottom line:</b> {d.verdict.aiAnalyst.bottomLine}</div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <Card title="Reasoning">
@@ -6620,7 +7239,7 @@ export default function App() {
                     )}
                   </div>
 
-                  <Card title="Where to Play — sub-field portfolio (rolls up to this field's 8 indices above)">
+                  <Card title="Where to Play — sub-field portfolio (rolls up to this field's MGI above)">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       {d.verdict.portfolio.map(p => (
                         <div key={p.sub} className="border border-slate-200 rounded-lg p-3">
@@ -6797,18 +7416,41 @@ export default function App() {
                 {swotView === "swot" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {swotIdx && (
-                    <div className="md:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-4">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">SWOT Index</div>
-                        <div className="text-3xl font-extrabold" style={{ color: swotIdx.band.color }}>{swotIdx.index}</div>
+                    <div className="md:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Strategic Posture Index (SPI)</div>
+                          <div className="text-3xl font-extrabold" style={{ color: swotIdx.band.color }}>{swotIdx.spi}</div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: swotIdx.band.color }} />
+                          <span className="text-sm font-semibold" style={{ color: swotIdx.band.color }}>{swotIdx.band.v}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 flex-1 min-w-[200px]">{swotIdx.band.m}</div>
+                        <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1">SPI = 0.3×IRI({swotIdx.iri}) + 0.7×EAI({swotIdx.eai}) = {swotIdx.spi}</div>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: swotIdx.band.color }} />
-                        <span className="text-sm font-semibold" style={{ color: swotIdx.band.color }}>{swotIdx.band.v}</span>
-                        <span className="text-xs text-slate-400">— {swotIdx.band.stance}</span>
-                      </div>
-                      <div className="text-xs text-slate-500 flex-1 min-w-[200px]">{swotIdx.band.m}</div>
-                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1">(S {swotIdx.S} + O {swotIdx.O}) ÷ (W {swotIdx.W} + T {swotIdx.T}) = {swotIdx.index}</div>
+                      {swotIdx.quadrant && (
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="border border-slate-200 rounded-lg p-3">
+                            <div className="text-[10px] font-bold uppercase text-slate-400">IRI — Internal Readiness</div>
+                            <div className="text-lg font-bold">{swotIdx.iri}</div>
+                            <div className="text-[10px] text-slate-400">(Strength {swotIdx.S} − Weakness {swotIdx.W}) ÷ (Strength + Weakness)</div>
+                          </div>
+                          <div className="border border-slate-200 rounded-lg p-3">
+                            <div className="text-[10px] font-bold uppercase text-slate-400">EAI — External Attractiveness</div>
+                            <div className="text-lg font-bold">{swotIdx.eai}</div>
+                            <div className="text-[10px] text-slate-400">(Opportunity {swotIdx.O} − Threat {swotIdx.T}) ÷ (Opportunity + Threat)</div>
+                          </div>
+                          <div className="md:col-span-2 border-2 rounded-lg p-3" style={{ borderColor: swotIdx.band.color }}>
+                            <div className="flex items-center gap-2">
+                              <Chip tone="violet">Quadrant {swotIdx.quadrant.key}</Chip>
+                              <span className="text-sm font-bold">{swotIdx.quadrant.name}</span>
+                              <span className="text-xs text-slate-500 ml-auto">{swotIdx.quadrant.mandate}</span>
+                            </div>
+                            <div className="text-xs text-slate-600 mt-1.5">{swotIdx.quadrant.action}</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="md:col-span-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
@@ -6921,9 +7563,14 @@ export default function App() {
                           <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Market Attractiveness Score (MAS)</div>
                           <div className="text-3xl font-extrabold" style={{ color: masResult.band.color }}>{masResult.mas}<span className="text-sm text-slate-400"> / 5</span></div>
                         </div>
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">MAI = (MAS−3)÷2</div>
+                          <div className="text-2xl font-extrabold" style={{ color: masResult.band.color }}>{masResult.mai}</div>
+                        </div>
                         <div className="flex items-center gap-1.5">
                           <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: masResult.band.color }} />
                           <span className="text-sm font-semibold" style={{ color: masResult.band.color }}>{masResult.band.v}</span>
+                          {masResult.band.code && <Chip tone={masResult.band.code === "GO" ? "green" : masResult.band.code === "NO-GO" ? "red" : "amber"}>{masResult.band.code}</Chip>}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
@@ -7105,63 +7752,55 @@ export default function App() {
               {/* ─────────────── COMPETENCY ─────────────── */}
               {tab === "Competency" && (
                 <div className="space-y-4">
-                  <Card title="Bosch competency vs requirement to win in India">
-                    <ResponsiveContainer width="100%" height={280}>
-                      <BarChart data={d.competency} margin={{ left: 0, right: 10 }}>
-                        <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-12} height={50} />
-                        <YAxis domain={[0, 10]} width={24} />
-                        <Tooltip />
-                        <Bar dataKey="req" name="Required" fill="#CBD5E1" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="bosch" name="Bosch today" fill="#0096A0" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                    <div className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3"><b>Score rationale (7.2):</b> {d.competencyRationale}</div>
-                  </Card>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {d.competency.map(c => (
-                      <div key={c.name} className="bg-white border border-slate-200 rounded-xl p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="font-semibold text-sm">{c.name}</div>
-                          <div className="text-xs"><span className="font-bold text-teal-700">{c.bosch}</span><span className="text-slate-400"> vs req </span><span className="font-bold">{c.req}</span></div>
+                  {cgiResult ? (
+                    <>
+                      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-4">
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Competency Gap Index (CGI)</div>
+                          <div className="text-3xl font-extrabold" style={{ color: cgiResult.band.color }}>{cgiResult.cgi}</div>
                         </div>
-                        <div className="text-xs text-slate-600 mt-2 flex gap-1.5"><span className="font-bold text-slate-500 shrink-0">REQ WHY</span><span>{c.whyReq}</span></div>
-                        <div className="text-xs text-slate-600 mt-1 flex gap-1.5"><span className="font-bold text-teal-700 shrink-0">BOSCH WHY</span><span>{c.whyBosch}</span></div>
-                        <div className="mt-2 flex items-start gap-2">
-                          <Chip tone={c.gap.includes("none") ? "green" : c.gap.includes("partner") || c.gap.includes("buy") ? "violet" : "amber"}>{c.gap}</Chip>
-                          <span className="text-xs text-slate-500">{c.gapWhy}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: cgiResult.band.color }} />
+                          <span className="text-sm font-semibold" style={{ color: cgiResult.band.color }}>{cgiResult.band.v}</span>
                         </div>
+                        <div className="text-xs text-slate-500 flex-1 min-w-[200px]">{cgiResult.band.m}</div>
+                        <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1">CGI = Σ(Gap × Weight) ÷ 3 = {cgiResult.cgi}</div>
                       </div>
-                    ))}
-                  </div>
-                  {v6.competencyAssessment && (
-                    <Card title="Competency assessment — nine standard categories, comparable across all search fields">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-xs">
-                          <thead><tr className="text-left text-slate-400">
-                            <th className="pb-2 pr-2">Category</th><th className="pb-2 pr-2">What is needed to succeed here</th>
-                            <th className="pb-2 pr-2 text-center">Current</th><th className="pb-2 pr-2 text-center">Target</th>
-                            <th className="pb-2 pr-2 text-center">Gap</th><th className="pb-2 text-center">Priority</th>
-                          </tr></thead>
-                          <tbody>
-                            {v6.competencyAssessment.map(r => {
-                              const gap = r.target - r.current;
-                              return (
-                                <tr key={r.cat} className="border-t border-slate-100 align-top">
-                                  <td className="py-2 pr-2 font-semibold whitespace-nowrap">{r.cat}</td>
-                                  <td className="py-2 pr-2 text-slate-600">{r.need}</td>
-                                  <td className="py-2 pr-2 text-center font-medium">{r.current}</td>
-                                  <td className="py-2 pr-2 text-center font-medium">{r.target}</td>
-                                  <td className={`py-2 pr-2 text-center font-bold ${gap >= 3 ? "text-red-700" : gap >= 1 ? "text-amber-600" : "text-green-700"}`}>{gap > 0 ? `+${gap}` : "—"}</td>
-                                  <td className="py-2 text-center"><Chip tone={r.priority === "High" ? "red" : r.priority === "Medium" ? "amber" : "slate"}>{r.priority}</Chip></td>
+                      <Card title="Competency assessment — 7 standard areas, weighted by sector profile">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-xs">
+                            <thead><tr className="text-left text-slate-400">
+                              <th className="pb-2 pr-2">Area</th>
+                              <th className="pb-2 pr-2 text-center">Market Required (1–4)</th>
+                              <th className="pb-2 pr-2 text-center">Bosch Current (1–4)</th>
+                              <th className="pb-2 pr-2 text-center">Gap</th>
+                              <th className="pb-2 pr-2 text-center">Weight</th>
+                              <th className="pb-2 text-center">Weighted Gap</th>
+                            </tr></thead>
+                            <tbody>
+                              {cgiResult.rows.map(r => (
+                                <tr key={r.k} className="border-t border-slate-100 align-top">
+                                  <td className="py-2 pr-2 font-semibold whitespace-nowrap">{r.label}</td>
+                                  <td className="py-2 pr-2 text-center"><Tip label={COMPETENCY_LEVEL_LABELS[r.required]}><span className="cursor-help font-medium border-b border-dotted border-slate-400">{r.required}</span></Tip></td>
+                                  <td className="py-2 pr-2 text-center"><Tip label={COMPETENCY_LEVEL_LABELS[r.current]}><span className="cursor-help font-medium border-b border-dotted border-slate-400">{r.current}</span></Tip></td>
+                                  <td className={`py-2 pr-2 text-center font-bold ${r.gap < 0 ? "text-red-700" : r.gap > 0 ? "text-green-700" : "text-slate-500"}`}>{r.gap > 0 ? `+${r.gap}` : r.gap}</td>
+                                  <td className="py-2 pr-2 text-center text-slate-500">{(r.weight * 100).toFixed(0)}%</td>
+                                  <td className="py-2 text-center font-mono text-slate-600">{(r.gap * r.weight).toFixed(2)}</td>
                                 </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="text-xs text-slate-600 bg-teal-50 rounded-lg p-3 mt-3"><b>Strategic recommendation:</b> {v6.competencyRemark}</div>
-                      <div className="text-[10px] text-slate-400 mt-2">Scale 0–10 per the BMC search-field methodology. Gap = Target − Current. Categories: {COMPETENCY_CATS.join(" · ")}.</div>
-                    </Card>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-2">Scale: 1 Beginner · 2 Experienced Personnel · 3 Specialist · 4 Champion (hover a level for the full definition). Gap = Current − Required. Weight profile: <b>{v8.competency?.profile}</b>.</div>
+                      </Card>
+                      {v8?.competency?.narrative && (
+                        <Card title="Where the gaps are — and how to close them">
+                          <p className="text-sm text-slate-700">{v8.competency.narrative}</p>
+                        </Card>
+                      )}
+                    </>
+                  ) : (
+                    <div className="bg-white border border-dashed border-slate-300 rounded-xl p-8 text-center text-sm text-slate-500">Competency assessment not yet compiled for this field.</div>
                   )}
                 </div>
               )}
@@ -7179,7 +7818,7 @@ export default function App() {
                       <Card title="Stakeholder Viability Index (SVI) — computed from the map below"
                         right={<span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full inline-block" style={{ background: sviResult.band.color }} /><span className="text-xs font-semibold" style={{ color: sviResult.band.color }}>{sviResult.band.v}</span></span>}>
                         <div className="grid grid-cols-4 gap-2 mb-2">
-                          {[["Alignment", sviResult.alignment, "power-weighted share of proponents"], ["Bosch Influence", sviResult.boschInfluence, "influence where power sits"], ["Conflict", sviResult.conflict, "power-weighted share of opponents"], ["Complexity", sviResult.complexity, "share who are power=5 key stakeholders"]].map(([k, v, sub]) => (
+                          {[["TES", sviResult.TES, "total effective support (proponents, BIM-boosted)"], ["TET", sviResult.TET, "total effective threat (opponents, BIM-mitigated)"], ["Base SVI", sviResult.baseSVI, "(TES−TET)÷(TES+TET)"], ["VSF", sviResult.vsf, "volatility scaling — 1.00 = no Neutrals"]].map(([k, v, sub]) => (
                             <div key={k} className="border border-slate-200 rounded-lg p-2 text-center">
                               <div className="text-lg font-bold">{v}</div>
                               <div className="text-[10px] font-bold uppercase text-slate-500">{k}</div>
@@ -7188,13 +7827,13 @@ export default function App() {
                           ))}
                         </div>
                         <div className="text-2xl font-extrabold" style={{ color: sviResult.band.color }}>{sviResult.svi}</div>
-                        <div className="text-xs text-slate-700 mt-1"><b>SVI</b> = (Alignment {sviResult.alignment} + Bosch Influence {sviResult.boschInfluence}) − (Conflict {sviResult.conflict} + Complexity {sviResult.complexity})</div>
+                        <div className="text-xs text-slate-700 mt-1"><b>Final SVI</b> = Base SVI ({sviResult.baseSVI}) × VSF ({sviResult.vsf}) = {sviResult.svi}</div>
                         <div className="text-xs text-slate-500 mt-2">{sviResult.band.m}</div>
                       </Card>
                     )}
                   </div>
                   <div className="lg:col-span-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-                    <b>2 · External — direct value chain:</b> OEMs (purchasing, engineering, strategy), Tier-1s, fleet operators, end-users, Tier-2/3 suppliers, technology & manufacturing partners, service networks, JV partners. <b>3 · External — broader ecosystem:</b> ministries & regulators (ARAI, NITI Aayog), states, VCs & banks, analysts, SIAM/ACMA, standards bodies (ISO, SAE), media, academia (IITs/IISc), public & activist groups. The map below shows the stakeholders that matter most for this field.
+                    <b>Standardized categories</b> (scoring document §6): {STAKEHOLDER_CATEGORIES.join(" · ")}. Each stakeholder below is tagged with the category it falls in — this keeps the analysis comparable across all 15 fields. The map shows the stakeholders that matter most for this field.
                   </div>
                   <Card title="Stakeholder map — influence × interest">
                     <ResponsiveContainer width="100%" height={320}>
@@ -7217,6 +7856,7 @@ export default function App() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-semibold">{s.name}</span>
                           <div className="flex gap-1">
+                            {sc?.category && <Chip tone="violet">{sc.category}</Chip>}
                             <Chip tone="slate">{s.type}</Chip>
                             <Chip tone={s.stance === "ally" ? "green" : s.stance === "blocker" ? "red" : "teal"}>{s.stance}</Chip>
                           </div>
@@ -7238,16 +7878,16 @@ export default function App() {
               {/* ─────────────── COMPETITORS (Perceptual map) ─────────────── */}
               {tab === "Competitors" && d.competitors && (
                 <div className="space-y-4">
-                  {cliResult && (
+                  {cpiResult && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Competitive Landscape Index (CLI)</div>
-                        <div className="text-3xl font-extrabold" style={{ color: cliResult.band.color }}>{cliResult.cli}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Competitive Posture Index (CPI)</div>
+                        <div className="text-3xl font-extrabold" style={{ color: cpiResult.band.color }}>{cpiResult.cpi}</div>
                         <div className="flex items-center gap-1.5 mt-1">
-                          <span className="w-2 h-2 rounded-full inline-block" style={{ background: cliResult.band.color }} />
-                          <span className="text-xs font-semibold" style={{ color: cliResult.band.color }}>{cliResult.band.v} — {cliResult.band.stance}</span>
+                          <span className="w-2 h-2 rounded-full inline-block" style={{ background: cpiResult.band.color }} />
+                          <span className="text-xs font-semibold" style={{ color: cpiResult.band.color }}>{cpiResult.band.v} — {cpiResult.label}</span>
                         </div>
-                        <div className="text-[10px] font-mono text-slate-400 mt-2">avg threat {cliResult.avgThreat} ÷ Bosch advantage {cliResult.advantageScore}</div>
+                        <div className="text-[10px] font-mono text-slate-400 mt-2">SVS {cpiResult.svs} = Adv {cpiResult.advantageScore} + Adv×(5−Threat {cpiResult.avgThreatScore})÷5 · CPI = (SVS−5)÷4</div>
                       </div>
                       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                         <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Bosch Strategic Advantage</div>
@@ -7389,12 +8029,13 @@ export default function App() {
                     <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-4">
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Supply Chain Viability Index (SCVI)</div>
-                        <div className="text-3xl font-extrabold" style={{ color: scviBand.color }}>{scviResult.s}<span className="text-sm text-slate-400"> / 5</span></div>
+                        <div className="text-3xl font-extrabold" style={{ color: scviResult.band.color }}>{scviResult.scvi}</div>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: scviBand.color }} />
-                        <span className="text-sm font-semibold" style={{ color: scviBand.color }}>{scviBand.v} — {scviResult.label}</span>
+                        <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: scviResult.band.color }} />
+                        <span className="text-sm font-semibold" style={{ color: scviResult.band.color }}>{scviResult.band.v} — {scviResult.label}</span>
                       </div>
+                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1">SCVS {scviResult.scvs} → (SCVS−3)÷2 = {scviResult.scvi}</div>
                       <div className="text-xs text-slate-500 flex-1 min-w-[200px]">
                         <Tip label={v8.supplyChainWhy}><span className="cursor-help underline decoration-dotted">Supply Chain Maturity: {v8.supplyChainMaturity}</span></Tip>
                         {" · "}
@@ -7469,16 +8110,17 @@ export default function App() {
               {/* ─────────────── 3 HORIZONS ─────────────── */}
               {tab === "3 Horizons" && (
                 <div className="space-y-4">
-                  {tpsResult && (
+                  {tpiResult && (
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-4">
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Technology Prognosis Score (TPS)</div>
-                        <div className="text-3xl font-extrabold" style={{ color: tpsBand.color }}>{tpsResult.s}<span className="text-sm text-slate-400"> / 5</span></div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Technology Prognosis Index (TPI)</div>
+                        <div className="text-3xl font-extrabold" style={{ color: tpiResult.band.color }}>{tpiResult.tpi}</div>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: tpsBand.color }} />
-                        <span className="text-sm font-semibold" style={{ color: tpsBand.color }}>{tpsBand.v} — {tpsResult.label}</span>
+                        <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: tpiResult.band.color }} />
+                        <span className="text-sm font-semibold" style={{ color: tpiResult.band.color }}>{tpiResult.band.v} — {tpiResult.label}</span>
                       </div>
+                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1">TPS {tpiResult.tps} → (TPS−3)÷2 = {tpiResult.tpi}</div>
                       <div className="text-xs text-slate-500 flex-1 min-w-[200px]">Technological Velocity: <b>{v8.techVelocity}</b> · Commercialization Readiness: <b>{v8.commReadiness}</b></div>
                       <div className="w-full text-xs text-slate-600 bg-slate-50 rounded-lg p-3">{v8.techTrendWhy}</div>
                     </div>
@@ -7624,7 +8266,6 @@ export default function App() {
               )}
 
               {/* ─────────────── METHODOLOGY ─────────────── */}
-              {tab === "Methodology" && <Methodology />}
 
               <div className="mt-6 bg-white rounded-xl border border-slate-200 p-4">
                 <div className="text-xs font-semibold text-slate-600 mb-2">Sources &amp; citations</div>
