@@ -39,20 +39,20 @@ const FIELDS = [
   { id: "health", name: "Health Care", subs: ["E-Call", "Assisted Motion", "DEI Mobility Design"] },
 ];
 
-/* ═══ India Macro Context — shared PESTEL baseline, verified as of Jul 2026 ═══
+/* ═══ India Macro Context — shared PESTEL baseline, verified as of Aug 2026 ═══
    Answers the framework's India-wide questions once for ALL search fields.   */
 const MACRO = {
-  asOf: "July 2026",
+  asOf: "August 2026",
   Political: [
     { k: "Policy certainty", v: "Stable central government; reform continuity (GST 2.0 Sept-2025, India–UK FTA 2025, PLI programmes)", src: "PIB / policy trackers" },
-    { k: "PM E-DRIVE", v: "₹10,900 Cr scheme EXTENDED to Mar-2028 — but e-2W/e-3W demand incentives ended Mar-2026; remaining outlay targets charging infra (₹2,000 Cr), 14,028 e-buses, e-trucks (scrappage-linked), e-ambulances", src: "MHI notification, Aug-2025" },
+    { k: "PM E-DRIVE", v: "₹10,900 Cr scheme EXTENDED to Mar-2028 — but e-2W/e-3W demand incentives ended Mar-2026; remaining outlay targets charging infra (₹2,000 Cr), 14,028 e-buses, e-trucks (scrappage-linked), e-ambulances. Industry now seeking to defer battery/component localisation norms to Apr-2027 citing China rare-earth magnet export curbs", src: "MHI notification, Aug-2025 / industry reps, Aug-2026" },
     { k: "PLI / localisation", v: "Auto & ACC PLI disbursing; Cabinet approved India Semiconductor Mission 2.0 (₹1,27,500 Cr outlay) on 15-Jul-2026 — targets ₹4L Cr investment over 6 years; Tata-PSMC fab under construction at Dholera, 3 of 12 approved facilities operational; Make-in-India value-addition pressure on all sourcing", src: "Union Cabinet, 15-Jul-2026 / MeitY" },
-    { k: "Trade & geopolitics", v: "India–UK FTA opens auto trade; China+1 sourcing inflows continue; West Asia conflict elevates freight & energy risk", src: "Commerce Ministry / RBI Jun-26" },
+    { k: "Trade & geopolitics", v: "India–UK FTA opens auto trade; China+1 sourcing inflows continue; West Asia conflict elevates freight & energy risk; China's rare-earth magnet export curbs are now a live automotive supply-chain constraint", src: "Commerce Ministry / RBI, Aug-2026" },
   ],
   Economic: [
-    { k: "GDP growth", v: "FY26 ~7.4–7.6% (strong); FY27 forecast cut to 6.6% by RBI (Jun-26) on West Asia conflict, crude prices, monsoon uncertainty", src: "RBI MPC, Jun-2026" },
-    { k: "Inflation & rates", v: "CPI FY27 projected ~5.1%; repo held at 5.25%, neutral stance — cost of capital stable but no longer falling", src: "RBI MPC, Jun-2026" },
-    { k: "Currency", v: "INR under weakening pressure (bond yields up) — imported-component cost risk (semiconductors, cells, displays)", src: "RBI / market data, Jun-2026" },
+    { k: "GDP growth", v: "FY26 ~7.4–7.6% (strong); FY27 forecast cut to 6.6% by RBI on West Asia conflict, crude prices, monsoon uncertainty — reaffirmed at the Aug 3–5 MPC meeting", src: "RBI MPC, Aug-2026" },
+    { k: "Inflation & rates", v: "CPI FY27 projected ~5.1%; repo held at 5.25% for a second consecutive review (Aug 3–5 MPC), neutral stance — cost of capital stable but no longer falling", src: "RBI MPC, Aug-2026" },
+    { k: "Currency", v: "INR under weakening pressure (bond yields up) — imported-component cost risk (semiconductors, cells, displays); China's rare-earth magnet export curbs add a new component-cost pressure point", src: "RBI / market data, Aug-2026" },
     { k: "Demand stimulus", v: "GST 2.0: small cars & ≤350cc 2W cut 28%→18%; most auto components →18%; EVs stay 5% — structural affordability boost to mass mobility", src: "GST Council 56th meeting, Sept-2025" },
     { k: "Infrastructure capex", v: "Record highway pipeline, mature 5G coverage, national charging-corridor buildout under PM E-DRIVE", src: "Budget / MoRTH" },
   ],
@@ -78,7 +78,7 @@ const MACRO = {
     { k: "Homologation", v: "CMVR + AIS standards; ARAI/ICAT type-approval is the gate — timelines and test capacity are a planning constraint for every product", src: "MoRTH / ARAI" },
     { k: "Data protection", v: "DPDP Act 2023, Rules notified 14-Nov-2025; Consent Manager framework operationalising Jun–Aug 2026; Nov-2026 ends soft-enforcement phase; full obligations (mandatory notices, 72-hr breach reporting to DPBI) apply from 13-May-2027 — consent, purpose-limitation & breach duties on all vehicle/user data", src: "MeitY DPDP Rules, Nov-2025" },
     { k: "Tax & investment", v: "GST 2.0 auto rates (18% small / 40% large / 5% EV / 18% components); 100% FDI automatic route in auto; India–UK FTA tariff schedules", src: "GST Council / DPIIT" },
-    { k: "Cyber regulation", v: "CERT-In 6-hour incident-reporting directions; AIS-189/190 (CSMS/SUMS) bringing UNECE-style vehicle cyber compliance", src: "CERT-In / AIS drafts" },
+    { k: "Cyber regulation", v: "CERT-In 6-hour incident-reporting directions; mandatory cybersecurity Rules 125-T/125-U (AIS-189 CSMS / AIS-190 SUMS) now finalised — L3+ ADAS models must comply from Oct-2026, existing models Apr-2027, OTA-capable vehicles phased through Oct-2029", src: "MoRTH Rules 125-T/U, confirmed Aug-2026" },
   ],
 };
 
@@ -679,7 +679,7 @@ const DATA = {
     "CEA renewable integration reports", "AIS-156 amendment circulars", "DPDP Act 2023 & rules",
     "NITI Aayog EV forecasts", "Component teardown benchmarks", "Charger rollout economics",
     "Analyst reports, India EV components", "Startup funding trackers (BMS/charging)", "2W OEM market-share data", "Battery swapping market studies",
-    "MHI PM E-DRIVE extension notification (Aug-2025)", "GST Council 56th meeting (Sept-2025)", "NITI Aayog ELV circular-economy report (Jan-2026)", "RBI MPC Jun-2026", "NPCI UPI statistics (May-2026)",
+    "MHI PM E-DRIVE extension notification (Aug-2025)", "GST Council 56th meeting (Sept-2025)", "NITI Aayog ELV circular-economy report (Jan-2026)", "RBI MPC Aug-2026", "NPCI UPI statistics (May-2026)",
   ],
 },
 
@@ -866,7 +866,7 @@ const DATA = {
       { input: "Optics / lens & reflector tooling", supply_risk: 6, profit_impact: 7, quadrant: "bottleneck", reasoning: "Specialised tooling concentrated with lamp Tier-1s — the reason to partner rather than build optics." },
       { input: "Thermal-management parts", supply_risk: 3, profit_impact: 4, quadrant: "non-critical", reasoning: "Commoditised; low risk and impact." },
     ],
-    sources: ["MoRTH/BNCAP visibility norms", "Lighting content-per-vehicle benchmarks", "OEM feature marketing analysis", "Matrix LED architecture briefings", "LED efficiency studies", "AIS homologation requirements", "India lighting market reports", "Tier-1 annual reports & platform awards", "GST Council 56th meeting decisions (Sept-2025)", "BEE CAFE-III draft & SIAM debate", "RBI MPC Jun-2026"],
+    sources: ["MoRTH/BNCAP visibility norms", "Lighting content-per-vehicle benchmarks", "OEM feature marketing analysis", "Matrix LED architecture briefings", "LED efficiency studies", "AIS homologation requirements", "India lighting market reports", "Tier-1 annual reports & platform awards", "GST Council 56th meeting decisions (Sept-2025)", "BEE CAFE-III draft & SIAM debate", "RBI MPC Aug-2026"],
   },
 
   cockpit: {
@@ -1045,7 +1045,7 @@ const DATA = {
       { input: "Language AI APIs (Bhashini, cloud LLMs)", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Open-source and government APIs reduce dependency; differentiation is in integration, not model access." },
       { input: "UX design studios", supply_risk: 5, profit_impact: 7, quadrant: "bottleneck", reasoning: "Consumer-grade UX talent is concentrated; key bottleneck to close the phone-grade gap." },
     ],
-    sources: ["Bhashini / language-AI ecosystem", "Cockpit content-per-vehicle teardowns", "Buyer-experience surveys & NPS studies", "Cockpit SoC roadmaps", "EV power-budget engineering notes", "DPDP Act application to in-cabin data", "PV/2W production forecasts", "Cockpit competitive award trackers", "GST Council 56th meeting (Sept-2025)", "RBI MPC Jun-2026", "BEE CAFE-III draft"],
+    sources: ["Bhashini / language-AI ecosystem", "Cockpit content-per-vehicle teardowns", "Buyer-experience surveys & NPS studies", "Cockpit SoC roadmaps", "EV power-budget engineering notes", "DPDP Act application to in-cabin data", "PV/2W production forecasts", "Cockpit competitive award trackers", "GST Council 56th meeting (Sept-2025)", "RBI MPC Aug-2026", "BEE CAFE-III draft"],
   },
 
   interior: {
@@ -1227,7 +1227,7 @@ const DATA = {
       { input: "AQI / PM2.5 sensors", supply_risk: 4, profit_impact: 5, quadrant: "leverage", reasoning: "Several MEMS sensor vendors; manageable." },
       { input: "Seat actuators & motors", supply_risk: 5, profit_impact: 6, quadrant: "leverage", reasoning: "Adjacent to Bosch EM portfolio; moderate supply risk." },
     ],
-    sources: ["BNCAP/UNECE DDAW trajectories", "Comfort-feature penetration data", "Cabin air-quality consumer studies", "60GHz in-cabin radar briefings", "EV power-budget notes", "DPDP biometric guidance", "Interior-systems market reports", "DMS competitive landscape", "RBI MPC Jun-2026"],
+    sources: ["BNCAP/UNECE DDAW trajectories", "Comfort-feature penetration data", "Cabin air-quality consumer studies", "60GHz in-cabin radar briefings", "EV power-budget notes", "DPDP biometric guidance", "Interior-systems market reports", "DMS competitive landscape", "RBI MPC Aug-2026"],
   },
 
   suspension: {
@@ -1745,7 +1745,7 @@ const DATA = {
       { input: "SiC/GaN power semiconductors", supply_risk: 7, profit_impact: 8, quadrant: "strategic", reasoning: "EV power electronics; supply constrained and performance-critical — coordinate with Energy field." },
       { input: "PCB / OSAT (OSATs in India)", supply_risk: 5, profit_impact: 5, quadrant: "leverage", reasoning: "India OSAT ecosystem growing; lower risk than offshore assembly." },
     ],
-    sources: ["ISM project approvals & DLI scheme", "E/E content-per-vehicle curves", "Chip-shortage impact retrospectives", "Zonal architecture & DIR-V briefings", "SiC/GaN efficiency studies", "ISO 26262/AIS-189 silicon implications", "Production & semiconductor consumption forecasts", "Tier-1 competitive award trackers", "WPC 5.9 GHz & 77–81 GHz de-licensing notifications (Jun-2026)", "RBI MPC Jun-2026", "BEE CAFE-III draft"],
+    sources: ["ISM project approvals & DLI scheme", "E/E content-per-vehicle curves", "Chip-shortage impact retrospectives", "Zonal architecture & DIR-V briefings", "SiC/GaN efficiency studies", "ISO 26262/AIS-189 silicon implications", "Production & semiconductor consumption forecasts", "Tier-1 competitive award trackers", "WPC 5.9 GHz & 77–81 GHz de-licensing notifications (Jun-2026)", "RBI MPC Aug-2026", "BEE CAFE-III draft"],
   },
 
   software: {
@@ -1930,7 +1930,7 @@ const DATA = {
       { input: "Open-source SDV middleware (Eclipse)", supply_risk: 3, profit_impact: 5, quadrant: "non-critical", reasoning: "Community-maintained; low supply risk, but commoditises some Bosch middleware value." },
       { input: "Automotive-domain LLM training data", supply_risk: 6, profit_impact: 8, quadrant: "strategic", reasoning: "Bosch's own vehicle/engineering data corpus is the scarce input; protect and leverage it." },
     ],
-    sources: ["GCC policies & engineering-export data", "OEM SDV budget disclosures", "Automotive talent-market studies", "AUTOSAR/Eclipse SDV roadmaps", "Virtual-validation impact studies", "ISO 26262/AIS-189 toolchain requirements", "Automotive SW market forecasts", "Competitive deal trackers", "RBI MPC Jun-2026", "GST Council 56th meeting (Sept-2025)"],
+    sources: ["GCC policies & engineering-export data", "OEM SDV budget disclosures", "Automotive talent-market studies", "AUTOSAR/Eclipse SDV roadmaps", "Virtual-validation impact studies", "ISO 26262/AIS-189 toolchain requirements", "Automotive SW market forecasts", "Competitive deal trackers", "RBI MPC Aug-2026", "GST Council 56th meeting (Sept-2025)"],
   },
 
   manufacturing: {
@@ -2111,7 +2111,7 @@ const DATA = {
       { input: "I4.0 software platforms (SAP, Siemens)", supply_risk: 5, profit_impact: 7, quadrant: "strategic", reasoning: "Digital-manufacturing platforms are strategic; Bosch's internal tools are the proprietary layer." },
       { input: "Plant utilities (power, water)", supply_risk: 3, profit_impact: 4, quadrant: "non-critical", reasoning: "Commodity; managed through local plant operations." },
     ],
-    sources: ["PLI disbursement & China+1 flows", "EMS player financials & margins", "Manufacturing employment policy notes", "I4.0/I5.0 adoption studies", "BRSR/green-manufacturing requirements", "IATF/liability frameworks", "EMS market forecasts", "Capacity announcement trackers", "MHI PM E-DRIVE extension notification (Aug-2025)", "RBI MPC Jun-2026", "GST Council 56th meeting (Sept-2025)"],
+    sources: ["PLI disbursement & China+1 flows", "EMS player financials & margins", "Manufacturing employment policy notes", "I4.0/I5.0 adoption studies", "BRSR/green-manufacturing requirements", "IATF/liability frameworks", "EMS market forecasts", "Capacity announcement trackers", "MHI PM E-DRIVE extension notification (Aug-2025)", "RBI MPC Aug-2026", "GST Council 56th meeting (Sept-2025)"],
   },
 
   fintech: {
@@ -2808,7 +2808,7 @@ const DATA = {
       { input: "Battery cells (high-density)", supply_risk: 7, profit_impact: 8, quadrant: "strategic", reasoning: "Aviation-grade battery energy density is beyond current automotive cells; critical gap." },
       { input: "Power electronics (shared with Energy field)", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Shared with Energy field investment — capital-efficient cross-leverage." },
     ],
-    sources: ["DGCA drone/UAM framework status", "UAM use-case economics studies", "Public-acceptance research", "Propulsion transferability briefings", "Battery energy-density analyses", "Aerospace certification overviews", "Speculative UAM market forecasts", "Pre-market competitive notes", "RBI MPC Jun-2026"],
+    sources: ["DGCA drone/UAM framework status", "UAM use-case economics studies", "Public-acceptance research", "Propulsion transferability briefings", "Battery energy-density analyses", "Aerospace certification overviews", "Speculative UAM market forecasts", "Pre-market competitive notes", "RBI MPC Aug-2026"],
   },
 
   robotics: {
@@ -4058,7 +4058,7 @@ const V7 = {
       E: {
         for: [
           { p: "EV total cost of ownership beats ICE for commercial fleets", why: "At ₹6/unit electricity vs ₹90+/L petrol, a commercial 3W breaks even against ICE in under 18 months at current economics.", sowhat: "Lead with TCO calculators in fleet sales — the economics do the selling without requiring subsidy conviction." },
-          { p: "RBI rate cuts create cheaper fleet financing", why: "RBI cut repo rate to 5.5% (Jun-2026), reducing EMI cost on fleet EV purchases by 3–5%.", sowhat: "Partner with NBFCs and fleet financiers to bundle affordable EV financing with charging management solutions." },
+          { p: "Stable, low-inflation rate environment keeps fleet financing affordable", why: "RBI has held the repo rate at 5.25% with a neutral stance across its Jun/Aug-2026 reviews, keeping EMI costs on fleet EV purchases predictable rather than volatile.", sowhat: "Partner with NBFCs and fleet financiers to bundle affordable EV financing with charging-management solutions while the rate environment stays stable." },
           { p: "Falling lithium cell prices (down 30% 2023–25) improve product margins", why: "Global cell oversupply has pushed LFP pack prices below $90/kWh — reducing BOM cost and improving business cases.", sowhat: "Redesign cost structures to capture the margin improvement rather than passing it all to OEM price negotiations." },
         ],
         against: [
@@ -7052,7 +7052,7 @@ export default function App() {
       <div style={{ height: 6, flexShrink: 0, background: GRAD }} />
       <div className="bg-white flex justify-between items-center shrink-0" style={{ padding: "9px 24px", borderBottom: "1px solid #d0d4d8" }}>
         <img src="bosch/bosch-logo.png" alt="Bosch" style={{ height: 22, display: "block" }} />
-        <span style={{ fontSize: 11, color: "#2e3033", fontWeight: 600, letterSpacing: "0.02em" }}>Market &amp; Business Strategy · M/MBR-IN</span>
+        <span style={{ fontSize: 11, color: "#2e3033", fontWeight: 600, letterSpacing: "0.02em" }}>BBM Marketing and Business Strategy - Region India (M/MBR-IN)</span>
       </div>
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4">
         <div>
@@ -7060,7 +7060,7 @@ export default function App() {
           <div className="text-xs text-slate-500 mt-0.5">Bosch Mobility · India Market · BBM Strategy Agent</div>
         </div>
         <div className="ml-auto flex items-center gap-2 text-xs text-slate-500">
-          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> One methodology for all fields · scores computed, not generated · Version 1.0
+          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Comprehensive Analytics for all search fields - Version 1.0
         </div>
       </header>
 
