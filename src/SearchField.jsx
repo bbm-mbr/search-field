@@ -488,7 +488,7 @@ const DATA = {
       ],
     },
     strategy: "Lead with Battery & BMS (reuse PS-ESB + workshops + SdV software), partner into V2G/charging management with fleets and discoms, watch new-energy tech via ventures.",
-    scoreRationale: "Three exploitable, hard-to-copy strengths (assets, software, channel) and two well-matched opportunities outweigh two structural weaknesses — but the weaknesses (cost base, no cells) directly amplify both threats, capping the score below 7.5.",
+    scoreRationale: "Three exploitable, hard-to-copy strengths (assets, software, channel) and two well-matched opportunities outweigh two structural weaknesses — but the weaknesses (cost base, no cells) directly amplify both threats, capping what would otherwise be a strong position.",
   },
 
   market: {
@@ -757,7 +757,7 @@ const DATA = {
       { force: "Substitutes", v: 3.0, why: "No substitute for vehicle lighting; technology substitution (LED→pixel) happens within the field and rewards SW players.", drivers: ["Function is mandatory", "Tech shift favours electronics entrants"], c: [4] },
       { force: "New entrants", v: 5.5, why: "Optics + homologation are real barriers for lamp making, but the SW/controller layer (where Bosch would enter) has lower walls — cutting both ways.", drivers: ["Homologation barrier (HW)", "Low barrier in SW layer", "Chinese lamp imports limited by AIS"], c: [6] },
     ],
-    porterRationale: "Buyer power (7.5) and rivalry (7.0) dominate; weak substitutes help. The field is more attractive for a SW-layer entrant than for a lamp maker — the score reflects the field as a whole.",
+    porterRationale: "Buyer power (7.5) and rivalry (7.0) dominate; weak substitutes help. The field is more attractive for a SW-layer entrant than for a lamp maker — this assessment reflects the field as a whole.",
     competency: [
       { name: "Optics & photometrics", bosch: 2, req: 8, whyReq: "Beam shaping, glare control and homologation are core to any lamp product (8)", whyBosch: "No optics franchise — never been a lighting Tier-1 (2)", gap: "partner", gapWhy: "Partner with an incumbent lamp maker; do not build" },
       { name: "Lighting control ECUs & drivers", bosch: 7, req: 7, whyReq: "Matrix/pixel lighting needs automotive-grade controllers and LED drivers (7)", whyBosch: "Decades of ECU design, manufacturing in India, functional safety (7)", gap: "none — match", gapWhy: "Direct entry point — meets requirement today" },
@@ -882,7 +882,7 @@ const DATA = {
         ],
       },
       strategy: "Lead as the integrated cockpit platform & AI-experience provider for India: cockpit HPC + pre-integrated SW bundle + vernacular AI assistant, with a silicon alliance and a UX capability acquisition.",
-      scoreRationale: "Two heavyweight, hard-to-copy strengths and two well-evidenced opportunities; weaknesses are real but both have named closure routes (UX acquisition, SoC alliance). Threats moderate the score below 8.",
+      scoreRationale: "Two heavyweight, hard-to-copy strengths and two well-evidenced opportunities; weaknesses are real but both have named closure routes (UX acquisition, SoC alliance). Threats temper what is otherwise a strong position.",
     },
     market: {
       tam: 5600, sam: 2100, cagr: 14, year: 2030,
@@ -1455,7 +1455,7 @@ const DATA = {
         { item: "Cross-OEM SDV data architecture standards", why: "Fragmented per-OEM platforms will consolidate; standard-setters win", trigger: "Two+ Indian OEMs adopting a shared vehicle-data schema" },
       ],
       h3: [{ item: "Quantum-safe vehicle security & 6G-era architectures", why: "Post-quantum migration for 15-year vehicle lifecycles must start before the threat matures — but India deployment is 5+ years out", trigger: "Indian regulatory guidance on PQC timelines for automotive" }],
-      rationale: "The only field with mandated H1 demand, structural H2 themes tied to India's DPI trajectory, and a real H3. Breadth across all five sub-fields compounds the score.",
+      rationale: "The only field with mandated H1 demand, structural H2 themes tied to India's DPI trajectory, and a real H3. Breadth across all five sub-fields compounds the opportunity.",
     },
     verdict: {
       entry: "Enter now, compliance-first: lead with CSMS/SUMS + secure OTA, expand into vehicle data platforms on the install base, co-architect federated mobility data; hyperscalers as infra partners, GenAI stream layered on the data assets.",
@@ -1919,7 +1919,7 @@ const DATA = {
         ],
       },
       strategy: "Two-track entry: (1) automotive-grade Manufacturing-as-a-Service monetising certified spare capacity for China+1 customers; (2) I4.0/I5.0 manufacturing-digitalisation solutions as a product/consulting business. No commodity EMS ambitions.",
-      scoreRationale: "Genuinely scarce assets (certified capacity, digitalisation practice) meet a structural margin-model weakness. The strategy works only with strict scope discipline — the score prices that execution risk.",
+      scoreRationale: "Genuinely scarce assets (certified capacity, digitalisation practice) meet a structural margin-model weakness. The strategy works only with strict scope discipline — this assessment prices that execution risk.",
     },
     market: {
       tam: 12000, sam: 1800, cagr: 18, year: 2030,
@@ -1965,7 +1965,7 @@ const DATA = {
       { force: "Substitutes", v: 4.5, why: "In-house manufacturing is the substitute; China+1 dynamics currently push the other way — toward outsourcing to India.", drivers: ["In-housing (cyclical)", "China+1 tailwind (current)"], c: [1] },
       { force: "New entrants", v: 6.0, why: "Capital and certification deter casual entry, but PLI subsidises serious entrants continuously.", drivers: ["PLI-subsidised entry", "Certification barrier (niche protection)"], c: [1] },
     ],
-    porterRationale: "Twin 8.0s (rivalry, buyer power) make commodity EMS structurally unattractive; the score survives only because the certified-niche and solutions tracks face softer versions of both forces.",
+    porterRationale: "Twin 8.0s (rivalry, buyer power) make commodity EMS structurally unattractive; the field stays investable only because the certified-niche and solutions tracks face softer versions of both forces.",
     competency: [
       { name: "Automotive-grade quality systems", bosch: 9, req: 9, whyReq: "Safety-part manufacturing gates on IATF-class certification (9)", whyBosch: "Decades of certified Indian plant operation (9)", gap: "none — match", gapWhy: "The moat for the MaaS niche" },
       { name: "Manufacturing digitalisation (I4.0/I5.0)", bosch: 9, req: 7, whyReq: "Factories buy proven digitalisation, not slideware (7)", whyBosch: "Lighthouse internal practice, productisable (9)", gap: "none — exceed", gapWhy: "Solutions business anchor" },
@@ -2640,7 +2640,7 @@ const DATA = {
       { force: "Substitutes", v: 6.5, why: "Ground transport, helicopters and drones substitute most eVTOL use cases today — a strong substitute set.", drivers: ["Ground transport", "Helicopters", "Cargo drones"], c: [2] },
       { force: "New entrants", v: 4.0, why: "Certification and capital intensity strongly deter entry — the field protects itself but also starves of demand.", drivers: ["Certification barrier", "Capital intensity"], c: [6] },
     ],
-    porterRationale: "Strong substitutes (6.5) and a non-existent current market define it; high entry barriers help future incumbents but don't create near-term value.",
+    porterRationale: "Strong substitutes (6.5) and a non-existent current market define the field's attractiveness; high entry barriers help future incumbents but don't create near-term value.",
     competency: [
       { name: "Electric propulsion & power electronics", bosch: 8, req: 8, whyReq: "Core eVTOL subsystem (8)", whyBosch: "Strong automotive franchise, transferable (8)", gap: "none — match (if certified)", gapWhy: "Transferable, pending aerospace qualification" },
       { name: "Aerospace certification & airworthiness", bosch: 1, req: 9, whyReq: "The absolute gatekeeper for any flight component (9)", whyBosch: "No aerospace certification base (1)", gap: "partner / skip", gapWhy: "Decisive gap — supply only non-flight-critical, or skip" },
@@ -2655,7 +2655,7 @@ const DATA = {
         { item: "Electric-propulsion subsystem supply to passenger eVTOL", why: "Passenger UAM certification and market formation in India is a 5–10 year horizon", trigger: "Indian passenger-eVTOL type certification regime established" },
         { item: "Rural-access UAM (medical, logistics)", why: "Compelling social case but depends on cost and regulation maturing — 5+ years", trigger: "Viable rural UAM operating economics demonstrated" },
       ],
-      rationale: "No H1, a thin H2, and the substance in H3. Almost pure optionality — the score reflects a real but distant opportunity, not a near-term business.",
+      rationale: "No H1, a thin H2, and the substance in H3. Almost pure optionality — this reflects a real but distant opportunity, not a near-term business.",
     },
     verdict: {
       entry: "Watch only. Maintain transferable-tech readiness through Energy/sensing investment, monitor DGCA framework development and cargo/medical use cases, and engage global primes opportunistically; no standalone capital commitment.",
@@ -2972,7 +2972,7 @@ const DATA = {
       { force: "Substitutes", v: 6.5, why: "Smartphones provide emergency-call and health monitoring already — a strong substitute the vehicle features must beat or complement.", drivers: ["Smartphone e-call/health", "Wearables"], c: [2] },
       { force: "New entrants", v: 5.5, why: "Digital-health startups enter cheaply; automotive integration and (for clinical) regulation are the barriers.", drivers: ["Digital-health startups", "Integration/regulation barriers"], c: [6] },
     ],
-    porterRationale: "The smartphone substitute (6.5) and buyer power define it; the e-call mandate is the structured-demand offset. Attractive mainly on the mandated wedge.",
+    porterRationale: "The smartphone substitute (6.5) and buyer power define the field's attractiveness; the e-call mandate is the structured-demand offset. Attractive mainly on the mandated wedge.",
     competency: [
       { name: "E-call / crash sensing / telematics", bosch: 8, req: 8, whyReq: "Mandated emergency-call needs reliable crash detection + connectivity (8)", whyBosch: "Crash-sensing and connectivity assets in production (8)", gap: "none — match", gapWhy: "The lead wedge" },
       { name: "In-cabin wellness sensing", bosch: 7, req: 7, whyReq: "Non-clinical wellness monitoring via radar/camera (7)", whyBosch: "Shared with Interior Systems sensing (7)", gap: "none — match", gapWhy: "Capital-efficient reuse" },
@@ -6954,8 +6954,12 @@ export default function App() {
             <h1 className="text-2xl font-extrabold tracking-tight">{field.name}</h1>
             {hasData && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {d.ma.map(m => <Chip key={m} tone="violet">M&A · {m}</Chip>)}
-                {d.bbm.map(b => <Chip key={b} tone="teal">BBM · {b}</Chip>)}
+                {d.ma.length
+                  ? d.ma.map(m => <Chip key={m} tone="violet">M&A · {m}</Chip>)
+                  : <Tip label="No M&A hook is mapped to this search field. This is a recorded finding, not missing data — an unmapped field has no existing acquisition thesis to build on, which raises the entry bar."><span className="cursor-help"><Chip tone="slate">M&A · none mapped</Chip></span></Tip>}
+                {d.bbm.length
+                  ? d.bbm.map(b => <Chip key={b} tone="teal">BBM · {b}</Chip>)
+                  : <Tip label="No BBM business-stream hook is mapped to this search field. This is a recorded finding, not missing data — without a mapped stream there is no existing go-to-market motion to carry the offer."><span className="cursor-help"><Chip tone="slate">BBM · none mapped</Chip></span></Tip>}
               </div>
             )}
             <div className="flex flex-wrap gap-1.5 mt-3">
