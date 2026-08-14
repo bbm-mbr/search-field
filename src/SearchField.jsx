@@ -1560,6 +1560,26 @@ const DATA = {
       { d: "May 20, 2026", t: "Open mobility-data network pilot expands to vehicle telematics in two states", s: "Mint" },
       { d: "May 09, 2026", t: "CERT-In advisory on connected-vehicle vulnerabilities prompts OEM security audits", s: "Economic Times" },
     ],
+    stakeholders: [
+      { name: "MeitY / CERT-In (DPDP + cyber-incident regulator)", type: "government", influence: 9, interest: 8, stance: "ally", reasoning: "AIS-189/190 CSMS/SUMS mandates and DPDP consent/breach-reporting rules are the primary compliance-pulled demand mechanism for connectivity, cyber and data services." },
+      { name: "DoT / WPC (telecom & spectrum regulator)", type: "government", influence: 7, interest: 5, stance: "ally", reasoning: "The Jun-2026 5.9 GHz C-V2X de-licensing removed the largest regulatory barrier to V2X deployment — a pure enabler, not a demand driver." },
+      { name: "OEM connected-vehicle & software teams (PV/CV E/E, digital)", type: "oem", influence: 9, interest: 8, stance: "neutral", reasoning: "Bosch's 2M+-vehicle AIS-140 telematics base gives real embedded relationships, but the platform build-vs-buy decision (Tata CVP, Mahindra MAIA) remains genuinely contested." },
+      { name: "Hyperscalers (AWS/Azure/GCP India)", type: "supplier", influence: 7, interest: 6, stance: "neutral", reasoning: "Simultaneously an infrastructure partner Bosch multi-sources deliberately and a coopetitor moving up-stack into automotive verticals." },
+      { name: "Insurers & fleet-data buyers (telematics underwriters)", type: "consumer", influence: 5, interest: 6, stance: "ally", reasoning: "Early-stage data-partnership discussions with 12–24 month enterprise sales cycles — real traction, not yet contracted revenue." },
+    ],
+    competitors: [
+      { name: "Tata Elxsi (connected vehicle platform)", type: "indian-incumbent", x_price_position: 5, y_tech_depth: 8, moat: "Tata CVP platform development + global OEM software engineering reputation", reasoning: "India's highest-margin automotive software company with global OEM relationships sets the pace on connected-platform depth." },
+      { name: "Jio Connectivity (Reliance Jio)", type: "indian-incumbent", x_price_position: 2, y_tech_depth: 5, moat: "India's largest 5G network coverage + lowest data cost", reasoning: "Structural cost/coverage dominance in carriage; automotive-specific platform depth still building — a coopetition candidate, not just a rival." },
+      { name: "Intellicar Telematics", type: "startup", x_price_position: 3, y_tech_depth: 6, moat: "India's largest fleet telematics startup install base", reasoning: "VC-backed niche player expanding fast (200K to 1M vehicles targeted by FY27) with credible India-specific AI product bets." },
+      { name: "Bosch (target position)", type: "global", x_price_position: 6, y_tech_depth: 8, moat: "Device-to-cloud stack (embedded connectivity HW + mobility cloud + cybersecurity engineering) + AIS-140 install base", reasoning: "The only player spanning automotive-grade embedded hardware through cloud services and compliance — a position no single point-player matches." },
+    ],
+    competitorWhiteSpace: "A managed vehicle SOC built for CERT-In's 6-hour clock and federated mobility-data exchange participation — both explicitly have no automotive incumbent yet, inside a $2.6B SAM growing at 22% CAGR.",
+    suppliers: [
+      { input: "Hyperscale cloud infrastructure (AWS/Azure/GCP)", supply_risk: 5, profit_impact: 8, quadrant: "leverage", reasoning: "Multi-cloud sourcing across all three India-available hyperscalers keeps switching options open and pricing power in check, even though cloud infra underpins nearly every connectivity revenue stream." },
+      { input: "eSIM / telecom carriage (Jio, Airtel)", supply_risk: 4, profit_impact: 6, quadrant: "leverage", reasoning: "Dual-sourced across India's two largest telecom networks — a commodity input Bosch can competitively tender, not a chokepoint." },
+      { input: "TCU / connectivity-module silicon (Qualcomm, Quectel-class)", supply_risk: 7, profit_impact: 5, quadrant: "bottleneck", reasoning: "Moderate supplier concentration on the hardware layer (~30% of the revenue mix) — manageable today but the one input Bosch doesn't fully control." },
+      { input: "Security tooling & CSMS/SUMS toolchain vendors", supply_risk: 2, profit_impact: 4, quadrant: "non-critical", reasoning: "A broad, competitive tooling market with no meaningful concentration risk — Bosch already leads on in-house security-engineering strength." },
+    ],
     sources: ["AIS-189/190 drafts & UNECE R155/156", "Embedded connectivity penetration data", "Connected-services churn studies", "Beckn/DPI mobility extensions", "Vehicle data volume analyses", "DPDP + CERT-In directives", "Connected-car market reports", "Competitive landscape trackers", "WPC 5.9 GHz C-V2X OBU de-licensing notification, June 2026 (G.S.R. notification under Indian Telegraph Act 1885 / Wireless Telegraphy Act 1933)", "5G coverage & India data-centre capex trackers", "NPCI UPI statistics (May-2026)"],
   },
 
@@ -5533,7 +5553,13 @@ V8.connectivity = {
     "Substitutes": [1, 1, 1, 3],
     "Rivalry": [3, 1, 3, 3, 3, 5],
   },
-  stakeholders: [],
+  stakeholders: [
+    { name: "MeitY / CERT-In (DPDP + cyber-incident regulator)", category: "Government & Regulatory", power: 9, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch engages CERT-In/MeitY through SIAM industry consultations on AIS-189/190 and DPDP rules but has no control over compliance timelines or enforcement posture." },
+    { name: "DoT / WPC (telecom & spectrum regulator)", category: "Government & Regulatory", power: 7, stance: 1, boschInfluence: 2, boschInfluenceWhy: "The Jun-2026 5.9 GHz de-licensing was a pure policy enabler Bosch had no hand in shaping — a beneficiary, not a participant, in spectrum rulemaking." },
+    { name: "OEM connected-vehicle & software teams (PV/CV E/E, digital)", category: "Customers & End-Users", power: 9, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already holds direct, embedded commercial relationships via the 2M+-vehicle AIS-140 telematics install base, even though the platform build-vs-buy decision (Tata CVP, Mahindra MAIA) remains genuinely contested." },
+    { name: "Hyperscalers (AWS/Azure/GCP India)", category: "Supply Chain & Ecosystem Partners", power: 7, stance: 0, boschInfluence: 3, boschInfluenceWhy: "Bosch deliberately multi-sources cloud infrastructure as one of many customers to check hyperscaler pricing power — real leverage, not control, over a partner simultaneously moving up-stack as a competitor." },
+    { name: "Insurers & fleet-data buyers (telematics underwriters)", category: "Financial & Investment Community", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Early-stage data-partnership discussions are underway but 12–24 month enterprise sales cycles mean relationship traction, not yet contractual control, over this emerging revenue channel." },
+  ],
   competitors: [
     { name: "Tata Elxsi (connected vehicle platform)", marketPosition: "High", futureMomentum: "High", why: "India's highest-margin (24% net) automotive software company with global OEM relationships sets the pace; AI-analytics and India V2X-stack R&D bets are visionary and well-funded." },
     { name: "Jio Connectivity (Reliance Jio)", marketPosition: "High", futureMomentum: "High", why: "India's largest telecom network (₹1L Cr Jio Platforms revenue, 52% EBITDA) gives structural cost/coverage dominance; 5G V2X pilots and fleet-SaaS bets reflect aggressive backing even though automotive-specific depth is still building." },
