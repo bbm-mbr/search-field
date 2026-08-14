@@ -82,59 +82,8 @@ const MACRO = {
   ],
 };
 
-/* ════════════════════════ SCORING — fixed for every field ═══════════════ */
-const WEIGHTS = [
-  { id: "competency", c: "Competency fit", f: "Competency Analysis", w: 0.25 },
-  { id: "swot", c: "SWOT net position", f: "SWOT (Bosch-India)", w: 0.15 },
-  { id: "market", c: "Market size & growth", f: "TAM / SAM", w: 0.20 },
-  { id: "porter", c: "Attractiveness", f: "Porter's 5 Forces", w: 0.20 },
-  { id: "horizons", c: "Tech growth potential", f: "McKinsey 3 Horizons", w: 0.20 },
-];
-const BANDS = [
-  { v: "ENTER", min: 7.5, m: "Strong right to play and right to win. Build or buy now." },
-  { v: "EXPLORE", min: 6.0, m: "Attractive but gaps exist. Enter via partnership, pilot or M&A." },
-  { v: "WATCH", min: 4.5, m: "Monitor triggers; revisit in 6–12 months." },
-  { v: "NO-GO", min: 0, m: "Weak attractiveness or weak right to play today." },
-];
-const RUBRIC = [
-  { range: "0.90 – 1.00", m: "Multiple independent, recent (<18 mo) cited sources agree" },
-  { range: "0.70 – 0.89", m: "Cited evidence exists but partial, single-source or older" },
-  { range: "0.50 – 0.69", m: "Sources conflict / thin coverage; material judgement applied" },
-  { range: "< 0.50", m: "Mostly reasoned estimates — flagged as low-evidence" },
-];
 
-/* The matrix is COMPUTED here, live, from criterion scores + confidence —
-   exactly the same code path the production backend uses. */
-function computeMatrix(rows) {
-  const out = rows.map(r => {
-    const effW = r.w * Math.max(r.conf, 0.2);
-    return { ...r, effW, contrib: r.s * effW };
-  });
-  const sumEffW = out.reduce((a, r) => a + r.effW, 0);
-  const sumContrib = out.reduce((a, r) => a + r.contrib, 0);
-  const score = sumContrib / sumEffW;
-  const verdict = BANDS.find(b => score >= b.min);
-  const confidence = out.reduce((a, r) => a + r.conf * r.w, 0) / out.reduce((a, r) => a + r.w, 0);
-  return { rows: out, sumEffW, sumContrib, score, verdict, confidence };
-}
 
-/* Stakeholder score — computed from the stakeholder map, formula shown in UI.
-   Alignment: influence-weighted share of allies. Complexity: how many groups
-   must work together. Conflict: influence-weighted share of blockers.
-   Influence: average influence of the stakeholders on our side. */
-function computeStakeholderScore(list) {
-  if (!list?.length) return null;
-  const totInf = list.reduce((a, s) => a + s.influence, 0);
-  const allyInf = list.filter(s => s.stance === "ally").reduce((a, s) => a + s.influence, 0);
-  const blockInf = list.filter(s => s.stance === "blocker").reduce((a, s) => a + s.influence, 0);
-  const allies = list.filter(s => s.stance === "ally");
-  const alignment = +(10 * allyInf / totInf).toFixed(1);
-  const complexity = +Math.min(10, list.length * 1.6).toFixed(1);
-  const conflict = +(10 * blockInf / totInf).toFixed(1);
-  const influence = allies.length ? +(allies.reduce((a, s) => a + s.influence, 0) / allies.length).toFixed(1) : 0;
-  const overall = +((alignment * 0.35 + influence * 0.35 + (10 - conflict) * 0.2 + (10 - complexity) * 0.1)).toFixed(1);
-  return { alignment, complexity, conflict, influence, overall };
-}
 
 /* Horizon leverage + tech-roadmap depth score — computed, formula shown in UI. */
 function computeHorizonScore(h) {
@@ -470,13 +419,6 @@ const DATA = {
   ma: ["Thermal Mgmt", "Alternate Fuels", "Charging Solutions", "Battery (PS-ESB)", "Power Electronics", "ME-SiCs GaN"],
   bbm: ["GenAI Products & Services", "SW System for SdV", "Future Vehicle System for SdV", "SW & Services for OEMs", "Workshop Services & Fleet"],
 
-  criterionScores: [
-    { ...WEIGHTS[0], s: 7.2, conf: 0.86, why: "Strong in power electronics & service network; one structural gap (cell chemistry) addressable via partner/buy — see Competency tab." },
-    { ...WEIGHTS[1], s: 6.8, conf: 0.81, why: "Three exploitable Bosch-India strengths vs two structural weaknesses; threats are real but counterable — see SWOT tab." },
-    { ...WEIGHTS[2], s: 8.4, conf: 0.74, why: "Large, fast-growing market (28% CAGR) but sizing relies on forecasts → score high, confidence moderate — see Market tab." },
-    { ...WEIGHTS[3], s: 6.5, conf: 0.83, why: "High rivalry & new-entrant pressure offset by weak substitutes → moderately attractive — see Attractiveness tab." },
-    { ...WEIGHTS[4], s: 8.8, conf: 0.88, why: "Dense, evidenced pipeline across all three horizons with clear India triggers — see 3 Horizons tab." },
-  ],
 
   pestel: {
     Political: [
@@ -546,7 +488,7 @@ const DATA = {
       ],
     },
     strategy: "Lead with Battery & BMS (reuse PS-ESB + workshops + SdV software), partner into V2G/charging management with fleets and discoms, watch new-energy tech via ventures.",
-    scoreRationale: "Score 6.8: three exploitable, hard-to-copy strengths (assets, software, channel) and two well-matched opportunities outweigh two structural weaknesses — but the weaknesses (cost base, no cells) directly amplify both threats, capping the score below 7.5.",
+    scoreRationale: "Three exploitable, hard-to-copy strengths (assets, software, channel) and two well-matched opportunities outweigh two structural weaknesses — but the weaknesses (cost base, no cells) directly amplify both threats, capping the score below 7.5.",
   },
 
   market: {
@@ -587,7 +529,7 @@ const DATA = {
       ],
       profitability: "Hardware thin and price-led; software & services earn 2–3× hardware margins",
     },
-    scoreRationale: "Score 8.4: TAM >$8B with 28% CAGR clears the 'Bosch-scale business' bar comfortably; deduction for in-housing risk shrinking the merchant SAM. Confidence 0.74 (not higher) because the sizing chain rests on 2030 forecasts and two derived estimates — per the rubric, partial cited evidence.",
+    scoreRationale: "TAM >$8B with 28% CAGR clears the 'Bosch-scale business' bar comfortably; deduction for in-housing risk shrinking the merchant SAM. Evidence base: the sizing chain rests on 2030 forecasts and two derived estimates — partial cited evidence rather than firm data.",
   },
 
   porter: [
@@ -617,7 +559,7 @@ const DATA = {
       drivers: ["Low capex for charging SW", "Active VC funding", "Chinese JV entry route", "AIS-156 as partial barrier"], c: [17],
     },
   ],
-  porterRationale: "Attractiveness 6.5 = 10 − weighted hostile pressure. Dominant pressures: new entrants (8.0) and rivalry (7.5); strong offset from near-absent substitutes (4.0). Field is structurally investable for players with certification moats and channel — i.e. attractive specifically for Bosch's profile.",
+  porterRationale: "Dominant pressures: new entrants (8.0) and rivalry (7.5); strong offset from near-absent substitutes (4.0). Field is structurally investable for players with certification moats and channel — i.e. attractive specifically for Bosch's profile.",
 
   competency: [
     { name: "Power electronics", bosch: 9, req: 8, whyReq: "DC fast charging and traction electronics demand high-efficiency, high-reliability designs (8)", whyBosch: "Global leader in inverters/DC-DC with India manufacturing and engineering already in place (9)", gap: "none — exceed", gapWhy: "Exceeds requirement; use as anchor credential" },
@@ -627,7 +569,6 @@ const DATA = {
     { name: "India cost engineering", bosch: 6, req: 9, whyReq: "2W-led volume means winning BOMs are designed-to-cost for ₹1L vehicles (9)", whyBosch: "Strong local R&D, but platform cost base is EU-derived — ~25–30% adrift in 2W segment (6)", gap: "build / buy", gapWhy: "Dedicated India-cost line, or acquire an Indian BMS startup to leapfrog — biggest single gap driving the 7.2 score" },
     { name: "Service network", bosch: 9, req: 6, whyReq: "Battery services need physical touchpoints, but requirement is moderate as OEM networks also exist (6)", whyBosch: "10,000+ workshops nationwide — unmatched (9)", gap: "none — exceed", gapWhy: "Over-serves the requirement → convert surplus into a differentiating service offer" },
   ],
-  competencyRationale: "Score 7.2: four of six competencies at or above requirement, two of those exceeding it (power electronics, service network). The score is pulled down by one structural gap (cell chemistry, −3 vs requirement but mitigated by clear partner route) and one execution gap (India cost engineering, −3, the genuinely hard one). Confidence 0.86: competency levels are verifiable against Bosch's own footprint — high-evidence per the rubric.",
 
   horizons: {
     h1: [
@@ -642,15 +583,15 @@ const DATA = {
       { item: "Sodium-ion-ready BMS platforms", why: "Na-ion is in pilot production; mass adoption in entry 2W depends on cost parity and cycle-life proof — 5+ years in India", trigger: "Na-ion reaching LFP cost parity for entry-segment packs" },
       { item: "P2P energy trading on DPI rails", why: "Technically demonstrable today, but requires energy-market deregulation and Beckn-style open energy protocols at production scale", trigger: "Discom adoption of open digital-energy-grid protocols beyond sandbox" },
     ],
-    rationale: "Score 8.8: dense pipeline in ALL three horizons (rare — most fields are H1-heavy or H3-speculative), each H2/H3 item has a concrete, observable India trigger, and H1 items monetise existing Bosch assets immediately. Confidence 0.88: horizon placement is corroborated by cited policy and standards milestones.",
+    rationale: "Dense pipeline in ALL three horizons (rare — most fields are H1-heavy or H3-speculative), each H2/H3 item has a concrete, observable India trigger, and H1 items monetise existing Bosch assets immediately. Evidence base: horizon placement is corroborated by cited policy and standards milestones.",
   },
 
   verdict: {
     entry: "Build on PS-ESB battery + power electronics; partner for charging networks and cells; M&A screen on Indian BMS/charging-SW startups to close the cost-engineering gap.",
     reasoning: [
-      "Tech growth (8.8 × w0.20) and market (8.4 × w0.20) are the two largest contributions to the weighted score — see the matrix working below [13][17]",
-      "Competency 7.2 carries the highest weight (0.25): strong where it matters (power electronics, channel), with both gaps having named closure routes (partner for cells, build/buy for India cost)",
-      "Porter 6.5 is the limiting criterion — new-entrant pressure is the risk to monitor; the AIS-156 certification moat is the counter",
+      "Technology growth and market scale are the two strongest dimensions in the field's profile [13][17]",
+      "Competency fit is strong where it matters (power electronics, channel), with both gaps having named closure routes (partner for cells, build/buy for India cost)",
+      "Industry structure is the limiting dimension — new-entrant pressure is the risk to monitor; the AIS-156 certification moat is the counter",
       "Mapped BBM streams (Workshop Services & Fleet, SW for OEMs) give two ready go-to-market motions, raising execution confidence",
     ],
     portfolio: [
@@ -703,13 +644,6 @@ const DATA = {
 
   lighting: {
     ma: ["New"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 5.4, conf: 0.84, why: "Strong in ECUs/SW and sensing, but no luminaire/optics franchise — the core hardware competency sits with lighting Tier-1s. See Competency tab." },
-      { ...WEIGHTS[1], s: 5.8, conf: 0.80, why: "SW/controller strengths are real but the field is owned by entrenched lighting specialists with locked OEM platforms. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.6, conf: 0.78, why: "$2.5B market at 6.2% CAGR (6Wresearch); sizeable but steady, and only the control/SW slice is Bosch-addressable. See Market tab." },
-      { ...WEIGHTS[3], s: 5.6, conf: 0.82, why: "Entrenched incumbents, strong buyer power, platform lock-ins — a hard field to break into mid-cycle. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.4, conf: 0.83, why: "Lighting is becoming software (adaptive, personalised, communicative) — the SW layer is where growth concentrates. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "GST 2.0 (Sept-2025) cut small cars & ≤350cc 2W from 28% to 18% and most auto components to 18% — a structural demand stimulus for exactly the volume segments where LED/adaptive lighting content is expanding", why: "The 56th GST Council restructuring made mass-segment vehicles materially cheaper (₹50–60k on compact cars), pulling forward first-time purchases; components at 18% also eases lighting-electronics BOM tax cascade [9]", sowhat: "Volume-segment tailwind lands precisely where lighting content-per-vehicle is rising — time controller/SW entry to the demand upcycle rather than premium niches", i: "high", subs: ["Controllers", "Application SW"], c: [9] },
@@ -776,7 +710,7 @@ const DATA = {
         ],
       },
       strategy: "Do not build lamps. Enter the control & Application-SW layer (auto-dimming, matrix control, personalisation) on the back of existing ADAS/SdV assets, partnering with an incumbent lamp maker for optics and homologation.",
-      scoreRationale: "Score 5.8: genuine, reusable SW strengths but both weaknesses are structural (no optics franchise, no M&A hooks) and the threats are timing-sensitive. Net position is workable only with a narrow, software-scoped entry.",
+      scoreRationale: "Genuine, reusable SW strengths but both weaknesses are structural (no optics franchise, no M&A hooks) and the threats are timing-sensitive. Net position is workable only with a narrow, software-scoped entry.",
     },
     market: {
       tam: 2500, sam: 620, cagr: 6.2, year: 2030,
@@ -814,7 +748,7 @@ const DATA = {
         ],
         profitability: "Lamps commodity-thin; controllers moderate; software highest — enter at the top of the stack",
       },
-      scoreRationale: "Score 6.6: a $2.5B field (6.2% CAGR, 6Wresearch) but only ~$0.62B is realistically Bosch-addressable (control/SW layer), and growth is steady GDP-plus rather than exponential. Confidence 0.78: market size now triangulated across 6Wresearch, Mordor and Renub; the SW-share split remains a Bosch estimate.",
+      scoreRationale: "A $2.5B field (6.2% CAGR, 6Wresearch) but only ~$0.62B is realistically Bosch-addressable (control/SW layer), and growth is steady GDP-plus rather than exponential. Evidence base: market size now triangulated across 6Wresearch, Mordor and Renub; the SW-share split remains a Bosch estimate.",
     },
     porter: [
       { force: "Rivalry", v: 7.0, why: "Four strong Indian incumbents plus global JVs compete on locked platform awards; price pressure is constant but capacity discipline keeps it from being destructive.", drivers: ["Lumax/Minda/Varroc/Fiem + global JVs", "Platform-cycle competition", "Price-down clauses"], c: [8] },
@@ -823,7 +757,7 @@ const DATA = {
       { force: "Substitutes", v: 3.0, why: "No substitute for vehicle lighting; technology substitution (LED→pixel) happens within the field and rewards SW players.", drivers: ["Function is mandatory", "Tech shift favours electronics entrants"], c: [4] },
       { force: "New entrants", v: 5.5, why: "Optics + homologation are real barriers for lamp making, but the SW/controller layer (where Bosch would enter) has lower walls — cutting both ways.", drivers: ["Homologation barrier (HW)", "Low barrier in SW layer", "Chinese lamp imports limited by AIS"], c: [6] },
     ],
-    porterRationale: "Attractiveness 5.6 = 10 − weighted hostile pressure. Buyer power (7.5) and rivalry (7.0) dominate; weak substitutes help. The field is more attractive for a SW-layer entrant than for a lamp maker — the score reflects the field as a whole.",
+    porterRationale: "Buyer power (7.5) and rivalry (7.0) dominate; weak substitutes help. The field is more attractive for a SW-layer entrant than for a lamp maker — the score reflects the field as a whole.",
     competency: [
       { name: "Optics & photometrics", bosch: 2, req: 8, whyReq: "Beam shaping, glare control and homologation are core to any lamp product (8)", whyBosch: "No optics franchise — never been a lighting Tier-1 (2)", gap: "partner", gapWhy: "Partner with an incumbent lamp maker; do not build" },
       { name: "Lighting control ECUs & drivers", bosch: 7, req: 7, whyReq: "Matrix/pixel lighting needs automotive-grade controllers and LED drivers (7)", whyBosch: "Decades of ECU design, manufacturing in India, functional safety (7)", gap: "none — match", gapWhy: "Direct entry point — meets requirement today" },
@@ -831,7 +765,6 @@ const DATA = {
       { name: "Personalisation / HMI SW", bosch: 7, req: 6, whyReq: "Theme engines & app control are demanded in premium trims (6)", whyBosch: "Cockpit/SdV SW teams cover this with India-cost engineering (7)", gap: "none — exceed", gapWhy: "Bundle into cockpit offers" },
       { name: "OEM lighting relationships", bosch: 4, req: 8, whyReq: "Lighting is sourced through specialised commodity teams with incumbent trust (8)", whyBosch: "Bosch sells to these OEMs, but not in the lighting commodity — relationships must be built (4)", gap: "build / partner", gapWhy: "Ride a lamp-maker partnership into the sourcing room" },
     ],
-    competencyRationale: "Score 5.4: matches or exceeds on the three electronics/SW competencies, but the two it lacks (optics, lighting-commodity relationships) are exactly the ones that decide lamp awards. Confidence 0.84: Bosch-side levels are verifiable; requirement levels from sourcing-practice evidence.",
     horizons: {
       h1: [{ item: "Lighting control ECUs + auto-dimming SW for current platforms", why: "Mature demand, certified components, immediate RFQ pipeline as LED penetration completes" }],
       h2: [
@@ -839,14 +772,14 @@ const DATA = {
         { item: "Personalisation & scenario lighting as OTA features", why: "Needs SdV electrical architectures to reach volume segments first", trigger: "Indian OEMs shipping zonal architectures in volume models" },
       ],
       h3: [{ item: "Communicative lighting (V2X signalling, projection)", why: "Standards and regulation for road-projection signalling don't exist in India yet — 5+ years", trigger: "AIS/UNECE rules permitting symbol projection on public roads" }],
-      rationale: "Score 7.4: strong H2 density tied to observable BNCAP/SdV triggers; H1 is solid but commoditising; H3 is genuinely far. Growth is real but concentrated in the SW layer — consistent with the entry thesis.",
+      rationale: "Strong H2 density tied to observable BNCAP/SdV triggers; H1 is solid but commoditising; H3 is genuinely far. Growth is real but concentrated in the SW layer — consistent with the entry thesis.",
     },
     verdict: {
       entry: "Enter the control & Application-SW layer only, via partnership with an incumbent lamp maker (joint offers to OEM platforms); screen one partnership/JV target — the 'New' M&A mapping must be filled before committing.",
       reasoning: [
-        "Tech growth (7.4) is the only criterion above 7 — the field's growth is concentrated exactly in the layer Bosch can serve, but the field as a whole scores moderate",
-        "Competency 5.4 (heaviest weight) is the drag: the two missing competencies are award-deciding for lamps — hence partner-led entry, not build",
-        "Porter 5.6 and SWOT 5.8 both flag incumbent lock-in and buyer power; market 6.6 is solid but not exceptional — together they cap the verdict below ENTER",
+        "Technology growth is the strongest dimension — the field's growth is concentrated exactly in the software/control layer Bosch can serve, even though the field as a whole rates moderate",
+        "Competency fit is the drag: the two missing competencies are award-deciding for lamps — hence partner-led entry, not build",
+        "Industry structure and the SWOT posture both flag incumbent lock-in and buyer power; the market is solid but not exceptional — together they cap this below a full-commitment bet",
       ],
       portfolio: [
         { sub: "Application SW", play: "LEAD", why: "Personalisation/adaptive SW rides existing Bosch assets; clearest right to win" },
@@ -889,13 +822,6 @@ const DATA = {
 
   cockpit: {
     ma: ["Video Perception", "AI Cockpit", "Strategic SoC"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 8.0, conf: 0.88, why: "Cockpit HPC heritage + the largest automotive SW org in India; gap only at consumer-grade UX polish and SoC dependency. See Competency tab." },
-      { ...WEIGHTS[1], s: 7.4, conf: 0.84, why: "Strengths (HPC, India SW, OEM trust) outweigh consumer-UX weakness; threats from consumer-electronics entrants are real but addressable. See SWOT tab." },
-      { ...WEIGHTS[2], s: 7.8, conf: 0.76, why: "Screens & cockpit compute are the fastest-rising content line in Indian PVs; large SAM with 14% CAGR. See Market tab." },
-      { ...WEIGHTS[3], s: 6.2, conf: 0.82, why: "Strong rivalry from consumer-electronics giants and Qualcomm's SoC leverage compress the field's attractiveness. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 8.4, conf: 0.86, why: "AI cockpit, local-language voice and in-car ecosystems give dense H1–H3 pipeline with clear India triggers. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "GST 2.0's 28%→18% cut on small cars pulls screen-rich trims into reach of first-time buyers — the volume stimulus lands exactly where cockpit content is climbing", why: "The Sept-2025 restructuring made mass-segment PVs materially cheaper; buyers upgrade trims rather than pocket the difference, and mid trims now carry twin displays [9]", sowhat: "Time the pre-integrated cockpit bundle for volume-segment platforms, not just premium — the demand pull is at ₹8–15L price points", i: "high", subs: ["Hardware", "System Integrator"], c: [9] },
@@ -956,7 +882,7 @@ const DATA = {
         ],
       },
       strategy: "Lead as the integrated cockpit platform & AI-experience provider for India: cockpit HPC + pre-integrated SW bundle + vernacular AI assistant, with a silicon alliance and a UX capability acquisition.",
-      scoreRationale: "Score 7.4: two heavyweight, hard-to-copy strengths and two well-evidenced opportunities; weaknesses are real but both have named closure routes (UX acquisition, SoC alliance). Threats moderate the score below 8.",
+      scoreRationale: "Two heavyweight, hard-to-copy strengths and two well-evidenced opportunities; weaknesses are real but both have named closure routes (UX acquisition, SoC alliance). Threats moderate the score below 8.",
     },
     market: {
       tam: 5600, sam: 2100, cagr: 14, year: 2030,
@@ -993,7 +919,7 @@ const DATA = {
         ],
         profitability: "Hardware pass-through thin; software and integration carry the margin — bundle to defend both",
       },
-      scoreRationale: "Score 7.8: $2.1B Bosch-addressable SAM with 14% CAGR and rising content/vehicle. Confidence 0.76: production forecasts solid; SW/integration share split is our estimate.",
+      scoreRationale: "$2.1B Bosch-addressable SAM with 14% CAGR and rising content/vehicle. Evidence base: production forecasts solid; SW/integration share split is our estimate.",
     },
     porter: [
       { force: "Rivalry", v: 7.5, why: "Harman, LG, Visteon, Panasonic, Desay and Chinese Tier-1s all target Indian cockpit awards; differentiation cycles are short.", drivers: ["Consumer-electronics entrants", "Chinese cockpit Tier-1s via JVs", "Short feature cycles"], c: [8] },
@@ -1002,7 +928,7 @@ const DATA = {
       { force: "Substitutes", v: 4.5, why: "Phone-mirroring (CarPlay/Android Auto) substitutes some embedded value, but OEMs are pulling experience back in-house for data & brand reasons.", drivers: ["Phone projection erosion", "OEM counter-trend to embedded"], c: [3] },
       { force: "New entrants", v: 6.5, why: "Software-side entry is cheap (Indian IT/GCC firms), but full cockpit (HW+SW+safety) integration remains a meaningful barrier.", drivers: ["IT-services entrants in SW", "Integration barrier for full stack"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.2 = 10 − weighted pressure. Rivalry (7.5) and SoC supplier power (7.0) dominate; partial offset from differentiation-driven buyer dynamics. Attractive for full-stack integrators, hostile for point-solution vendors.",
+    porterRationale: "Rivalry (7.5) and SoC supplier power (7.0) dominate; partial offset from differentiation-driven buyer dynamics. Attractive for full-stack integrators, hostile for point-solution vendors.",
     competency: [
       { name: "Cockpit domain compute (HPC)", bosch: 9, req: 9, whyReq: "Cockpit-ADAS fusion on central compute is the architecture endgame (9)", whyBosch: "Bosch ships cockpit/cross-domain HPCs globally; India engineering involved (9)", gap: "none — match", gapWhy: "Anchor asset for the integrated offer" },
       { name: "HMI / UX design", bosch: 6, req: 9, whyReq: "Phone-grade UX is the buyer benchmark in India (9)", whyBosch: "Functional HMI competence; lacks consumer-design culture (6)", gap: "buy / hire", gapWhy: "Acquire a UX studio or build a dedicated India design lab — biggest gap" },
@@ -1010,7 +936,6 @@ const DATA = {
       { name: "Android Automotive / OS integration", bosch: 8, req: 8, whyReq: "AAOS is the de-facto Indian cockpit OS (8)", whyBosch: "Multiple AAOS programmes delivered from India (8)", gap: "none — match", gapWhy: "Productise as the pre-integrated bundle" },
       { name: "Display/panel supply chain", bosch: 3, req: 6, whyReq: "Integrators need panel sourcing, though OEMs often direct-buy (6)", whyBosch: "No panel franchise (3)", gap: "partner", gapWhy: "Panel partnerships suffice; do not integrate backwards" },
     ],
-    competencyRationale: "Score 8.0: matches requirement on the three platform competencies (HPC, OS, compute) that carry the most weight; the UX gap is significant but closable by acquisition, and panels are deliberately out of scope. Confidence 0.88: levels verifiable against delivered programmes.",
     horizons: {
       h1: [
         { item: "Cockpit HPC + AAOS integration for current platforms", why: "Active RFQ pipeline today; Bosch assets production-ready" },
@@ -1021,14 +946,14 @@ const DATA = {
         { item: "Cockpit-ADAS fusion on single SoC", why: "Silicon available; OEM architecture cycles put volume adoption 2–4 years out", trigger: "Two Indian OEM platforms sourcing one-box cockpit-ADAS" },
       ],
       h3: [{ item: "Agentic in-car AI + app/commerce ecosystem", why: "Requires mature payments, content partnerships and trust frameworks beyond current cockpit scope — 5+ years to material revenue", trigger: "In-car commerce GMV crossing meaningful scale on UPI rails" }],
-      rationale: "Score 8.4: dense H1 (immediate revenue), two well-evidenced H2 themes with observable triggers, and a credible H3 tied to India's payment rails. One of the strongest growth profiles across the search fields.",
+      rationale: "Dense H1 (immediate revenue), two well-evidenced H2 themes with observable triggers, and a credible H3 tied to India's payment rails. One of the strongest growth profiles across the search fields.",
     },
     verdict: {
       entry: "Lead with the integrated cockpit platform (HPC + pre-integrated AAOS bundle + vernacular AI assistant); execute the Strategic-SoC alliance and a UX-capability acquisition; use Video Perception assets for occupant-aware experiences.",
       reasoning: [
-        "Competency 8.0 at the heaviest weight plus 3-Horizons 8.4 drive the score — Bosch's strongest combined right-to-play/right-to-win outside Software",
-        "Market 7.8 with content-per-vehicle growth means revenue grows even in flat unit years",
-        "Porter 6.2 is the limiting criterion (rivalry + SoC supplier power) — the named counters are the SoC alliance and full-stack integration positioning",
+        "Competency fit plus horizon depth drive the case — Bosch's strongest combined right-to-play/right-to-win outside Software",
+        "Market growth in content-per-vehicle means revenue grows even in flat unit years",
+        "Industry structure is the limiting dimension (rivalry + SoC supplier power) — the named counters are the SoC alliance and full-stack integration positioning",
       ],
       portfolio: [
         { sub: "SW", play: "LEAD", why: "AI cockpit, vernacular assistant, HMI platform — largest value pool, strongest fit" },
@@ -1068,13 +993,6 @@ const DATA = {
 
   interior: {
     ma: ["ADAS - Interior Sensing", "Comfort Actuators (EM)"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 6.6, conf: 0.85, why: "Interior-sensing (camera/radar) and actuator competencies are strong; seating and scent are absent franchises — selective fit. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.2, conf: 0.80, why: "Sensing strengths + regulatory tailwind vs absent seating franchise and consumer-comfort brand. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.4, conf: 0.72, why: "Aggregate field is mid-sized; the high-growth slice (occupant monitoring, air quality) is the Bosch-relevant part. See Market tab." },
-      { ...WEIGHTS[3], s: 6.0, conf: 0.80, why: "Fragmented sub-markets: monitoring attractive (regulation-pulled), seating hostile (entrenched giants). See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.2, conf: 0.82, why: "DMS regulation, AQI-driven air purity and biometric access give a strong India-specific H1–H2 pipeline. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Stability & Policy Certainty", p: "Driver-monitoring is moving from NCAP incentive to expected regulation — a predictable trajectory, not a policy gamble", why: "BNCAP protocols and global UNECE DDAW precedent point to Indian DMS requirements; commercial-fleet fatigue rules already nudge adoption [1]", sowhat: "Occupant/driver monitoring becomes a regulation-pulled volume market — the strongest entry wedge, matching the 'Interior Sensing' M&A hook", i: "high", subs: ["Occupant Monitoring"], c: [1] },
@@ -1135,7 +1053,7 @@ const DATA = {
         ],
       },
       strategy: "Lead occupant & driver monitoring (regulation-timed), supply comfort actuators and air-quality sensing as component/SW layers to incumbents, and stay out of complete seats and consumer scent.",
-      scoreRationale: "Score 6.2: two strong, asset-backed strengths and a genuine regulatory opportunity, but the field's largest revenue pools (complete seating) sit behind a structural weakness. Net position good only with strict sub-field selection.",
+      scoreRationale: "Two strong, asset-backed strengths and a genuine regulatory opportunity, but the field's largest revenue pools (complete seating) sit behind a structural weakness. Net position good only with strict sub-field selection.",
     },
     market: {
       tam: 4200, sam: 1100, cagr: 12, year: 2030,
@@ -1172,7 +1090,7 @@ const DATA = {
         ],
         profitability: "Sensing and actuators earn healthy component margins; trim and seats are volume-thin — stay selective",
       },
-      scoreRationale: "Score 6.4: moderate aggregate ($1.1B SAM, 12% CAGR) but the addressable slice grows much faster than the field. Confidence 0.72: sub-segment splits rest on our estimates; regulation timing uncertain.",
+      scoreRationale: "Moderate aggregate ($1.1B SAM, 12% CAGR) but the addressable slice grows much faster than the field. Evidence base: sub-segment splits rest on our estimates; regulation timing uncertain.",
     },
     porter: [
       { force: "Rivalry", v: 6.5, why: "Each sub-market has different rivals — monitoring (Smart Eye, Seeing Machines, startups), access (Continental, Marquardt), seating (giants). Moderate overall because few compete across all.", drivers: ["Specialist DMS players", "Access-system incumbents", "Fragmented sub-markets"], c: [8] },
@@ -1181,7 +1099,7 @@ const DATA = {
       { force: "Substitutes", v: 4.0, why: "Smartphone-based monitoring substitutes only in aftermarket retrofits; OEM-line functions have no substitute.", drivers: ["Phone-app retrofits (low end)", "No OEM-line substitute"], c: [3] },
       { force: "New entrants", v: 7.0, why: "Camera-AI startups enter monitoring cheaply; certification and OEM-line integration are the main, surmountable barriers.", drivers: ["Edge-AI startup wave", "Certification as partial barrier"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.0 = 10 − weighted pressure. New entrants (7.0) and fragmented rivalry dominate; weak substitutes and supplier power help. Attractiveness is sub-field-specific — strongest where regulation creates certified-supplier leverage.",
+    porterRationale: "New entrants (7.0) and fragmented rivalry dominate; weak substitutes and supplier power help. Attractiveness is sub-field-specific — strongest where regulation creates certified-supplier leverage.",
     competency: [
       { name: "In-cabin sensing (camera/radar/MEMS)", bosch: 8, req: 8, whyReq: "DMS/CPD require robust multi-modal sensing in harsh cabins (8)", whyBosch: "Existing sensor franchises extend directly; perception SW in-house (8)", gap: "none — match", gapWhy: "Core entry asset" },
       { name: "Occupant-state AI (drowsiness, distraction, health)", bosch: 7, req: 8, whyReq: "Regulatory DDAW-class performance plus India-specific conditions (8)", whyBosch: "Perception AI strong; India-condition datasets (lighting, attire, occupancy patterns) need building (7)", gap: "build", gapWhy: "Data-collection programme in India — 12–18 months" },
@@ -1189,7 +1107,6 @@ const DATA = {
       { name: "Complete seating systems", bosch: 2, req: 9, whyReq: "Seat awards demand full structures, foam, trim, crash competence (9)", whyBosch: "No franchise (2)", gap: "skip", gapWhy: "Deliberately out of scope — partner channel instead" },
       { name: "Air-quality sensing & purification", bosch: 7, req: 7, whyReq: "Credible PM/VOC/CO2 sensing + HVAC integration (7)", whyBosch: "MEMS environmental sensors exist; purification via partners (7)", gap: "partner", gapWhy: "Sensor-led offer, filtration partnered" },
     ],
-    competencyRationale: "Score 6.6: strong matches on sensing, actuators and air quality; the deliberate seating skip drags the field-level average but reflects strategy, not weakness. Confidence 0.85: levels verifiable against existing product lines.",
     horizons: {
       h1: [
         { item: "Fleet driver-fatigue monitoring (retrofit + OEM-line CV)", why: "Commercial fatigue rules and insurer pressure create demand today" },
@@ -1200,14 +1117,14 @@ const DATA = {
         { item: "Integrated cabin air-quality systems with health display", why: "AQI salience high now; OEM productisation cycles put volume 2–3 years out", trigger: "Two OEMs marketing certified cabin-air claims in volume models" },
       ],
       h3: [{ item: "In-cabin health monitoring (vitals via radar/camera)", why: "Medically credible vitals sensing needs validation and possibly medical-device pathways — 5+ years", trigger: "Regulatory clarity on wellness vs medical-device classification in India" }],
-      rationale: "Score 7.2: H1 monetises today, H2 is regulation-timed with observable triggers, H3 bridges to the Health Care field. Growth concentrated exactly in the Bosch-addressable slice.",
+      rationale: "H1 monetises today, H2 is regulation-timed with observable triggers, H3 bridges to the Health Care field. Growth concentrated exactly in the Bosch-addressable slice.",
     },
     verdict: {
       entry: "Lead occupant/driver monitoring timed to regulation (build India datasets now); supply comfort actuators and air-quality sensing as component/SW layers; partner with seat Tier-1s; skip complete seats and scent.",
       reasoning: [
-        "3-Horizons 7.2 and Competency 6.6 carry the verdict: growth and fit concentrate in monitoring + air quality, both asset-backed",
-        "Market 6.4 and Porter 6.0 reflect the field's fragmentation — the aggregate is mid-attractive, the selected slice better",
-        "SWOT 6.2 confirms: the field rewards strict sub-field selection, hence EXPLORE with a focused portfolio rather than broad entry",
+        "Horizon depth and competency fit carry the case: growth and fit concentrate in monitoring + air quality, both asset-backed",
+        "Market size and industry structure both reflect the field's fragmentation — the aggregate is mid-attractive, the selected slice better",
+        "The SWOT posture confirms it: the field rewards strict sub-field selection — a focused portfolio rather than broad entry",
       ],
       portfolio: [
         { sub: "Occupant Monitoring", play: "LEAD", why: "Regulation-pulled, competency-matched, M&A hook mapped" },
@@ -1250,13 +1167,6 @@ const DATA = {
 
   suspension: {
     ma: ["Compute", "Chassis System", "VMM"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 6.4, conf: 0.84, why: "VMM/chassis-control SW and compute are strong; active-damper hardware franchise absent. See Competency tab." },
-      { ...WEIGHTS[1], s: 5.6, conf: 0.78, why: "Software strengths real but the Indian market for active suspension is premium-niche; hardware incumbents own it. See SWOT tab." },
-      { ...WEIGHTS[2], s: 4.2, conf: 0.70, why: "Small Indian TAM today; growth depends on premiumisation trickling down — slow. See Market tab." },
-      { ...WEIGHTS[3], s: 5.0, conf: 0.80, why: "Niche with entrenched global suppliers and strong OEM cost resistance. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 6.0, conf: 0.78, why: "Cross-domain ride control (ADAS-linked) is a real H2/H3 theme, but India volume triggers are distant. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Stability & Policy Certainty", p: "No regulatory driver exists for active suspension — the absence of a mandate is itself the strategic finding", why: "Highway quality improves (less need) while urban roads stay rough (more need) — but no rule mandates ride tech, and none is on the AIS agenda [1]", sowhat: "Demand is purely market-pulled premiumisation — plan for slow adoption, no mandate windfall", i: "low", subs: ["Active & Semi-Active"], c: [1] },
@@ -1317,7 +1227,7 @@ const DATA = {
         ],
       },
       strategy: "Software-and-compute-only posture: sell cross-domain ride control (preview damping, roll mitigation, motion-sickness reduction) inside VMM/SdV platform deals; partner for all damper hardware; revisit hardware stance only if the market inflects.",
-      scoreRationale: "Score 5.6: credible software strengths but the market-size weakness is structural and both threats squeeze the niche from opposite sides. Net position is a patient, software-scoped play.",
+      scoreRationale: "Credible software strengths but the market-size weakness is structural and both threats squeeze the niche from opposite sides. Net position is a patient, software-scoped play.",
     },
     market: {
       tam: 900, sam: 220, cagr: 11, year: 2030,
@@ -1354,7 +1264,7 @@ const DATA = {
         ],
         profitability: "Hardware margins thin and contested; software-only participation is the one margin-positive route",
       },
-      scoreRationale: "Score 4.2: smallest SAM among the search fields ($0.22B) and growth depends on premium trickle-down. Confidence 0.70: premium-segment forecasts vary widely; content estimates ours.",
+      scoreRationale: "Smallest SAM among the search fields ($0.22B) and growth depends on premium trickle-down. Evidence base: premium-segment forecasts vary widely; content estimates ours.",
     },
     porter: [
       { force: "Rivalry", v: 6.0, why: "A handful of global specialists compete for few Indian awards; rivalry is concentrated but not price-destructive given low volumes.", drivers: ["ZF/Tenneco/BWI/Marelli", "Few annual awards"], c: [8] },
@@ -1363,7 +1273,7 @@ const DATA = {
       { force: "Substitutes", v: 6.0, why: "Good passive tuning + frequency-selective dampers deliver 70% of the benefit at 20% of the cost — a real substitute in India.", drivers: ["Advanced passive dampers", "India tuning culture"], c: [2] },
       { force: "New entrants", v: 3.5, why: "Capital intensity, safety validation and tiny market size deter entrants — the niche protects itself.", drivers: ["High validation cost", "Small prize"], c: [8] },
     ],
-    porterRationale: "Attractiveness 5.0 = 10 − weighted pressure. Buyer power (7.5) and passive-damper substitution (6.0) dominate; low entrant threat helps incumbents more than newcomers. A defendable niche, but a niche.",
+    porterRationale: "Buyer power (7.5) and passive-damper substitution (6.0) dominate; low entrant threat helps incumbents more than newcomers. A defendable niche, but a niche.",
     competency: [
       { name: "Motion-control SW (VMM)", bosch: 9, req: 8, whyReq: "Coordinated chassis control across braking/steering/damping (8)", whyBosch: "VMM is a flagship Bosch stack; chassis-systems hook mapped (9)", gap: "none — exceed", gapWhy: "The entire entry thesis rests here" },
       { name: "Damper/valve hardware", bosch: 2, req: 8, whyReq: "System awards need the hydraulic/mechatronic corner (8)", whyBosch: "No franchise (2)", gap: "partner", gapWhy: "Partner or stay SW-only — do not build" },
@@ -1371,7 +1281,6 @@ const DATA = {
       { name: "Cost-engineered semi-active for India", bosch: 5, req: 8, whyReq: "₹25L price points demand India-cost mechatronics (8)", whyBosch: "Global designs premium-priced; India cost variant absent (5)", gap: "partner / build", gapWhy: "Only relevant if hardware stance changes — currently parked" },
       { name: "Functional safety for SW-defined chassis", bosch: 9, req: 8, whyReq: "ISO 26262 rigour as control goes software (8)", whyBosch: "Decades of chassis safety pedigree (9)", gap: "none — exceed", gapWhy: "Credential for OEM-side architecture wins" },
     ],
-    competencyRationale: "Score 6.4: exceeds on every software/safety competency, absent on hardware — a bimodal profile averaging to moderate. The score understates fit for the software-scoped strategy and overstates it for any hardware ambition. Confidence 0.84.",
     horizons: {
       h1: [{ item: "Ride-control SW features on existing semi-active hardware (premium trims)", why: "Sellable today into the small but real premium pipeline" }],
       h2: [
@@ -1379,14 +1288,14 @@ const DATA = {
         { item: "Heavy-EV body control on central compute", why: "EV mass problem grows with battery sizes; zonal architectures arriving", trigger: "Indian EV platforms above 2.2t kerb weight reaching volume" },
       ],
       h3: [{ item: "Full software-defined chassis (damping as OTA-tunable service)", why: "Needs SDV architectures + business-model acceptance — 5+ years in India", trigger: "OEMs monetising chassis-feature subscriptions in India" }],
-      rationale: "Score 6.0: H2 themes are genuine and Bosch-aligned, but every horizon depends on premium/SdV adoption curves that move slowly in India. Growth is real, gradient is shallow.",
+      rationale: "H2 themes are genuine and Bosch-aligned, but every horizon depends on premium/SdV adoption curves that move slowly in India. Growth is real, gradient is shallow.",
     },
     verdict: {
       entry: "Software-and-compute scope inside VMM/SdV platform deals; no damper hardware; revisit in 12 months against the premium-SUV penetration trigger.",
       reasoning: [
-        "Market 4.2 is the decisive drag — the smallest addressable pool of all search fields makes standalone investment unjustifiable",
-        "Competency 6.4 and Horizons 6.0 show a credible software path, which is why this is WATCH-with-a-play rather than NO-GO",
-        "Porter 5.0 (buyer power + passive substitution) confirms thin standalone economics — hence bundling into already-funded ADAS/SdV programmes",
+        "Market size is the decisive drag — the smallest addressable pool of all search fields makes standalone investment unjustifiable",
+        "Competency fit and the horizon pipeline show a credible software path, which is why this is a watch-with-a-play rather than an outright pass",
+        "Industry structure (buyer power + passive substitution) confirms thin standalone economics — hence bundling into already-funded ADAS/SdV programmes",
       ],
       portfolio: [
         { sub: "Control Algorithms", play: "LEAD", why: "VMM extension — near-zero marginal cost, ships inside SdV deals" },
@@ -1424,13 +1333,6 @@ const DATA = {
 
   connectivity: {
     ma: ["Offboard SW & Services", "Data Processing", "Compute (connectivity HW under)", "SW & Services - CVS"], bbm: ["GenAI Products & Services", "SW System for SdV", "Future Vehicle System for SdV", "Software & Services for OEMs", "Workshop"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 8.2, conf: 0.88, why: "Mobility cloud, cybersecurity engineering and the India SW org map directly onto every sub-field; only hyperscale infra is out of scope. See Competency tab." },
-      { ...WEIGHTS[1], s: 7.6, conf: 0.84, why: "Regulatory tailwinds (AIS-189/190, DPDP) play to Bosch's compliance strengths; hyperscaler coopetition is the managed threat. See SWOT tab." },
-      { ...WEIGHTS[2], s: 7.8, conf: 0.75, why: "Connected-vehicle penetration racing toward ubiquity; $2.6B SAM at 22% CAGR. See Market tab." },
-      { ...WEIGHTS[3], s: 6.8, conf: 0.83, why: "Crowded but regulation raises certified-supplier barriers; substitutes weak. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 8.6, conf: 0.88, why: "Cyber regulation now, federated data & SDV platforms next, quantum-safe later — full-spectrum pipeline. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Stability & Policy Certainty", p: "AIS-189/190 bring UNECE-style cybersecurity & software-update management to India — a predictable, ratcheting compliance agenda", why: "CSMS/SUMS requirements make certified security processes a homologation precondition for connected vehicles [1]", sowhat: "Cybersecurity engineering becomes mandatory spend by every OEM — a compliance-pulled services and product market Bosch is built for", i: "high", subs: ["Cyber Security"], c: [1] },
@@ -1489,7 +1391,7 @@ const DATA = {
         ],
       },
       strategy: "Lead cybersecurity & software-update compliance now, build the vehicle data platform business on it, and co-architect India's federated mobility-data layer; partner hyperscalers for infrastructure.",
-      scoreRationale: "Score 7.6: rare full-stack strength alignment plus a regulation-pulled opportunity; weaknesses are layer-boundaries (infra, consumer UX) with clear partner/build routes. Threats are serious but Bosch holds differentiated ground.",
+      scoreRationale: "Rare full-stack strength alignment plus a regulation-pulled opportunity; weaknesses are layer-boundaries (infra, consumer UX) with clear partner/build routes. Threats are serious but Bosch holds differentiated ground.",
     },
     market: {
       tam: 6800, sam: 2600, cagr: 22, year: 2030,
@@ -1526,7 +1428,7 @@ const DATA = {
         ],
         profitability: "Implementation services thin; compliance products and data platforms carry strong recurring margins",
       },
-      scoreRationale: "Score 7.8: $2.6B SAM at 22% CAGR with recurring-revenue character. Confidence 0.75: parc forecasts robust; ARPU and compliance-spend assumptions are ours.",
+      scoreRationale: "$2.6B SAM at 22% CAGR with recurring-revenue character. Evidence base: parc forecasts robust; ARPU and compliance-spend assumptions are ours.",
     },
     porter: [
       { force: "Rivalry", v: 7.0, why: "Hyperscalers, IT majors, telematics specialists and Tier-1s all converge — but the field is broad enough that direct collisions are layer-specific.", drivers: ["Hyperscaler verticals", "IT-services majors", "Telematics specialists"], c: [8] },
@@ -1535,7 +1437,7 @@ const DATA = {
       { force: "Substitutes", v: 3.5, why: "Compliance cannot be substituted; smartphone-based connectivity substitutes only low-end retrofit telematics.", drivers: ["Mandated compliance", "Phone-based retrofit (low end only)"], c: [1] },
       { force: "New entrants", v: 7.0, why: "Software entry is cheap and VC-funded security startups proliferate — but AIS-189-grade certification and OEM trust are rising barriers.", drivers: ["Startup wave", "Certification barrier rising"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.8 = 10 − weighted pressure. Rivalry and entrants (7.0 each) are offset by near-absent substitutes (3.5) and post-install stickiness. Regulation systematically raises barriers in Bosch's favour.",
+    porterRationale: "Rivalry and entrants (7.0 each) are offset by near-absent substitutes (3.5) and post-install stickiness. Regulation systematically raises barriers in Bosch's favour.",
     competency: [
       { name: "Automotive cybersecurity (CSMS/SUMS)", bosch: 9, req: 9, whyReq: "AIS-189/190 demand certified end-to-end security processes (9)", whyBosch: "Global UNECE R155/156 programme experience; security engineering at scale (9)", gap: "none — match", gapWhy: "Lead offer — immediate" },
       { name: "Vehicle data platforms & analytics", bosch: 8, req: 8, whyReq: "OEMs need scaled ingestion, processing, monetisation (8)", whyBosch: "Mobility cloud + Data Processing M&A hook + India data engineering (8)", gap: "none — match", gapWhy: "Build the platform business on compliance entry" },
@@ -1543,7 +1445,6 @@ const DATA = {
       { name: "Hyperscale cloud infrastructure", bosch: 3, req: 6, whyReq: "Scaled, India-resident infra underneath everything (6)", whyBosch: "Deliberately not owned (3)", gap: "partner", gapWhy: "Multi-cloud partnerships; differentiate above the line" },
       { name: "Open-network / DPI-style architectures", bosch: 6, req: 7, whyReq: "Federated mobility data needs Beckn-class open-protocol fluency (7)", whyBosch: "Architecture talent exists; India DPI-specific experience thin (6)", gap: "build / hire", gapWhy: "Hire from India DPI ecosystem; co-build with network founders" },
     ],
-    competencyRationale: "Score 8.2: matches or exceeds on four of five competencies including both decisive ones (cyber, data platforms); the infra gap is a deliberate partner line. Highest competency score across the search fields alongside Software. Confidence 0.88.",
     horizons: {
       h1: [
         { item: "CSMS/SUMS compliance products & secure OTA", why: "Regulatory deadlines create urgent, budgeted demand today" },
@@ -1554,14 +1455,14 @@ const DATA = {
         { item: "Cross-OEM SDV data architecture standards", why: "Fragmented per-OEM platforms will consolidate; standard-setters win", trigger: "Two+ Indian OEMs adopting a shared vehicle-data schema" },
       ],
       h3: [{ item: "Quantum-safe vehicle security & 6G-era architectures", why: "Post-quantum migration for 15-year vehicle lifecycles must start before the threat matures — but India deployment is 5+ years out", trigger: "Indian regulatory guidance on PQC timelines for automotive" }],
-      rationale: "Score 8.6: the only field with mandated H1 demand, structural H2 themes tied to India's DPI trajectory, and a real H3. Breadth across all five sub-fields compounds the score.",
+      rationale: "The only field with mandated H1 demand, structural H2 themes tied to India's DPI trajectory, and a real H3. Breadth across all five sub-fields compounds the score.",
     },
     verdict: {
       entry: "Enter now, compliance-first: lead with CSMS/SUMS + secure OTA, expand into vehicle data platforms on the install base, co-architect federated mobility data; hyperscalers as infra partners, GenAI stream layered on the data assets.",
       reasoning: [
-        "Competency 8.2 at top weight + Horizons 8.6 — the strongest right-to-play/right-to-win combination in the portfolio review",
-        "Market 7.8 with recurring-revenue character and regulation-guaranteed floor demand de-risks the entry economics",
-        "Porter 6.8 is the lowest criterion yet still above field average — regulation keeps raising barriers in favour of certified incumbents",
+        "Competency fit and horizon depth together — the strongest right-to-play/right-to-win combination in the portfolio review",
+        "A large market with recurring-revenue character and regulation-guaranteed floor demand de-risks the entry economics",
+        "Industry structure is the weakest dimension yet still above field average — regulation keeps raising barriers in favour of certified incumbents",
       ],
       portfolio: [
         { sub: "Cyber Security", play: "LEAD", why: "Regulation-mandated, competency-matched, immediate revenue" },
@@ -1603,13 +1504,6 @@ const DATA = {
 
   eca: {
     ma: ["MEMS", "ECU", "Power Semiconductors", "IC", "ASICs", "Quantum Sensing"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 7.4, conf: 0.86, why: "World-class ECU/MEMS franchises and zonal-architecture leadership; no fab and limited India silicon design scale. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.8, conf: 0.82, why: "Architecture leadership + India Semiconductor Mission alignment vs fab absence and SoC-vendor gravity. See SWOT tab." },
-      { ...WEIGHTS[2], s: 7.0, conf: 0.72, why: "$2.3B SAM as E/E content rises and zonal transitions begin; semiconductor value partly flows to silicon vendors. See Market tab." },
-      { ...WEIGHTS[3], s: 6.0, conf: 0.82, why: "SoC-vendor power and OEM in-housing pressure offset by high entry barriers. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.6, conf: 0.84, why: "Zonal now, AI-compute and chiplets next, RISC-V and quantum sensing later — deep pipeline with ISM tailwind. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission funds fabs, OSAT and design-linked incentives — a domestic silicon ecosystem is forming for the first time", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", subs: ["Semiconductor Tech"], c: [1] },
@@ -1671,7 +1565,7 @@ const DATA = {
         ],
       },
       strategy: "Lead the zonal/central-compute transition on Indian platforms, anchor automotive qualification of ISM silicon, hold the power-semiconductor line with Energy-field coordination, and watch RISC-V for sovereignty-driven programmes.",
-      scoreRationale: "Score 6.8: two franchise-grade strengths and a genuine once-a-decade opportunity, tempered by the structural fab gap and value migration toward SoC vendors. Strong but contested ground.",
+      scoreRationale: "Two franchise-grade strengths and a genuine once-a-decade opportunity, tempered by the structural fab gap and value migration toward SoC vendors. Strong but contested ground.",
     },
     market: {
       tam: 7400, sam: 2300, cagr: 16, year: 2030,
@@ -1708,7 +1602,7 @@ const DATA = {
         ],
         profitability: "Commodity ECUs margin-compressed; architecture wins and qualification services carry durable margin",
       },
-      scoreRationale: "Score 7.0: large SAM with structural content growth, discounted for value migration to SoC vendors and OEM captives. Confidence 0.72: content-per-vehicle curves and merchant-share splits are estimates.",
+      scoreRationale: "Large SAM with structural content growth, discounted for value migration to SoC vendors and OEM captives. Evidence base: content-per-vehicle curves and merchant-share splits are estimates.",
     },
     porter: [
       { force: "Rivalry", v: 6.5, why: "Global Tier-1s (Continental, Aptiv, Denso, Visteon) plus rising Indian electronics players compete for the zonal wave; discipline holds because validation costs deter price wars.", drivers: ["Tier-1 set converging on zonal", "Indian EMS/electronics risers"], c: [8] },
@@ -1717,7 +1611,7 @@ const DATA = {
       { force: "Substitutes", v: 3.0, why: "No substitute for vehicle electronics; substitution happens within the field (many ECUs → fewer computers) and is the opportunity itself.", drivers: ["Function mandatory", "Consolidation = intra-field shift"], c: [4] },
       { force: "New entrants", v: 5.0, why: "Automotive qualification, functional safety and OEM trust are high walls; ISM-funded Indian entrants will emerge but need years to qualify.", drivers: ["High qualification barrier", "ISM-funded future entrants"], c: [1] },
     ],
-    porterRationale: "Attractiveness 6.0 = 10 − weighted pressure. Supplier power (7.5, foundry/SoC) is the dominant hostile force; near-zero substitutes and high entry walls protect incumbents. Attractive for architecture leaders, squeezed for commodity-ECU positions.",
+    porterRationale: "Supplier power (7.5, foundry/SoC) is the dominant hostile force; near-zero substitutes and high entry walls protect incumbents. Attractive for architecture leaders, squeezed for commodity-ECU positions.",
     competency: [
       { name: "ECU design & manufacturing", bosch: 9, req: 8, whyReq: "Cost-optimised, safety-certified controllers at Indian volumes (8)", whyBosch: "Among world's largest; India plants operating (9)", gap: "none — exceed", gapWhy: "The base to defend and migrate" },
       { name: "Zonal/central-compute architecture", bosch: 9, req: 9, whyReq: "The transition is the entry window; blueprint owners win sockets (9)", whyBosch: "Global vehicle-computer programmes shipping (9)", gap: "none — match", gapWhy: "Lead asset for the decade" },
@@ -1725,7 +1619,6 @@ const DATA = {
       { name: "MEMS & power semiconductors", bosch: 9, req: 7, whyReq: "Sensing + efficient power conversion across EVs (7)", whyBosch: "Franchise businesses with hooks mapped (9)", gap: "none — exceed", gapWhy: "Cash-generative defensive base; Energy-field synergy" },
       { name: "RISC-V / sovereign compute", bosch: 4, req: 6, whyReq: "DIR-V momentum may make RISC-V a procurement criterion in sovereignty-sensitive programmes (6)", whyBosch: "Limited RISC-V automotive investment to date (4)", gap: "build (watch)", gapWhy: "Low-cost optionality: one evaluation programme, scale on trigger" },
     ],
-    competencyRationale: "Score 7.4: franchise-level on three competencies including the decisive architecture one; gaps are at silicon ownership (managed by partnership) and RISC-V (optionality). Confidence 0.86: levels verifiable against shipping product lines.",
     horizons: {
       h1: [
         { item: "Domain ECUs & MEMS/power-semi merchant growth on rising E/E content", why: "Safety mandates and EV mix grow today's sockets — revenue now" },
@@ -1738,14 +1631,14 @@ const DATA = {
         { item: "Chiplet-based custom vehicle compute & RISC-V programmes", why: "Chiplet standards (UCIe) and automotive RISC-V toolchains are 5+ years from Indian volume", trigger: "UCIe-based automotive design wins announced globally" },
         { item: "Quantum sensing in vehicles (hook mapped)", why: "Lab-to-vehicle transition for quantum MEMS/magnetometers exceeds 5 years", trigger: "Quantum sensor cost crossing automotive thresholds" },
       ],
-      rationale: "Score 7.6: H1 grows on mandates, H2 holds the decisive architecture window plus the ISM white space, H3 is speculative but hook-mapped. Depth across horizons with India-specific triggers.",
+      rationale: "H1 grows on mandates, H2 holds the decisive architecture window plus the ISM white space, H3 is speculative but hook-mapped. Depth across horizons with India-specific triggers.",
     },
     verdict: {
       entry: "Lead the zonal transition on Indian platforms while defending the ECU/MEMS/power-semi base; anchor automotive qualification of ISM silicon; ASIC/chiplet partnerships for compute differentiation; RISC-V as funded optionality.",
       reasoning: [
-        "Competency 7.4 (top weight) + Horizons 7.6: franchise strength meets a once-a-decade architecture re-sourcing window",
-        "Market 7.0 is structurally growing but Porter 6.0 flags real value migration to SoC vendors — hence the partner-up/partner-down silicon strategy",
-        "SWOT 6.8 nets to contested-but-favourable ground; the ISM qualification white space is the differentiated, India-specific move",
+        "Competency fit and horizon depth: franchise strength meets a once-a-decade architecture re-sourcing window",
+        "The market is structurally growing but industry structure flags real value migration to SoC vendors — hence the partner-up/partner-down silicon strategy",
+        "The SWOT posture nets to contested-but-favourable ground; the ISM qualification white space is the differentiated, India-specific move",
       ],
       portfolio: [
         { sub: "Edge Compute", play: "LEAD", why: "Zonal/vehicle-computer sockets — the decade's entry window" },
@@ -1788,13 +1681,6 @@ const DATA = {
 
   software: {
     ma: ["Onboard SW", "SDV Tooling", "Offboard SW & Services", "Data Processing"], bbm: ["GenAI Products & Services", "SW System for SdV", "Software & Services for OEMs"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 8.6, conf: 0.90, why: "ETAS toolchain, middleware franchises, the largest automotive SW workforce in India — near-complete coverage of the sub-fields. See Competency tab." },
-      { ...WEIGHTS[1], s: 7.8, conf: 0.85, why: "Asset depth + OEM SDV urgency vs IT-services price competition and open-source commoditisation. See SWOT tab." },
-      { ...WEIGHTS[2], s: 8.0, conf: 0.78, why: "$2.8B SAM at 24% CAGR as every OEM funds SDV programmes; India is also the global delivery hub. See Market tab." },
-      { ...WEIGHTS[3], s: 6.9, conf: 0.84, why: "Crowded with IT majors and OEM captives, but product-IP positions escape the services price war. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 9.0, conf: 0.90, why: "Middleware/SDV now, AI-defined vehicle and digital twins next, agentic/WASM later — the deepest pipeline of all fields. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "GCC policy & SDV skilling missions make India the world's automotive-software factory — the field's global talent pool sits in Bosch's backyard", why: "State GCC policies, engineering-export momentum and skilling missions concentrate global SDV development in India; 1,600+ GCCs operate today [1]", sowhat: "Scale advantage compounds for whoever organises the talent best — Bosch's existing India SW organisation is the head start", i: "high", subs: ["Middleware/OS", "AI/ML"], c: [1] },
@@ -1856,7 +1742,7 @@ const DATA = {
         ],
       },
       strategy: "Product-led SDV leadership: middleware + ETAS tooling + GenAI engineering products, delivered at India scale, anchored by lighthouse Indian-OEM platform deals; shape open-source rather than resist it.",
-      scoreRationale: "Score 7.8: rare product-plus-scale strength combination and structural demand; weaknesses are positioning issues with active closure paths, threats are price-war traps avoidable by product strategy.",
+      scoreRationale: "Rare product-plus-scale strength combination and structural demand; weaknesses are positioning issues with active closure paths, threats are price-war traps avoidable by product strategy.",
     },
     market: {
       tam: 5200, sam: 2800, cagr: 24, year: 2030,
@@ -1893,7 +1779,7 @@ const DATA = {
         ],
         profitability: "Products and licences high-margin; T&M thin — the mix IS the strategy",
       },
-      scoreRationale: "Score 8.0: largest SAM ratio of any field (54% of TAM addressable) at 24% CAGR with counter-cyclical character. Confidence 0.78: budget aggregation and export-flow estimates are ours; direction unambiguous.",
+      scoreRationale: "Largest SAM ratio of any field (54% of TAM addressable) at 24% CAGR with counter-cyclical character. Evidence base: budget aggregation and export-flow estimates are ours; direction unambiguous.",
     },
     porter: [
       { force: "Rivalry", v: 7.5, why: "IT majors, global SW Tier-1s (Elektrobit, Vector), OEM captives and startups all compete; but product vs services segmentation blunts head-on collisions.", drivers: ["KPIT/Elxsi/LTTS scale", "Global tool vendors", "Captive expansion"], c: [8] },
@@ -1902,7 +1788,7 @@ const DATA = {
       { force: "Substitutes", v: 4.0, why: "Open-source substitutes paid middleware partially; nothing substitutes certified toolchains and accountable integration.", drivers: ["Open-source erosion (partial)", "Certification non-substitutable"], c: [4] },
       { force: "New entrants", v: 7.0, why: "Software entry is cheap and the startup wave is real; automotive certification, safety culture and production references are the rising walls.", drivers: ["Low capital entry", "Certification/reference barriers"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.9 = 10 − weighted pressure. Rivalry (7.5) and entrants (7.0) are high, but supplier power is the lowest in the portfolio (3.5) and product positions escape the worst buyer pressure. Attractive specifically for product-IP holders.",
+    porterRationale: "Rivalry (7.5) and entrants (7.0) are high, but supplier power is the lowest in the portfolio (3.5) and product positions escape the worst buyer pressure. Attractive specifically for product-IP holders.",
     competency: [
       { name: "Middleware / vehicle OS", bosch: 9, req: 9, whyReq: "The consolidation battleground; production-proven stacks win (9)", whyBosch: "Production middleware + Eclipse SDV leadership + ETAS (9)", gap: "none — match", gapWhy: "Core product line" },
       { name: "SDV tooling & validation (ETAS)", bosch: 9, req: 8, whyReq: "Certified toolchains mandatory as regulation deepens (8)", whyBosch: "ETAS is a market-leading franchise (9)", gap: "none — exceed", gapWhy: "Moat widens with every regulation" },
@@ -1910,7 +1796,6 @@ const DATA = {
       { name: "Simulation & digital twin", bosch: 8, req: 8, whyReq: "Left-shifted validation is how SDV programmes hold timelines (8)", whyBosch: "Simulation assets + vehicle physics depth (8)", gap: "none — match", gapWhy: "Bundle with tooling" },
       { name: "Developer-ecosystem GTM", bosch: 5, req: 8, whyReq: "SDV platforms win by developer adoption, not RFQs alone (8)", whyBosch: "Classic B2B GTM; developer-relations muscle thin (5)", gap: "hire / build", gapWhy: "DevRel team + India developer community investment — cheap, high-leverage" },
     ],
-    competencyRationale: "Score 8.6: the strongest competency sheet of all search fields — franchise positions on three of five, with the two gaps (GenAI productisation, DevRel) being execution items, not structural absences. Confidence 0.90: every level verifiable against shipping products.",
     horizons: {
       h1: [
         { item: "Middleware + ETAS tooling on current SDV programmes", why: "Funded OEM programmes buying today; regulation compounds demand" },
@@ -1923,14 +1808,14 @@ const DATA = {
       h3: [
         { item: "Agentic vehicle software & app ecosystems (WASM-sandboxed)", why: "WASM in-vehicle runtimes and agentic features need architecture + trust maturity — 5+ years to volume", trigger: "Production vehicle shipping third-party WASM apps in India" },
       ],
-      rationale: "Score 9.0: the deepest pipeline in the portfolio — funded H1, a referenceability-window H2 with named triggers, and a credible H3 where Bosch already holds technical positions (WASM, middleware). Highest horizon score of the search fields.",
+      rationale: "The deepest pipeline in the portfolio — funded H1, a referenceability-window H2 with named triggers, and a credible H3 where Bosch already holds technical positions (WASM, middleware). Highest horizon score of the search fields.",
     },
     verdict: {
       entry: "Enter at full commitment: product-led (middleware + ETAS + GenAI engineering products) with lighthouse Indian-OEM SDV platform deals; sell into OEM captives; shape open-source; build DevRel.",
       reasoning: [
-        "Competency 8.6 at the heaviest weight and Horizons 9.0 — the portfolio's best right-to-win paired with its deepest growth pipeline",
-        "Market 8.0: largest addressable share (54%) of any field, counter-cyclical demand, India as global delivery hub",
-        "Porter 6.9 is manageable precisely because the strategy is product-IP-led — the criterion would read far worse for a services-led entry, which the recommendation explicitly avoids",
+        "Competency fit and horizon depth — the portfolio's best right-to-win paired with its deepest growth pipeline",
+        "Market: largest addressable share (54%) of any field, counter-cyclical demand, India as global delivery hub",
+        "Industry structure is manageable precisely because the strategy is product-IP-led — it would read far worse for a services-led entry, which the recommendation explicitly avoids",
       ],
       portfolio: [
         { sub: "Middleware/OS", play: "LEAD", why: "Franchise position in the consolidation battleground" },
@@ -1973,13 +1858,6 @@ const DATA = {
 
   manufacturing: {
     ma: ["EMS"], bbm: [],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 7.0, conf: 0.86, why: "World-class plants, quality systems and I4.0 practice in India; missing the EMS commercial model and cost culture. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.4, conf: 0.80, why: "Underutilised certified capacity + quality brand vs margin-model mismatch and entrenched EMS champions. See SWOT tab." },
-      { ...WEIGHTS[2], s: 7.2, conf: 0.74, why: "Huge EMS wave (PLI, China+1) but only a filtered slice fits Bosch economics. See Market tab." },
-      { ...WEIGHTS[3], s: 5.4, conf: 0.82, why: "Brutal EMS margins, powerful buyers, aggressive incumbents — structurally tough economics. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 6.6, conf: 0.80, why: "MaaS and I5.0 are real growth vectors; dark factories distant for India's labour economics. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "PLI schemes + China+1 sourcing push electronics manufacturing to India at scale — a rising tide for contract manufacturing", why: "Electronics/auto-component PLI disbursements and global supply-chain de-risking redirect manufacturing investment into India [1]", sowhat: "The question is whether Bosch participates as a service provider or only as a buyer — the MaaS thesis answers it", i: "high", subs: ["Contract Mfg (MaaS)", "EMS"], c: [1] },
@@ -2041,7 +1919,7 @@ const DATA = {
         ],
       },
       strategy: "Two-track entry: (1) automotive-grade Manufacturing-as-a-Service monetising certified spare capacity for China+1 customers; (2) I4.0/I5.0 manufacturing-digitalisation solutions as a product/consulting business. No commodity EMS ambitions.",
-      scoreRationale: "Score 6.4: genuinely scarce assets (certified capacity, digitalisation practice) meet a structural margin-model weakness. The strategy works only with strict scope discipline — the score prices that execution risk.",
+      scoreRationale: "Genuinely scarce assets (certified capacity, digitalisation practice) meet a structural margin-model weakness. The strategy works only with strict scope discipline — the score prices that execution risk.",
     },
     market: {
       tam: 12000, sam: 1800, cagr: 18, year: 2030,
@@ -2078,7 +1956,7 @@ const DATA = {
         ],
         profitability: "Commodity EMS below Bosch's hurdle rate; certified-niche MaaS and solutions clear it — scope discipline is the profit strategy",
       },
-      scoreRationale: "Score 7.2: the headline market is huge, but the Bosch-fit slice is 15% of it — still $1.8B at 18% CAGR. Confidence 0.74: EMS forecasts solid; the automotive-grade and addressable-share splits are ours.",
+      scoreRationale: "The headline market is huge, but the Bosch-fit slice is 15% of it — still $1.8B at 18% CAGR. Evidence base: EMS forecasts solid; the automotive-grade and addressable-share splits are ours.",
     },
     porter: [
       { force: "Rivalry", v: 8.0, why: "EMS champions compete ferociously on cost, speed and PLI capture; capacity additions outpace demand in commodity segments.", drivers: ["Dixon/Kaynes/Syrma scale-ups", "Tata Electronics ambition", "PLI-fuelled capacity race"], c: [2] },
@@ -2087,7 +1965,7 @@ const DATA = {
       { force: "Substitutes", v: 4.5, why: "In-house manufacturing is the substitute; China+1 dynamics currently push the other way — toward outsourcing to India.", drivers: ["In-housing (cyclical)", "China+1 tailwind (current)"], c: [1] },
       { force: "New entrants", v: 6.0, why: "Capital and certification deter casual entry, but PLI subsidises serious entrants continuously.", drivers: ["PLI-subsidised entry", "Certification barrier (niche protection)"], c: [1] },
     ],
-    porterRationale: "Attractiveness 5.4 = 10 − weighted pressure. Twin 8.0s (rivalry, buyer power) make commodity EMS structurally unattractive; the score survives only because the certified-niche and solutions tracks face softer versions of both forces.",
+    porterRationale: "Twin 8.0s (rivalry, buyer power) make commodity EMS structurally unattractive; the score survives only because the certified-niche and solutions tracks face softer versions of both forces.",
     competency: [
       { name: "Automotive-grade quality systems", bosch: 9, req: 9, whyReq: "Safety-part manufacturing gates on IATF-class certification (9)", whyBosch: "Decades of certified Indian plant operation (9)", gap: "none — match", gapWhy: "The moat for the MaaS niche" },
       { name: "Manufacturing digitalisation (I4.0/I5.0)", bosch: 9, req: 7, whyReq: "Factories buy proven digitalisation, not slideware (7)", whyBosch: "Lighthouse internal practice, productisable (9)", gap: "none — exceed", gapWhy: "Solutions business anchor" },
@@ -2095,7 +1973,6 @@ const DATA = {
       { name: "External-manufacturing commercial GTM", bosch: 3, req: 7, whyReq: "Winning external builds needs dedicated sales & program mgmt (7)", whyBosch: "Never sold manufacturing as a service at scale (3)", gap: "build / hire", gapWhy: "Small dedicated MaaS unit; hire EMS-experienced commercial leads" },
       { name: "High-mix flexible production", bosch: 7, req: 8, whyReq: "MaaS economics need fast changeovers across many SKUs (8)", whyBosch: "Capable plants tuned historically for high-volume single products (7)", gap: "build", gapWhy: "Flexibility retrofit on selected lines" },
     ],
-    competencyRationale: "Score 7.0: franchise-level on quality and digitalisation — the two competencies the chosen strategy actually requires — with deliberate skips on commodity-EMS economics. The score reads the strategy, not the whole field. Confidence 0.86.",
     horizons: {
       h1: [
         { item: "Manufacturing-digitalisation solutions to Indian factories", why: "Demand exists today; Bosch practice is reference-grade; software-margin revenue" },
@@ -2106,14 +1983,14 @@ const DATA = {
         { item: "I5.0 human-machine collaboration offerings", why: "Standards and customer maturity arriving over 2–4 years", trigger: "I5.0 adoption appearing in Indian factory capex plans" },
       ],
       h3: [{ item: "Dark/lights-out factories for India", why: "India's labour economics and political context defer full automation beyond 5 years except in niche hazardous processes", trigger: "Automation cost crossing labour-cost parity in target processes" }],
-      rationale: "Score 6.6: solid H1 (both tracks revenue-ready), credible H2 scale-up, but H3 is genuinely distant in India. Growth is real yet bounded by the deliberate niche scope.",
+      rationale: "Solid H1 (both tracks revenue-ready), credible H2 scale-up, but H3 is genuinely distant in India. Growth is real yet bounded by the deliberate niche scope.",
     },
     verdict: {
       entry: "Two-track entry under strict scope discipline: certified-capacity MaaS for China+1 customers plus manufacturing-digitalisation solutions; explicit no-go on commodity EMS; revisit scope annually against margin performance.",
       reasoning: [
-        "Market 7.2 and Competency 7.0 justify entry — but only because the strategy targets the certified niche where both scores actually apply",
-        "Porter 5.4 is the portfolio's bluntest warning: twin 8.0 forces in commodity EMS — the scope discipline IS the risk management",
-        "Horizons 6.6 and SWOT 6.4 support a bounded capacity-utilisation-plus-solutions play rather than an EMS empire — hence EXPLORE, not ENTER",
+        "Market size and competency fit justify entry — but only because the strategy targets the certified niche where both actually apply",
+        "Industry structure is the portfolio's bluntest warning: rivalry and buyer power are both near-maximal in commodity EMS — the scope discipline IS the risk management",
+        "The horizon pipeline and SWOT posture support a bounded capacity-utilisation-plus-solutions play rather than an EMS empire — a gated bet, not full commitment",
       ],
       portfolio: [
         { sub: "Contract Mfg (MaaS)", play: "LEAD", why: "Certified spare capacity for China+1 — the scarce-asset play" },
@@ -2154,13 +2031,6 @@ const DATA = {
 
   fintech: {
     ma: ["AI Cockpit", "SW & Services", "Solutions in Tech Stack"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 5.2, conf: 0.82, why: "Strong vehicle-data and cockpit integration assets, but zero licensed-financial-services competency — the field's core. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.0, conf: 0.76, why: "Unique vehicle-side position vs regulatory-licence absence; partnerships resolve it if structured early. See SWOT tab." },
-      { ...WEIGHTS[2], s: 7.4, conf: 0.70, why: "UPI rails + vehicle commerce + UBI insurance create a fast-growing pool, with Bosch capturing the enablement layer. See Market tab." },
-      { ...WEIGHTS[3], s: 5.6, conf: 0.80, why: "The smartphone substitute is the defining force; the vehicle-integration niche is defensible. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.0, conf: 0.80, why: "In-vehicle UPI near, UBI insurance and vehicle identity next, monetisation platforms later. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "India's DPI (UPI, FASTag, Account Aggregator, VAHAN) is state-built rails for vehicle commerce — public infrastructure, not private walled gardens", why: "NPCI rails and government registries mean vehicle payments and identity ride public infrastructure [1]", sowhat: "Build ON the rails (UPI in-vehicle, VAHAN-linked identity) rather than building rails — uniquely low-cost entry vs other markets", i: "high", subs: ["In-Vehicle Payment", "Vehicle Aadhar"], c: [1] },
@@ -2221,7 +2091,7 @@ const DATA = {
         ],
       },
       strategy: "Enable, never bank: own in-vehicle payment & identity infrastructure (UPI, secure elements, Vehicle-Aadhar-class identity) and verified-data products for insurers/lenders, with regulated activities always carried by licensed partners.",
-      scoreRationale: "Score 6.0: a genuinely unique vehicle-side position offset by a hard regulatory boundary. The strategy converts the boundary into a partnership structure — workable but execution-sensitive.",
+      scoreRationale: "A genuinely unique vehicle-side position offset by a hard regulatory boundary. The strategy converts the boundary into a partnership structure — workable but execution-sensitive.",
     },
     market: {
       tam: 3100, sam: 600, cagr: 26, year: 2030,
@@ -2258,7 +2128,7 @@ const DATA = {
         ],
         profitability: "Enablement margins are infrastructure-like; recurring data feeds are the best pool — avoid one-off integration economics",
       },
-      scoreRationale: "Score 7.4: fast growth (26%) on India's unique DPI rails, but the licence-free enablement slice is only $0.6B. Confidence 0.70: flow-to-enablement conversion ratios are heavily estimated.",
+      scoreRationale: "Fast growth (26%) on India's unique DPI rails, but the licence-free enablement slice is only $0.6B. Evidence base: flow-to-enablement conversion ratios are heavily estimated.",
     },
     porter: [
       { force: "Rivalry", v: 6.0, why: "Fintech giants dominate payments broadly but none owns automotive-grade vehicle integration; rivalry inside the niche is currently low.", drivers: ["Fintech giants (adjacent)", "Niche under-occupied today"], c: [8] },
@@ -2267,7 +2137,7 @@ const DATA = {
       { force: "Substitutes", v: 7.0, why: "The smartphone IS the substitute — QR scanning works today. In-vehicle payment must beat 'good enough' phone behaviour on convenience.", drivers: ["Phone+QR incumbent behaviour", "Convenience bar to clear"], c: [3] },
       { force: "New entrants", v: 6.0, why: "Fintech entry is cheap, automotive-grade integration is not; the niche walls are real but not tall.", drivers: ["Cheap fintech entry", "Automotive integration barrier"], c: [4] },
     ],
-    porterRationale: "Attractiveness 5.6 = 10 − weighted pressure. The smartphone substitute (7.0) is the defining force — the entire field must out-convenience a phone. The under-occupied niche and public rails partially compensate.",
+    porterRationale: "The smartphone substitute (7.0) is the defining force — the entire field must out-convenience a phone. The under-occupied niche and public rails partially compensate.",
     competency: [
       { name: "Vehicle secure elements & identity", bosch: 8, req: 8, whyReq: "Payments from the vehicle require hardware trust anchors (8)", whyBosch: "Secure ECU/HSM competence in production (8)", gap: "none — match", gapWhy: "Foundation of the enablement play" },
       { name: "Cockpit payment UX integration", bosch: 7, req: 8, whyReq: "Must beat phone-QR convenience decisively (8)", whyBosch: "Cockpit/HMI assets strong; payment-specific UX new (7)", gap: "build", gapWhy: "Joint design with NPCI-ecosystem partners" },
@@ -2275,7 +2145,6 @@ const DATA = {
       { name: "Verified vehicle-data products", bosch: 8, req: 7, whyReq: "UBI/financing products need trustworthy telemetry (7)", whyBosch: "Vehicle & battery data assets across fields (8)", gap: "none — exceed", gapWhy: "Recurring data-revenue line" },
       { name: "Fintech-ecosystem GTM", bosch: 3, req: 7, whyReq: "Deals are struck in NPCI/fintech circles, not automotive ones (7)", whyBosch: "No presence in that ecosystem (3)", gap: "hire / partner", gapWhy: "Small BD team embedded in the fintech ecosystem" },
     ],
-    competencyRationale: "Score 5.2: strong on every vehicle-side competency, near-zero on the financial-services ones — the most bimodal profile in the portfolio. The partnership structure is what makes the field playable at all. Confidence 0.82.",
     horizons: {
       h1: [{ item: "Verified vehicle/battery data feeds to insurers & lenders", why: "Demand exists now via sandboxes; licence-free; rides existing data assets" }],
       h2: [
@@ -2283,14 +2152,14 @@ const DATA = {
         { item: "Vehicle-Aadhar-class identity infrastructure", why: "VAHAN-anchored vehicle identity needs standardisation rounds — 2–4 years", trigger: "Government/NPCI standardisation initiative for vehicle digital identity" },
       ],
       h3: [{ item: "Vehicle monetisation platforms (ads, leasing compute, in-car commerce)", why: "Requires mature in-vehicle ecosystems and consumer trust — 5+ years to material India revenue", trigger: "In-car commerce GMV reaching measurable scale" }],
-      rationale: "Score 7.0: H1 monetises existing assets immediately, H2 holds two well-timed India-specific windows, H3 is real but distant. Growth gated by partnership execution rather than technology.",
+      rationale: "H1 monetises existing assets immediately, H2 holds two well-timed India-specific windows, H3 is real but distant. Growth gated by partnership execution rather than technology.",
     },
     verdict: {
       entry: "Enable-never-bank entry: data products now, in-vehicle UPI + vehicle identity with NPCI-ecosystem and OEM partners next; regulated activities always with licensed institutions; embed fintech BD capability.",
       reasoning: [
-        "Market 7.4 and Horizons 7.0 show a fast-growing, India-unique opportunity riding public rails",
-        "Competency 5.2 (heaviest weight) is the honest drag — the bimodal profile demands the partnership structure the entry mode specifies",
-        "Porter 5.6's smartphone-substitute warning shapes the product bar: only build what beats phone-QR convenience decisively",
+        "Market growth and the horizon pipeline show a fast-growing, India-unique opportunity riding public rails",
+        "Competency fit is the honest drag — the bimodal profile demands the partnership structure the entry mode specifies",
+        "The industry-structure smartphone-substitute warning shapes the product bar: only build what beats phone-QR convenience decisively",
       ],
       portfolio: [
         { sub: "In-Vehicle Payment", play: "LEAD", why: "UPI enablement layer — first-credible-implementation window" },
@@ -2329,13 +2198,6 @@ const DATA = {
 
   infrastructure: {
     ma: ["SW & Services", "Solutions in Tech Stack"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 6.8, conf: 0.84, why: "Global tolling/ITS heritage + V2X stack + map-data partnerships; gap at India public-procurement muscle. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.4, conf: 0.78, why: "Technology leadership vs B2G execution risk; the MLFF transition is the asymmetric opportunity. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.8, conf: 0.72, why: "$1.3B SAM across tolling, ITS, V2X with the GNSS-tolling transition as the step-change. See Market tab." },
-      { ...WEIGHTS[3], s: 6.2, conf: 0.80, why: "Government monopsony and integrator competition, offset by technology barriers in MLFF/V2X. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.4, conf: 0.82, why: "MLFF tolling imminent, V2X corridors next, intermodal orchestration later. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "GNSS-based barrier-free (MLFF) tolling is policy direction, replacing FASTag plazas — a once-in-a-generation system transition", why: "NHAI pilots and policy statements target satellite-based tolling — a nationwide system replacement [1]", sowhat: "Bosch's global GNSS-tolling experience meets a once-in-a-generation Indian system build — the field's defining opportunity", i: "high", subs: ["Tolling & Parking"], c: [1] },
@@ -2396,7 +2258,7 @@ const DATA = {
         ],
       },
       strategy: "Consortium-led: technology provider inside Indian-prime-led MLFF and ITS consortia; both-sides V2X packaging; commercial charging-map data services as the fast-cycle balance.",
-      scoreRationale: "Score 6.4: real technology leadership meeting a hard procurement reality. The MLFF window is the asymmetric upside; B2G execution risk is the persistent drag.",
+      scoreRationale: "Real technology leadership meeting a hard procurement reality. The MLFF window is the asymmetric upside; B2G execution risk is the persistent drag.",
     },
     market: {
       tam: 4600, sam: 1300, cagr: 19, year: 2030,
@@ -2433,7 +2295,7 @@ const DATA = {
         ],
         profitability: "B2G thin but long-duration; data services higher-margin and fast-cycle — the portfolio balances them",
       },
-      scoreRationale: "Score 6.8: sizeable SAM with the MLFF step-change, discounted for B2G margin and timing risk. Confidence 0.72: pipeline allocations firm, transition timing uncertain.",
+      scoreRationale: "Sizeable SAM with the MLFF step-change, discounted for B2G margin and timing risk. Evidence base: pipeline allocations firm, transition timing uncertain.",
     },
     porter: [
       { force: "Rivalry", v: 7.0, why: "Global ITS players, Indian primes and telecom-backed entrants all circle MLFF; consortium formation is the current battlefield.", drivers: ["Global ITS rivals", "Indian primes", "Consortium races"], c: [8] },
@@ -2442,7 +2304,7 @@ const DATA = {
       { force: "Substitutes", v: 3.5, why: "No real substitute for tolling/ITS infrastructure; the substitution is generational (plaza→GNSS) and is the opportunity.", drivers: ["Function mandatory", "Generational tech swap = opportunity"], c: [1] },
       { force: "New entrants", v: 5.5, why: "Technology and references gate entry, but well-funded consortia and telecom players can assemble capability quickly.", drivers: ["Reference barrier", "Well-funded consortium entrants"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.2 = 10 − weighted pressure. Government buyer power (8.0) dominates and defines the field; near-absent substitutes and a generational tech swap create the offsetting upside. Attractive only inside the right consortium.",
+    porterRationale: "Government buyer power (8.0) dominates and defines the field; near-absent substitutes and a generational tech swap create the offsetting upside. Attractive only inside the right consortium.",
     competency: [
       { name: "Tolling / GNSS systems", bosch: 8, req: 9, whyReq: "MLFF is a nationwide GNSS-tolling system build (9)", whyBosch: "Group GNSS-tolling deployments elsewhere; India localisation needed (8)", gap: "build / partner", gapWhy: "Localise reference architecture inside a consortium" },
       { name: "ITS & traffic management", bosch: 7, req: 8, whyReq: "Smart corridors, enforcement, traffic optimisation (8)", whyBosch: "ITS portfolio exists; India-scale deployment thinner (7)", gap: "build", gapWhy: "Scale via consortium delivery" },
@@ -2450,7 +2312,6 @@ const DATA = {
       { name: "Indian B2G procurement & delivery", bosch: 3, req: 9, whyReq: "Winning public tenders needs relationships, consortium craft, L1 navigation (9)", whyBosch: "Limited public-procurement track record (3)", gap: "partner", gapWhy: "Indian prime carries the procurement relationship — biggest gap" },
       { name: "Map & geospatial data services", bosch: 7, req: 7, whyReq: "Charging/routing data products need geospatial depth (7)", whyBosch: "Map-data partnerships and SdV navigation assets (7)", gap: "none — match", gapWhy: "Fast-cycle commercial line" },
     ],
-    competencyRationale: "Score 6.8: strong technology competencies across tolling, ITS and V2X, undercut by the decisive B2G-procurement gap that only a consortium partner closes. Confidence 0.84: technology levels verifiable; procurement gap clear-eyed.",
     horizons: {
       h1: [
         { item: "Charging-map & routing data services to OEMs/CPOs", why: "Commercial demand now; fast cycles; rides existing map/navigation assets" },
@@ -2461,14 +2322,14 @@ const DATA = {
         { item: "C-V2X safety corridors (vehicle + roadside)", why: "Standards settled, pilots running; volume deployment 2–4 years out", trigger: "State/NHAI committing to V2X-equipped corridor at scale" },
       ],
       h3: [{ item: "Intermodal mobility orchestration platforms", why: "Multi-modal integration needs institutional and data-sharing maturity across agencies — 5+ years", trigger: "City adopting a unified intermodal mobility data platform" }],
-      rationale: "Score 7.4: H1 has a commercial fast-cycle line plus live projects; H2 holds the MLFF and V2X step-changes with observable triggers; H3 is institutionally gated. Growth real, partly B2G-paced.",
+      rationale: "H1 has a commercial fast-cycle line plus live projects; H2 holds the MLFF and V2X step-changes with observable triggers; H3 is institutionally gated. Growth real, partly B2G-paced.",
     },
     verdict: {
       entry: "Consortium-led entry: secure technology-partner slots in Indian-prime MLFF/ITS consortia; package both-sides V2X; run charging-map data services as the fast-cycle commercial balance; move on consortium positions within 12 months.",
       reasoning: [
-        "Horizons 7.4 and the MLFF asymmetric prize (technology > incumbency in a system replacement) drive the upside",
-        "Competency 6.8 is strong on technology but the B2G-procurement gap is decisive — hence consortium-only, never solo bids",
-        "Porter 6.2 with government buyer power at 8.0 confirms the field is attractive only from inside the right partnership",
+        "The horizon pipeline and the MLFF asymmetric prize (technology > incumbency in a system replacement) drive the upside",
+        "Competency fit is strong on technology but the B2G-procurement gap is decisive — hence consortium-only, never solo bids",
+        "Industry structure — with government buyer power the dominant force — confirms the field is attractive only from inside the right partnership",
       ],
       portfolio: [
         { sub: "Tolling & Parking", play: "LEAD", why: "MLFF transition — the field's asymmetric, technology-led prize" },
@@ -2508,13 +2369,6 @@ const DATA = {
 
   sustainability: {
     ma: ["SW & Services", "Solutions in Tech Stack"], bbm: ["Circular Economy"],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 6.0, conf: 0.82, why: "Battery diagnostics, residual-value data and workshop network fit recycling/second-life; no recycling-process franchise. See Competency tab." },
-      { ...WEIGHTS[1], s: 5.8, conf: 0.78, why: "Workshop + data strengths and the Circular-Economy BBM stream vs nascent markets and policy-dependence. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.0, conf: 0.68, why: "EPR-driven and growing fast, but small near-term base; the data/diagnostics slice is the Bosch-fit part. See Market tab." },
-      { ...WEIGHTS[3], s: 6.4, conf: 0.78, why: "Early-stage field with few entrenched players; regulation creates structured demand. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.2, conf: 0.80, why: "Recycling/EPR now, second-life and residual-value next, carbon and right-to-repair platforms later. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "ELV Rules 2025 (steel-linked EPR) + Battery Waste Rules + advancing Right-to-Repair policy — regulation is manufacturing this field's demand", why: "MoEFCC EPR targets create audited compliance obligations; a national Right-to-Repair framework is in motion for automobiles [1][9]", sowhat: "Traceability, diagnostics and second-life services have regulation-guaranteed buyers — the data layer Bosch can own", i: "high", subs: ["Battery 2nd Life & Recycling", "Right to Repair"], c: [1, 9] },
@@ -2575,7 +2429,7 @@ const DATA = {
         ],
       },
       strategy: "Own the data & diagnostics layer of circularity (battery traceability, second-life grading, residual valuation) using the workshop network; partner recyclers for process; build standards-agnostic platforms; scale on EPR-enforcement triggers.",
-      scoreRationale: "Score 5.8: distinctive workshop+data strengths and strong BBM-stream alignment, but nascent markets and policy-dependence cap the near-term case. A patient, optionality-rich position.",
+      scoreRationale: "Distinctive workshop+data strengths and strong BBM-stream alignment, but nascent markets and policy-dependence cap the near-term case. A patient, optionality-rich position.",
     },
     market: {
       tam: 2400, sam: 500, cagr: 30, year: 2030,
@@ -2612,7 +2466,7 @@ const DATA = {
         ],
         profitability: "Data and certification services earn software-like margins; physical recycling is capital-heavy and not ours",
       },
-      scoreRationale: "Score 6.0: very high growth (30%) but the smallest near-term base; the Bosch-fit service slice is $0.5B. Confidence 0.68: retirement curves and service splits are heavily estimated, policy timing uncertain.",
+      scoreRationale: "Very high growth (30%) but the smallest near-term base; the Bosch-fit service slice is $0.5B. Evidence base: retirement curves and service splits are heavily estimated, policy timing uncertain.",
     },
     porter: [
       { force: "Rivalry", v: 5.0, why: "Field is early; recyclers, startups and OEM programmes coexist without entrenched dominance in the data layer.", drivers: ["Early-stage field", "Data layer under-occupied"], c: [8] },
@@ -2621,7 +2475,7 @@ const DATA = {
       { force: "Substitutes", v: 5.0, why: "Manual grading and in-house compliance are substitutes, but they scale poorly against the coming battery-retirement wave.", drivers: ["Manual processes (don't scale)", "In-house compliance attempts"], c: [4] },
       { force: "New entrants", v: 6.5, why: "Low capital for software/data entry attracts startups; the differentiator is data access and certification trust, which Bosch's network provides.", drivers: ["Cheap data/SW entry", "Data-access & trust as the moat"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.4 = 10 − weighted pressure. An early field with no dominant incumbent and regulation-manufactured demand makes it structurally attractive; the main pressure is future new entrants, blunted by Bosch's data-access advantage.",
+    porterRationale: "An early field with no dominant incumbent and regulation-manufactured demand makes it structurally attractive; the main pressure is future new entrants, blunted by Bosch's data-access advantage.",
     competency: [
       { name: "Battery diagnostics & state estimation", bosch: 8, req: 8, whyReq: "Accurate state-of-health is the basis of grading/valuation (8)", whyBosch: "BMS & diagnostics competence from Energy field (8)", gap: "none — match", gapWhy: "Technical heart of the data play" },
       { name: "Collection & physical network", bosch: 9, req: 7, whyReq: "Circularity needs trusted physical touchpoints (7)", whyBosch: "10,000+ workshops nationwide (9)", gap: "none — exceed", gapWhy: "Unmatched collection/certification channel" },
@@ -2629,7 +2483,6 @@ const DATA = {
       { name: "Traceability & compliance platforms", bosch: 7, req: 8, whyReq: "EPR proof needs auditable lifecycle traceability (8)", whyBosch: "Data platforms & SW from Connectivity field (7)", gap: "build", gapWhy: "Standards-agnostic platform build" },
       { name: "Carbon/circularity standards fluency", bosch: 5, req: 7, whyReq: "Carbon credits & circularity scoring need evolving-standards expertise (7)", whyBosch: "Sustainability function exists; mechanism-specific depth thin (5)", gap: "build / hire", gapWhy: "Hire standards expertise; keep platforms flexible" },
     ],
-    competencyRationale: "Score 6.0: exceeds on collection network, matches on diagnostics and platforms, deliberately absent on recycling chemistry. The score reads the data-layer strategy correctly. Confidence 0.82.",
     horizons: {
       h1: [{ item: "Battery traceability & EPR-compliance services to obligated producers", why: "EPR obligations are live now; regulation-guaranteed demand; rides data assets" }],
       h2: [
@@ -2637,14 +2490,14 @@ const DATA = {
         { item: "Residual-value estimation services for fleets/lenders/insurers", why: "Demand emerging now; standardisation and data depth mature over 2–3 years", trigger: "Lenders/insurers adopting battery-data-based valuation" },
       ],
       h3: [{ item: "Carbon-credit & circularity-scoring platforms", why: "Depends on maturing Indian carbon markets and circularity standards — 5+ years", trigger: "Stable Indian carbon-market mechanics and pricing" }],
-      rationale: "Score 7.2: H1 is regulation-guaranteed today, H2 rides the battery-retirement wave with clear triggers, H3 awaits market maturity. Strong growth gradient on a small base.",
+      rationale: "H1 is regulation-guaranteed today, H2 rides the battery-retirement wave with clear triggers, H3 awaits market maturity. Strong growth gradient on a small base.",
     },
     verdict: {
       entry: "Patient, data-layer entry: lead EPR-traceability and battery diagnostics now via the workshop network; build second-life grading and residual-value services for the retirement wave; partner recyclers; standards-agnostic platforms; scale on EPR-enforcement and retirement-volume triggers.",
       reasoning: [
-        "Horizons 7.2 and the regulation-manufactured demand make this a credible optionality play despite a small base",
-        "Competency 6.0 confirms a clean data-layer fit (workshop + diagnostics) with recycling chemistry deliberately partnered out",
-        "Market 6.0 and SWOT 5.8 cap it at EXPLORE: high growth, but policy-dependence and nascency demand patience over commitment",
+        "The horizon pipeline and regulation-manufactured demand make this a credible optionality play despite a small base",
+        "Competency fit confirms a clean data-layer fit (workshop + diagnostics) with recycling chemistry deliberately partnered out",
+        "Market size and the SWOT posture cap it below full commitment: high growth, but policy-dependence and nascency demand patience",
       ],
       portfolio: [
         { sub: "Battery 2nd Life & Recycling", play: "LEAD", why: "Diagnostics + collection network — the defensible data layer" },
@@ -2683,13 +2536,6 @@ const DATA = {
 
   evtol: {
     ma: [], bbm: [],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 5.0, conf: 0.80, why: "Transferable competencies (power electronics, sensing, actuators, safety) but no aerospace certification base — the field's gatekeeper. See Competency tab." },
-      { ...WEIGHTS[1], s: 4.6, conf: 0.74, why: "Component-supplier angle exists, but no M&A/BBM hooks and a regulatory environment years from maturity. See SWOT tab." },
-      { ...WEIGHTS[2], s: 4.0, conf: 0.62, why: "Near-zero Indian market today; pure 2030+ optionality with very wide forecast error. See Market tab." },
-      { ...WEIGHTS[3], s: 5.2, conf: 0.74, why: "Few players and high barriers, but the prize is small and distant in India. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 5.6, conf: 0.72, why: "Almost entirely H3; meaningful India revenue is a 5–10 year proposition. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Stability & Policy Certainty", p: "No Indian eVTOL/UAM certification regime exists — the regulatory gap is itself the strategic finding", why: "India lacks type-certification, vertiport and air-corridor rules for passenger eVTOL; DGCA drone policy is the nearest precedent [1]", sowhat: "Market formation is regulation-gated and years away — this is optionality, not a near-term business", i: "high", subs: ["Urban Air Mobility"], c: [1] },
@@ -2750,7 +2596,7 @@ const DATA = {
         ],
       },
       strategy: "Watch-and-qualify only: monitor the field, maintain transferable-tech readiness via Energy/sensing investment, and engage global primes as a component supplier if cargo/medical UAM forms; no standalone capital commitment now.",
-      scoreRationale: "Score 4.6: real transferable competencies cannot overcome the absence of aerospace certification, M&A hooks and a near-term market. A genuine but low-priority optionality.",
+      scoreRationale: "Real transferable competencies cannot overcome the absence of aerospace certification, M&A hooks and a near-term market. A genuine but low-priority optionality.",
     },
     market: {
       tam: 600, sam: 80, cagr: 35, year: 2030,
@@ -2785,7 +2631,7 @@ const DATA = {
         ],
         profitability: "Negative near-term by definition — spend is option-preservation, not investment",
       },
-      scoreRationale: "Score 4.0: smallest, most speculative market in the portfolio. Confidence 0.62 — the lowest, reflecting genuine forecast uncertainty per the rubric (mostly reasoned estimates).",
+      scoreRationale: "Smallest, most speculative market in the portfolio. Evidence base: the weakest in the portfolio, reflecting genuine forecast uncertainty — mostly reasoned estimates.",
     },
     porter: [
       { force: "Rivalry", v: 4.0, why: "Few players in a pre-market; competition is for future positioning, not current revenue.", drivers: ["Pre-market field", "Positioning not revenue"], c: [8] },
@@ -2794,7 +2640,7 @@ const DATA = {
       { force: "Substitutes", v: 6.5, why: "Ground transport, helicopters and drones substitute most eVTOL use cases today — a strong substitute set.", drivers: ["Ground transport", "Helicopters", "Cargo drones"], c: [2] },
       { force: "New entrants", v: 4.0, why: "Certification and capital intensity strongly deter entry — the field protects itself but also starves of demand.", drivers: ["Certification barrier", "Capital intensity"], c: [6] },
     ],
-    porterRationale: "Attractiveness 5.2 = 10 − weighted pressure. Strong substitutes (6.5) and a non-existent current market define it; high entry barriers help future incumbents but don't create near-term value.",
+    porterRationale: "Strong substitutes (6.5) and a non-existent current market define it; high entry barriers help future incumbents but don't create near-term value.",
     competency: [
       { name: "Electric propulsion & power electronics", bosch: 8, req: 8, whyReq: "Core eVTOL subsystem (8)", whyBosch: "Strong automotive franchise, transferable (8)", gap: "none — match (if certified)", gapWhy: "Transferable, pending aerospace qualification" },
       { name: "Aerospace certification & airworthiness", bosch: 1, req: 9, whyReq: "The absolute gatekeeper for any flight component (9)", whyBosch: "No aerospace certification base (1)", gap: "partner / skip", gapWhy: "Decisive gap — supply only non-flight-critical, or skip" },
@@ -2802,7 +2648,6 @@ const DATA = {
       { name: "Aviation customer relationships", bosch: 2, req: 7, whyReq: "Primes select partners through aerospace networks (7)", whyBosch: "No aviation customer base (2)", gap: "build", gapWhy: "Watch-and-engage; low cost" },
       { name: "Battery/thermal for aviation duty cycles", bosch: 6, req: 8, whyReq: "Aviation energy density & thermal demands exceed automotive (8)", whyBosch: "Automotive battery/thermal know-how, not aviation-rated (6)", gap: "build", gapWhy: "Tracks Energy-field progress" },
     ],
-    competencyRationale: "Score 5.0: genuinely transferable on propulsion/sensing/battery, but the certification gap (1 vs 9) is categorical and the strategy parks the field. Confidence 0.80 on the assessment itself.",
     horizons: {
       h1: [],
       h2: [{ item: "Component qualification with cargo/medical UAM primes", why: "Earliest realistic use cases may begin platform sourcing in 2–5 years", trigger: "DGCA framework for cargo/medical UAM operations" }],
@@ -2810,14 +2655,14 @@ const DATA = {
         { item: "Electric-propulsion subsystem supply to passenger eVTOL", why: "Passenger UAM certification and market formation in India is a 5–10 year horizon", trigger: "Indian passenger-eVTOL type certification regime established" },
         { item: "Rural-access UAM (medical, logistics)", why: "Compelling social case but depends on cost and regulation maturing — 5+ years", trigger: "Viable rural UAM operating economics demonstrated" },
       ],
-      rationale: "Score 5.6: no H1, a thin H2, and the substance in H3. Almost pure optionality — the score reflects a real but distant opportunity, not a near-term business.",
+      rationale: "No H1, a thin H2, and the substance in H3. Almost pure optionality — the score reflects a real but distant opportunity, not a near-term business.",
     },
     verdict: {
       entry: "Watch only. Maintain transferable-tech readiness through Energy/sensing investment, monitor DGCA framework development and cargo/medical use cases, and engage global primes opportunistically; no standalone capital commitment.",
       reasoning: [
-        "Market 4.0 (smallest, most speculative) and the absence of any near-term India revenue make commitment unjustifiable now",
-        "Competency 5.0 shows transferable tech, but the categorical aerospace-certification gap and zero M&A/BBM hooks raise the entry bar",
-        "Horizons 5.6 places the substance in H3 — this is a monitor-and-position field, hence WATCH",
+        "The market — smallest and most speculative in the portfolio — plus the absence of any near-term India revenue make commitment unjustifiable now",
+        "Competency fit shows transferable tech, but the categorical aerospace-certification gap and zero M&A/BBM hooks raise the entry bar",
+        "The horizon pipeline places the substance in H3 — this is a monitor-and-position field",
       ],
       portfolio: [
         { sub: "Urban Air Mobility", play: "WATCH", why: "Passenger UAM is H3 in India; monitor certification regime" },
@@ -2851,13 +2696,6 @@ const DATA = {
 
   robotics: {
     ma: [], bbm: [],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 7.2, conf: 0.84, why: "Sensors, actuators, motion control and SdV-grade compute transfer strongly to robotics; gap at humanoid-specific integration. See Competency tab." },
-      { ...WEIGHTS[1], s: 6.4, conf: 0.78, why: "Deep transferable tech and convergence-with-SdV thesis vs no hooks and a crowded, hype-prone field. See SWOT tab." },
-      { ...WEIGHTS[2], s: 6.8, conf: 0.70, why: "AMR/industrial robotics real and growing now; humanoids large but speculative — mixed. See Market tab." },
-      { ...WEIGHTS[3], s: 6.0, conf: 0.78, why: "Crowded and hype-cycle-prone, but component-supply and convergence angles are defensible. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 7.6, conf: 0.80, why: "AMR now, campus autonomy and robotics-SdV convergence next, humanoids later — strong staged pipeline. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Schemes & Incentives", p: "Make-in-India & automation incentives support industrial/warehouse robotics — policy tailwind for the pragmatic entry, not humanoid hype", why: "Manufacturing-competitiveness and logistics-efficiency policy favours AMR and industrial automation adoption [1]", sowhat: "Industrial/warehouse robotics has policy tailwind and real near-term demand — the pragmatic entry vs humanoid hype", i: "medium", subs: ["AMR"], c: [1] },
@@ -2918,7 +2756,7 @@ const DATA = {
         ],
       },
       strategy: "Component-and-convergence strategy: supply sensors/actuators/compute/safety to AMR and industrial robotics now, use campus shuttles as an SdV-autonomy testbed, exploit robotics-SdV convergence for capital efficiency, and keep humanoids on watch.",
-      scoreRationale: "Score 6.4: strong transferable tech and a capital-efficient convergence thesis, held back by the absence of a platform franchise, no hooks, and a hype-prone competitive field. Solid as an adjacency, not a standalone empire.",
+      scoreRationale: "Strong transferable tech and a capital-efficient convergence thesis, held back by the absence of a platform franchise, no hooks, and a hype-prone competitive field. Solid as an adjacency, not a standalone empire.",
     },
     market: {
       tam: 5800, sam: 1200, cagr: 25, year: 2030,
@@ -2955,7 +2793,7 @@ const DATA = {
         ],
         profitability: "Components earn healthy margins with certification moats; platform plays carry inventory and integration risk",
       },
-      scoreRationale: "Score 6.8: real, growing addressable component market ($1.2B) discounted for the speculative humanoid portion excluded from scope. Confidence 0.70: segment splits and humanoid uncertainty are estimates.",
+      scoreRationale: "Real, growing addressable component market ($1.2B) discounted for the speculative humanoid portion excluded from scope. Evidence base: segment splits and humanoid uncertainty are estimates.",
     },
     porter: [
       { force: "Rivalry", v: 7.0, why: "Global robotics specialists, automation Tier-1s and Chinese cost players compete hard across segments.", drivers: ["Global robotics OEMs", "Chinese cost competition", "Automation specialists"], c: [8] },
@@ -2964,7 +2802,7 @@ const DATA = {
       { force: "Substitutes", v: 5.5, why: "Manual labour substitutes robotics in low-wage India contexts, limiting adoption outside high-throughput nodes.", drivers: ["Cheap labour (real substitute)", "Adoption limited to scale nodes"], c: [2] },
       { force: "New entrants", v: 6.5, why: "Robotics startups proliferate with cheap compute and open-source stacks; safety certification and reliability are the differentiators.", drivers: ["Startup proliferation", "Safety/reliability as moat"], c: [8] },
     ],
-    porterRationale: "Attractiveness 6.0 = 10 − weighted pressure. Rivalry (7.0) and entrants (6.5) are high; the labour substitute (5.5) is a distinctly Indian dampener. Attractive at the safety-certified component layer where Bosch differentiates.",
+    porterRationale: "Rivalry (7.0) and entrants (6.5) are high; the labour substitute (5.5) is a distinctly Indian dampener. Attractive at the safety-certified component layer where Bosch differentiates.",
     competency: [
       { name: "Sensors & perception", bosch: 9, req: 8, whyReq: "Robots need robust multi-modal perception (8)", whyBosch: "ADAS/SdV sensing franchise transfers directly (9)", gap: "none — exceed", gapWhy: "Core supply asset" },
       { name: "Actuators & motion control", bosch: 8, req: 8, whyReq: "Precise, reliable actuation is fundamental (8)", whyBosch: "Electric-machine and motion-control lines (8)", gap: "none — match", gapWhy: "Direct component supply" },
@@ -2972,7 +2810,6 @@ const DATA = {
       { name: "Robot platform integration", bosch: 4, req: 8, whyReq: "Full robots need mechanical + control + application integration (8)", whyBosch: "Component supplier, not platform integrator (4)", gap: "partner", gapWhy: "Partner integrators; don't build platforms" },
       { name: "Humanoid-specific systems", bosch: 4, req: 7, whyReq: "Bipedal control, dexterous manipulation, HRI (7)", whyBosch: "Adjacent competencies but no humanoid programme (4)", gap: "watch", gapWhy: "Optionality only until economics prove out" },
     ],
-    competencyRationale: "Score 7.2: franchise-or-match on the three component competencies that the AMR/convergence strategy needs; platform and humanoid gaps are deliberately partnered/parked. Confidence 0.84: transferable strengths verifiable.",
     horizons: {
       h1: [
         { item: "Sensors/compute/safety to AMR & warehouse automation", why: "Real demand today at high-throughput logistics nodes; component revenue now" },
@@ -2983,14 +2820,14 @@ const DATA = {
         { item: "Robotics-SdV converged platform components", why: "Convergence productisation over 2–4 years as both fields share more stack", trigger: "Shared safety/compute platform reused across a robot and a vehicle programme" },
       ],
       h3: [{ item: "Humanoid subsystem supply (sensors, actuators, control)", why: "Humanoid economics and safety frameworks need 5+ years to mature in India", trigger: "Viable humanoid unit economics demonstrated at deployable scale" }],
-      rationale: "Score 7.6: solid revenue-generating H1, a capital-efficient H2 built on SdV convergence with clear triggers, and humanoids correctly deferred to H3. Strong staged growth without hype dependence.",
+      rationale: "Solid revenue-generating H1, a capital-efficient H2 built on SdV convergence with clear triggers, and humanoids correctly deferred to H3. Strong staged growth without hype dependence.",
     },
     verdict: {
       entry: "Component-and-convergence entry: supply sensors/actuators/compute/safety to AMR and industrial robotics now; use campus shuttles as an SdV-autonomy testbed; exploit robotics-SdV convergence for capital efficiency; keep humanoids on watch.",
       reasoning: [
-        "Competency 7.2 (top weight) and Horizons 7.6: strong transferable tech meets a real near-term AMR market plus a capital-efficient convergence thesis",
-        "Market 6.8 is healthy once humanoid speculation is excluded from scope — the recommendation does exactly that",
-        "Porter 6.0 and SWOT 6.4 confirm a defensible component/convergence play rather than a platform or humanoid bet — hence EXPLORE with discipline",
+        "Competency fit and horizon depth: strong transferable tech meets a real near-term AMR market plus a capital-efficient convergence thesis",
+        "The market is healthy once humanoid speculation is excluded from scope — the recommendation does exactly that",
+        "Industry structure and the SWOT posture confirm a defensible component/convergence play rather than a platform or humanoid bet — pursued with discipline",
       ],
       portfolio: [
         { sub: "AMR", play: "LEAD", why: "Real near-term demand; direct component supply on existing assets" },
@@ -3030,13 +2867,6 @@ const DATA = {
 
   health: {
     ma: [], bbm: [],
-    criterionScores: [
-      { ...WEIGHTS[0], s: 5.4, conf: 0.78, why: "E-call and sensing competencies fit; medical-device regulation and clinical validation are absent competencies. See Competency tab." },
-      { ...WEIGHTS[1], s: 5.6, conf: 0.74, why: "E-call regulatory tailwind and sensing reuse vs no hooks and medical-domain regulatory distance. See SWOT tab." },
-      { ...WEIGHTS[2], s: 5.6, conf: 0.66, why: "E-call is a real mandated slice; broader mobility-health is small and diffuse near-term. See Market tab." },
-      { ...WEIGHTS[3], s: 5.8, conf: 0.74, why: "Fragmented, early field; e-call mandate creates structured demand, rest is diffuse. See Attractiveness tab." },
-      { ...WEIGHTS[4], s: 6.2, conf: 0.74, why: "E-call now, assisted motion & inclusive design next, in-vehicle health monitoring later. See 3 Horizons tab." },
-    ],
     pestel: {
       Political: [
         { cat: "Government Stability & Policy Certainty", p: "Emergency-call (e-call/112 integration) is moving toward mandate, as in other markets — the regulation-pulled wedge of this otherwise diffuse field", why: "Road-safety missions and global e-call precedents point to Indian emergency-call requirements for vehicles [1]", sowhat: "E-call is the regulation-pulled, near-term wedge — position for the mandate before it lands", i: "high", subs: ["E-Call"], c: [1] },
@@ -3096,7 +2926,7 @@ const DATA = {
         ],
       },
       strategy: "Lead the mandated e-call slice with existing sensing/connectivity assets; reuse Interior-Systems sensing for wellness (non-medical) features; build inclusive-design as a procurement differentiator; partner medical-device players for any clinical-grade ambition; treat broader mobility-health as social-impact optionality.",
-      scoreRationale: "Score 5.6: a real regulation-pulled e-call wedge and capital-efficient sensing reuse, but the field beyond e-call is diffuse, hard to monetise and regulatorily distant. EXPLORE on the wedge, watch the rest.",
+      scoreRationale: "A real regulation-pulled e-call wedge and capital-efficient sensing reuse, but the field beyond e-call is diffuse, hard to monetise and regulatorily distant. Pursue the wedge, watch the rest.",
     },
     market: {
       tam: 1400, sam: 300, cagr: 17, year: 2030,
@@ -3133,7 +2963,7 @@ const DATA = {
         ],
         profitability: "Mandate volumes earn steady component margins; wellness monetisation unproven — anchor on the regulated wedge",
       },
-      scoreRationale: "Score 5.6: a small but real mandated slice with diffuse upside beyond it. Confidence 0.66: mandate timing and willingness-to-pay are uncertain; estimates dominate.",
+      scoreRationale: "A small but real mandated slice with diffuse upside beyond it. Evidence base: mandate timing and willingness-to-pay are uncertain; estimates dominate.",
     },
     porter: [
       { force: "Rivalry", v: 5.0, why: "Early, fragmented field; telematics and medtech players circle but none dominates vehicle-health integration.", drivers: ["Fragmented entrants", "No dominant integrator"], c: [8] },
@@ -3142,7 +2972,7 @@ const DATA = {
       { force: "Substitutes", v: 6.5, why: "Smartphones provide emergency-call and health monitoring already — a strong substitute the vehicle features must beat or complement.", drivers: ["Smartphone e-call/health", "Wearables"], c: [2] },
       { force: "New entrants", v: 5.5, why: "Digital-health startups enter cheaply; automotive integration and (for clinical) regulation are the barriers.", drivers: ["Digital-health startups", "Integration/regulation barriers"], c: [6] },
     ],
-    porterRationale: "Attractiveness 5.8 = 10 − weighted pressure. The smartphone substitute (6.5) and buyer power define it; the e-call mandate is the structured-demand offset. Attractive mainly on the mandated wedge.",
+    porterRationale: "The smartphone substitute (6.5) and buyer power define it; the e-call mandate is the structured-demand offset. Attractive mainly on the mandated wedge.",
     competency: [
       { name: "E-call / crash sensing / telematics", bosch: 8, req: 8, whyReq: "Mandated emergency-call needs reliable crash detection + connectivity (8)", whyBosch: "Crash-sensing and connectivity assets in production (8)", gap: "none — match", gapWhy: "The lead wedge" },
       { name: "In-cabin wellness sensing", bosch: 7, req: 7, whyReq: "Non-clinical wellness monitoring via radar/camera (7)", whyBosch: "Shared with Interior Systems sensing (7)", gap: "none — match", gapWhy: "Capital-efficient reuse" },
@@ -3150,7 +2980,6 @@ const DATA = {
       { name: "Inclusive / accessible design", bosch: 5, req: 7, whyReq: "DEI procurement and accessibility norms (7)", whyBosch: "Design capability exists; accessibility-specialism thin (5)", gap: "build", gapWhy: "Build inclusive-design competency across cockpit/interior" },
       { name: "Health-data privacy (DPDP) handling", bosch: 6, req: 8, whyReq: "Sensitive health data demands strict consent/security (8)", whyBosch: "Cyber/privacy assets from Connectivity field (6)", gap: "build", gapWhy: "Extend Connectivity-field privacy capability to health data" },
     ],
-    competencyRationale: "Score 5.4: matches on e-call and wellness sensing, but the medical-device gap (2 vs 8) caps clinical ambition and inclusive-design/privacy need building. The score reads a wellness/safety-scoped strategy. Confidence 0.78.",
     horizons: {
       h1: [{ item: "E-call / emergency-response stacks for OEMs", why: "Regulation-pulled near-term demand; reuses existing crash-sensing & connectivity" }],
       h2: [
@@ -3158,14 +2987,14 @@ const DATA = {
         { item: "Inclusive-mobility-design offerings for public/fleet procurement", why: "DEI procurement criteria maturing over 2–3 years", trigger: "Accessibility requirements appearing in fleet/public tenders" },
       ],
       h3: [{ item: "Medical-grade in-vehicle health monitoring (via medtech partnership)", why: "Clinical validation and CDSCO pathways need 5+ years and partnerships", trigger: "Clear regulatory pathway for in-vehicle medical monitoring" }],
-      rationale: "Score 6.2: H1 e-call is real and mandate-pulled, H2 wellness/inclusive features are capital-efficient reuse, H3 medical-grade is partnership-and-regulation gated. Modest but coherent growth on the wedge.",
+      rationale: "H1 e-call is real and mandate-pulled, H2 wellness/inclusive features are capital-efficient reuse, H3 medical-grade is partnership-and-regulation gated. Modest but coherent growth on the wedge.",
     },
     verdict: {
       entry: "Lead the mandated e-call slice with existing sensing/connectivity assets; reuse Interior-Systems sensing for wellness features; build inclusive-design as a procurement differentiator; partner medtech for any clinical-grade ambition; treat broader mobility-health as social-impact optionality.",
       reasoning: [
-        "Horizons 6.2 and the e-call mandate give a real, regulation-pulled near-term wedge that reuses existing assets",
-        "Competency 5.4 confirms fit on e-call/wellness but a decisive medical-device gap — hence wellness/safety scope with medtech partnership for clinical",
-        "Market 5.6 and SWOT 5.6: the field beyond e-call is diffuse and hard to monetise — EXPLORE the wedge, watch the rest",
+        "The horizon pipeline and the e-call mandate give a real, regulation-pulled near-term wedge that reuses existing assets",
+        "Competency fit confirms strength on e-call/wellness but a decisive medical-device gap — hence wellness/safety scope with medtech partnership for clinical",
+        "Market size and the SWOT posture agree: the field beyond e-call is diffuse and hard to monetise — pursue the wedge, watch the rest",
       ],
       portfolio: [
         { sub: "E-Call", play: "LEAD", why: "Mandate-pulled, competency-matched, reuses crash-sensing/connectivity" },
@@ -5765,7 +5594,7 @@ V8.fintech = {
     { name: "ICICI Lombard (vehicle insurance + telematics)", marketPosition: "High", futureMomentum: "Medium", why: "India's largest private motor insurer by GWP (~₹24,000 Cr) — a clear market leader, but sentiment notes 'product innovation pace lagging digital-native competitors', i.e. stable rather than aggressive." },
     { name: "Intellicar Telematics (fleet fintech)", marketPosition: "Low", futureMomentum: "High", why: "Small revenue base (~₹80 Cr) and niche fleet-telematics scope make it a niche player today, but it is aggressively expanding install base 5x by FY27 and launching new insurance/lending data products." },
   ],
-  boschStrength: "Medium", boschStrengthWhy: "Vehicle-side trust and data assets are decisive, but the field's core execution (licensed financial services) is entirely outside Bosch's operating model — competencyRationale itself calls this 'the most bimodal profile in the portfolio'.",
+  boschStrength: "Medium", boschStrengthWhy: "Vehicle-side trust and data assets are decisive, but the field's core execution (licensed financial services) is entirely outside Bosch's operating model — the competency analysis calls this 'the most bimodal profile in the portfolio'.",
   marketGapSignificance: "Medium", marketGapWhy: "The automotive-grade in-vehicle payment/identity niche is genuinely underserved (no automotive-grade UPI implementation exists), but the addressable pool ($0.6B SAM) is a clear segment gap, not a massive blue-ocean void.",
   supplyChainMaturity: "Medium", supplyChainWhy: "Secure-element/HSM silicon (NXP, Infineon, ST) is standard, mature automotive sourcing with 'no chokepoint', but the automotive-grade payment-integration and NPCI-certified stack itself is still forming.",
   boschControl: "Medium", boschControlWhy: "Bosch sources secure elements via standard high-volume automotive procurement from multi-customer suppliers (NXP/Infineon/ST) — solid but not exclusive leverage; NPCI rails themselves are public infrastructure with no private supplier power either way.",
@@ -5811,7 +5640,7 @@ V8.infrastructure = {
     { name: "Exicom / Servotech (EV charging infra)", marketPosition: "Medium", futureMomentum: "Medium", why: "Established FAME-linked government/fleet tender wins across NHAI, discoms and fuel retailers make it a credible contender, but thin margins and noted after-sales/firmware criticism mark it as an adaptive incremental follower." },
     { name: "AECOM India (smart city consulting + systems)", marketPosition: "Medium", futureMomentum: "Medium", why: "Positioning as the smart-city systems integrator for NHAI/Smart Cities V2I design gives it credible government access, but thin margins (~3-5%) limit aggressive next-gen R&D investment." },
   ],
-  boschStrength: "Medium", boschStrengthWhy: "Global GNSS-tolling heritage and automotive V2X are deep Bosch DNA, but competencyRationale calls the B2G-procurement gap 'decisive' — winning India's consortium/relationship game is foreign to Bosch's direct-sales model.",
+  boschStrength: "Medium", boschStrengthWhy: "Global GNSS-tolling heritage and automotive V2X are deep Bosch DNA, but the competency analysis calls the B2G-procurement gap 'decisive' — winning India's consortium/relationship game is foreign to Bosch's direct-sales model.",
   marketGapSignificance: "High", marketGapWhy: "The MLFF transition is described as resetting incumbency entirely — 'technology decides' — a genuinely large, structurally underserved system-replacement opportunity, not just an incremental segment gap.",
   supplyChainMaturity: "Medium", supplyChainWhy: "GNSS OBU hardware and cloud ITS backend are multi-sourced and mature, but C-V2X roadside-unit electronics are explicitly flagged as a 'bottleneck' with limited certified India vendors.",
   boschControl: "Medium", boschControlWhy: "Bosch manufactures OBU/RSU assembly in-house at existing India plants (high leverage there) but sources GNSS silicon from global multi-vendor suppliers (u-blox/STMicro-class) as just one of many customers.",
@@ -5857,7 +5686,7 @@ V8.sustainability = {
     { name: "EKI Energy Services (carbon credit advisory)", marketPosition: "Medium", futureMomentum: "Medium", why: "India's most active voluntary carbon-credit/ESG advisory firm with deep CCTS relationships is a leading niche player, but is described as advisory-focused rather than technology-enabled — steady rather than aggressive growth." },
     { name: "GreenCell Mobility (sustainable fleet operator)", marketPosition: "Medium", futureMomentum: "Medium", why: "India's largest electric intercity bus operator with proven route economics is a solid contender, but is loss-making with noted 'concerns about financial sustainability... without subsidies' — an adaptive grower, not a decisively strong momentum player." },
   ],
-  boschStrength: "High", boschStrengthWhy: "The 10,000-workshop network and BMS/battery-diagnostics data are hard-to-replicate assets that map directly onto the field's core need (trusted collection plus certified data) — competencyRationale calls this 'the data-layer strategy read correctly', a genuine DNA fit.",
+  boschStrength: "High", boschStrengthWhy: "The 10,000-workshop network and BMS/battery-diagnostics data are hard-to-replicate assets that map directly onto the field's core need (trusted collection plus certified data) — the competency analysis calls this 'the data-layer strategy read correctly', a genuine DNA fit.",
   marketGapSignificance: "Medium", marketGapWhy: "Porter rivalry notes the data layer is 'under-occupied' with 'no data-layer leader' yet — a real, defensible segment gap — but the near-term addressable pool remains the smallest of the three fields ($0.5B SAM), short of a true blue-ocean-scale void.",
   supplyChainMaturity: "Medium", supplyChainWhy: "Workshop-network logistics and much diagnostic hardware already come from Bosch's own existing equipment lines (mature, local), but specialised battery EIS/state-of-health testing equipment has limited automotive-grade vendors — a hybrid position.",
   boschControl: "High", boschControlWhy: "Diagnostic hardware is sourced from Bosch's own existing workshop-equipment lines and the traceability software is being built in-house/standards-agnostic — unusually high control over its own core supply chain versus the other two fields.",
@@ -7587,7 +7416,7 @@ export default function App() {
                         </BarChart>
                       </ResponsiveContainer>
                       <div className="text-sm">CAGR <b>{d.market.cagr}%</b> (2025–30) · every figure cited or explicitly marked <b>estimate</b></div>
-                      <div className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3 mt-2"><b>Score rationale (8.4):</b> {d.market.scoreRationale}</div>
+                      <div className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3 mt-2"><b>Score rationale:</b> {d.market.scoreRationale}</div>
                     </Card>
                     <Card title="Customer landscape — who buys what">
                       {d.market.customers.map(c => (
@@ -7723,13 +7552,17 @@ export default function App() {
                       <div className="flex flex-wrap items-center gap-4 mb-3">
                         <div>
                           <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Industry Attractiveness Index (IAI)</div>
-                          <div className="text-3xl font-extrabold" style={{ color: iaiResult.band.color }}>{iaiResult.iai}<span className="text-sm text-slate-400"> / 5</span></div>
+                          <div className="text-3xl font-extrabold" style={{ color: iaiResult.band.color }}>{iaiResult.iai}<span className="text-sm text-slate-400"> / +1</span></div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Raw five-force average</div>
+                          <div className="text-3xl font-extrabold text-slate-700">{iaiResult.iaiRaw}<span className="text-sm text-slate-400"> / 5</span></div>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: iaiResult.band.color }} />
                           <span className="text-sm font-semibold" style={{ color: iaiResult.band.color }}>{iaiResult.band.v}</span>
                         </div>
-                        <div className="text-xs text-slate-500">1 = Structurally Attractive (Blue Ocean) · 5 = Structurally Unattractive (Red Ocean)</div>
+                        <div className="text-xs text-slate-500">Raw scale: 1 = Structurally Attractive (Blue Ocean) · 5 = Structurally Unattractive (Red Ocean).<br />Normalized IAI runs −1 (Red Ocean) to +1 (Blue Ocean), so it is comparable with the other eight indices.</div>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                         {Object.entries(iaiResult.forceAvgs).map(([force, avgScore]) => (
@@ -7742,7 +7575,7 @@ export default function App() {
                           </Tip>
                         ))}
                       </div>
-                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1 mt-3">IAI = avg({Object.values(iaiResult.forceAvgs).join(", ")}) = {iaiResult.iai}</div>
+                      <div className="text-[10px] font-mono text-slate-400 bg-slate-50 rounded px-2 py-1 mt-3">raw = avg({Object.values(iaiResult.forceAvgs).join(", ")}) = {iaiResult.iaiRaw} &nbsp;·&nbsp; IAI = (3 − {iaiResult.iaiRaw}) ÷ 2 = {iaiResult.iai}</div>
                     </div>
                   )}
                   <Card title="Porter's Five Forces — pressure (10 = hostile)">
