@@ -340,6 +340,24 @@ const THREAT_MATRIX = {
   Low: { High: { s: 3, label: "Disruptor" }, Medium: { s: 2, label: "Niche Contender" }, Low: { s: 1, label: "Minor Threat" } },
 };
 function competitorThreat(marketPosition, futureMomentum) { return THREAT_MATRIX[marketPosition]?.[futureMomentum] || null; }
+/* What each of the 9 named threat classifications means. The legend below is built by walking
+   THREAT_MATRIX itself, so it can never drift out of sync with the scoring that produces it. */
+const THREAT_LEVEL_DEFS = {
+  "Apex Predator": "Market-leading today and still accelerating. The most dangerous competitor class — head-on confrontation is expensive and rarely wins. Differentiate, niche down, or partner.",
+  "Incumbent at Risk": "Leads the market but grows only at market pace. Defensible in the near term, exposed to faster-moving challengers over a platform cycle.",
+  "Rising Star": "Not yet a leader but taking share and investing aggressively. Becomes an Apex Predator if left unchecked — the classification to act on earliest.",
+  "Fading Giant": "Large installed base and share, but little forward investment. Share erodes as platforms turn over — attack on next-generation capability, not on price.",
+  "Steady Competitor": "A stable, conventional rival tracking market growth. The standard competitive case, beaten on execution and differentiation rather than strategy.",
+  "Disruptor": "Small share but growing fast on a differentiated technology or business model. Low threat to current revenue, high threat to the future position.",
+  "Stagnant Player": "Mid-tier share with no meaningful investment or momentum. Losing relevance — a share donor rather than a threat.",
+  "Niche Contender": "Small, with modest growth and credibility only in specific segments. Manage where segments overlap; otherwise monitor.",
+  "Minor Threat": "Marginal presence and no momentum. Monitor only — no competitive response warranted.",
+};
+const POSITION_RANK = { High: 3, Medium: 2, Low: 1 };
+const THREAT_LEVEL_LEGEND = Object.entries(THREAT_MATRIX)
+  .flatMap(([pos, row]) => Object.entries(row).map(([mom, cell]) => ({ ...cell, pos, mom, m: THREAT_LEVEL_DEFS[cell.label] })))
+  .sort((a, b) => b.s - a.s || POSITION_RANK[b.pos] - POSITION_RANK[a.pos]);
+const threatTone = s => (s >= 4 ? "red" : s === 3 ? "amber" : "slate");
 const ADVANTAGE_MATRIX = {
   High: { High: { s: 5, label: "Perfect Opportunity" }, Medium: { s: 4, label: "Strong Position" }, Low: { s: 2, label: "Trapped Strength" } },
   Medium: { High: { s: 4, label: "Growth Bet" }, Medium: { s: 3, label: "Standard Battle" }, Low: { s: 1, label: "Uphill Fight" } },
@@ -7736,9 +7754,9 @@ export default function App() {
                         <Radar dataKey="v" stroke="#E20015" fill="#E20015" fillOpacity={0.18} strokeWidth={2} />
                       </RadarChart>
                     </ResponsiveContainer>
-                    <div className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3"><b>How 6.5 was derived:</b> {d.porterRationale}</div>
+                    <div className="text-xs text-slate-600 bg-slate-50 rounded-lg p-3"><b>How this was derived:</b> {d.porterRationale}</div>
                   </Card>
-                  <Card title="Why each force scores what it scores">
+                  <Card title="Scoring rationale — what drives each force">
                     {d.porter.map(f => (
                       <div key={f.force} className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
                         <div className="flex items-center justify-between">
@@ -7926,11 +7944,29 @@ export default function App() {
                         {competitorThreats.map(c => (
                           <div key={c.name} className="flex items-center justify-between text-xs py-0.5">
                             <span className="text-slate-600 truncate pr-2">{c.name.split(" ")[0]}</span>
-                            <Chip tone={c.s >= 4 ? "red" : c.s === 3 ? "amber" : "slate"}>{c.s} · {c.label}</Chip>
+                            <Tip label={`${c.s} · ${c.label} — market position ${c.marketPosition} × future momentum ${c.futureMomentum}\n\n${THREAT_LEVEL_DEFS[c.label] || ""}`}>
+                              <span className="cursor-help"><Chip tone={threatTone(c.s)}>{c.s} · {c.label}</Chip></span>
+                            </Tip>
                           </div>
                         ))}
                       </div>
                     </div>
+                  )}
+                  {cpiResult && (
+                    <Card title="Threat level legend — what each classification means">
+                      <div className="text-xs text-slate-500 mb-3">
+                        A competitor's threat level is the intersection of <b>Market Position</b> (their share and standing in the market today) and <b>Future Momentum</b> (their growth rate, investment intensity and strategic ambition). Those two axes produce the nine classifications below, scored 1–5. The same scale is used for every field, so competitors are comparable across the whole portfolio.
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {THREAT_LEVEL_LEGEND.map(t => (
+                          <div key={t.label} className="border border-slate-200 rounded-lg p-2.5">
+                            <Chip tone={threatTone(t.s)}>{t.s} · {t.label}</Chip>
+                            <div className="text-[10px] text-slate-400 mt-1.5">Position {t.pos} × Momentum {t.mom}</div>
+                            <p className="text-[11px] text-slate-600 mt-1">{t.m}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
                   )}
                   {/* Radar / multi-axis competitive positioning */}
                   {(() => {
@@ -8006,8 +8042,8 @@ export default function App() {
                             {(() => {
                               const t = competitorThreats?.find(c => c.name === cmp.name);
                               return t && (
-                                <Tip label={`Market position: ${t.marketPosition} · Future momentum: ${t.futureMomentum}\n\n${t.why}`}>
-                                  <span className="cursor-help"><Chip tone={t.s >= 4 ? "red" : t.s === 3 ? "amber" : "slate"}>Threat {t.s} · {t.label}</Chip></span>
+                                <Tip label={`Market position: ${t.marketPosition} · Future momentum: ${t.futureMomentum}\n\n${t.label}: ${THREAT_LEVEL_DEFS[t.label] || ""}\n\nWhy this rating: ${t.why}`}>
+                                  <span className="cursor-help"><Chip tone={threatTone(t.s)}>Threat {t.s} · {t.label}</Chip></span>
                                 </Tip>
                               );
                             })()}
