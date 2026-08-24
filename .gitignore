@@ -3,3 +3,6 @@ dist/
 .env
 .env.*
 *.local
+
+# scratch output from the esbuild JSX compile check
+.tmpcheck.js
