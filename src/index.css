@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tooltips open after a dwell delay; this fades them in so the appearance
+   reads as deliberate rather than as a flicker. */
+@keyframes tipIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tip-in { animation: tipIn 120ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tip-in { animation: none; }
+}

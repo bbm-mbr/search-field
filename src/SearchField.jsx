@@ -27,13 +27,21 @@ const FIELDS = [
   { id: "interior", name: "Interior Systems", subs: ["Seating", "Vehicle Access", "Occupant Monitoring", "Air Purity", "Ambient Smell", "Automated Access"] },
   { id: "suspension", name: "Active Suspension", subs: ["Active & Semi-Active", "Control Units", "Control Algorithms", "Cross-Domain Function"] },
   { id: "connectivity", name: "Connectivity, Cloud, Cyber, Data, Arch.", subs: ["Connectivity", "Cloud", "Cyber Security", "Data Management", "Architectures"] },
-  { id: "eca", name: "Electronic Control Architectures", subs: ["Edge Compute", "Distributed Compute", "AI Compute", "Semiconductor Tech", "Comm. Tech", "Vehicle as Sensor"] },
+  /* Reviewed as too coarse: silicon and module manufacture are different businesses
+     with different capital profiles, different partners and different Bosch fit.
+     "Semiconductors" is split into Semiconductors (design/qualification) and
+     EMS & Modules (assembly and module build). */
+  { id: "eca", name: "Electronic Control Architectures", subs: ["Semiconductors", "EMS & Modules", "Edge Compute", "Distributed Compute", "AI Compute", "Comm. Tech", "Vehicle as Sensor"] },
   { id: "software", name: "Software", subs: ["Interoperable Functions", "Comm. Technologies", "Middleware/OS", "AI/ML", "Simulations", "Digital Twin", "WASM"] },
   { id: "manufacturing", name: "Manufacturing", subs: ["EMS", "Contract Mfg (MaaS)", "Industry 5.0", "Dark Factories"] },
   { id: "energy", name: "Energy", subs: ["V2G & Charging", "Battery & BMS", "New Energy Tech"] },
   { id: "fintech", name: "Fintech", subs: ["In-Vehicle Payment", "Insurance", "Vehicle Aadhar", "Vehicle Monetization"] },
   { id: "infrastructure", name: "Infrastructure", subs: ["V2X", "Urban Traffic Mgmt", "Tolling & Parking", "Map Services", "Intermodal"] },
-  { id: "sustainability", name: "Sustainability", subs: ["Battery 2nd Life & Recycling", "Carbon Credits", "Right to Repair", "Residual Value"] },
+  /* Sustainability was reviewed as too broad an umbrella. Battery second life and
+     battery recycling are different businesses — one repurposes a working asset for
+     stationary storage, the other destroys it to recover material — so they are split
+     and scoped separately rather than carried as one sub-field. */
+  { id: "sustainability", name: "Sustainability", subs: ["Battery Second Life", "Battery Recycling", "Right to Repair", "Residual Value", "Carbon Credits"] },
   { id: "evtol", name: "EVTOL", subs: ["Urban Air Mobility", "Rural Applications"] },
   { id: "robotics", name: "Robotics", subs: ["AMR", "Campus Shuttles", "Humanoids", "Robotics × SDV"] },
   { id: "health", name: "Health Care", subs: ["E-Call", "Assisted Motion", "DEI Mobility Design"] },
@@ -47,7 +55,9 @@ const MACRO = {
     { k: "Policy certainty", v: "Stable central government; reform continuity (GST 2.0 Sept-2025, India–UK FTA 2025, PLI programmes)", src: "PIB / policy trackers" },
     { k: "PM E-DRIVE", v: "₹10,900 Cr scheme EXTENDED to Mar-2028 — but e-2W/e-3W demand incentives ended Mar-2026; remaining outlay targets charging infra (₹2,000 Cr), 14,028 e-buses, e-trucks (scrappage-linked), e-ambulances. Industry now seeking to defer battery/component localisation norms to Apr-2027 citing China rare-earth magnet export curbs", src: "MHI notification, Aug-2025 / industry reps, Aug-2026" },
     { k: "PLI / localisation", v: "Auto & ACC PLI disbursing; Cabinet approved India Semiconductor Mission 2.0 (₹1,27,500 Cr outlay) on 15-Jul-2026 — targets ₹4L Cr investment over 6 years; Tata-PSMC fab under construction at Dholera, 3 of 12 approved facilities operational; Make-in-India value-addition pressure on all sourcing", src: "Union Cabinet, 15-Jul-2026 / MeitY" },
-    { k: "Trade & geopolitics", v: "India–UK FTA opens auto trade; China+1 sourcing inflows continue; West Asia conflict elevates freight & energy risk; China's rare-earth magnet export curbs are now a live automotive supply-chain constraint", src: "Commerce Ministry / RBI, Aug-2026" },
+    { k: "Trade & geopolitics", v: "India–UK FTA opens auto trade; China+1 sourcing inflows continue; West Asia conflict elevates freight & energy risk", src: "Commerce Ministry / RBI, Aug-2026" },
+    { k: "China dependency (critical minerals)", v: "China controls >90% of global rare-earth magnet processing and India imports 100% of its sintered NdFeB magnet requirement. Dy/Tb export controls are now a live constraint on EV traction motors, and SIAM has asked to defer traction-motor localisation deadlines from Sept-2026 to Apr-2027", src: "IEA / SIAM representations, 2026" },
+    { k: "China dependency (policy response)", v: "₹7,300 Cr incentive scheme for domestic rare-earth magnet manufacturing near approval, plus ₹1,500 Cr for critical-minerals recycling under the National Critical Minerals Mission (2026–31) — recycling is now an explicit sovereignty instrument, not only an environmental one", src: "National Critical Minerals Mission, 2026" },
   ],
   Economic: [
     { k: "GDP growth", v: "FY26 ~7.4–7.6% (strong); FY27 forecast cut to 6.6% by RBI on West Asia conflict, crude prices, monsoon uncertainty — reaffirmed at the Aug 3–5 MPC meeting", src: "RBI MPC, Aug-2026" },
@@ -75,6 +85,7 @@ const MACRO = {
     { k: "Physical climate risk", v: "Extreme heat, monsoon flooding, high dust — components need India-hardened thermal/ingress design; a real engineering differentiator", src: "IMD / OEM DVP norms" },
   ],
   Legal: [
+    { k: "BNCAP 2.0 (AIS-197 Rev 1)", v: "Confirmed for Oct-2027, replacing the current protocol when it expires 20-Sept-2027. Moves to a 100-point score across five pillars — Crash Protection 55, Vulnerable Road-User Protection 20, Safe Driving 10, Accident Avoidance 10, Post-Crash Safety 5. Five stars needs ≥70/100 (2027–29), rising to ≥80 (2029–31), with no zero permitted in any pillar", src: "MoRTH / AIS-197 Rev 1 draft, 2026" },
     { k: "Homologation", v: "CMVR + AIS standards; ARAI/ICAT type-approval is the gate — timelines and test capacity are a planning constraint for every product", src: "MoRTH / ARAI" },
     { k: "Data protection", v: "DPDP Act 2023, Rules notified 14-Nov-2025; Consent Manager framework operationalising Jun–Aug 2026; Nov-2026 ends soft-enforcement phase; full obligations (mandatory notices, 72-hr breach reporting to DPBI) apply from 13-May-2027 — consent, purpose-limitation & breach duties on all vehicle/user data", src: "MeitY DPDP Rules, Nov-2025" },
     { k: "Tax & investment", v: "GST 2.0 auto rates (18% small / 40% large / 5% EV / 18% components); 100% FDI automatic route in auto; India–UK FTA tariff schedules", src: "GST Council / DPIIT" },
@@ -1320,6 +1331,9 @@ const DATA = {
       { name: "ZF (CDC / active suspension)", type: "global", x_price_position: 8, y_tech_depth: 9, moat: "Continuous Damping Control IP + hardware + SW bundle", reasoning: "Complete corner-module with embedded control; Bosch competes at the central-compute layer above." },
       { name: "Tenneco (Monroe Intelligent Suspension)", type: "global", x_price_position: 7, y_tech_depth: 8, moat: "Semi-active valve IP + OEM integration", reasoning: "Sells the hardware + control together; Bosch's angle is cross-domain functions that span beyond the damper." },
       { name: "BWI Group", type: "global", x_price_position: 6, y_tech_depth: 8, moat: "MagneRide + semi-active portfolio", reasoning: "Another complete-module supplier; same dynamics." },
+      { name: "Hitachi Astemo", type: "global", x_price_position: 6, y_tech_depth: 8, moat: "Full PC chassis portfolio — dampers, EPS and brake — with established India passenger-car supply", reasoning: "The most PC-relevant rival in India: unlike the premium damper specialists it already supplies mainstream passenger-car platforms, so it competes for the same volume sockets Bosch's ride-control software would attach to." },
+      { name: "KYB Corporation (via Gabriel India JV)", type: "global", x_price_position: 4, y_tech_depth: 6, moat: "PC damper volume leadership through the Gabriel India JV across mass-market platforms", reasoning: "Owns the passenger-car damper socket at volume price points. Not a software competitor — the realistic licensing channel for Bosch ride-control into mainstream PC platforms." },
+      { name: "Endurance Technologies", type: "indian-incumbent", x_price_position: 3, y_tech_depth: 5, moat: "India-cost suspension for PC and 2W with deep domestic OEM relationships", reasoning: "Competes on cost in the mass PC segment where adaptive content is not yet specified; relevant as the incumbent Bosch software would have to displace or ride on, rather than as a technology rival." },
       { name: "Bosch (target position)", type: "global", x_price_position: 7, y_tech_depth: 8, moat: "VMM cross-domain software + ADAS data feed", reasoning: "Enters at the central-compute / cross-domain SW layer, not the damper — differentiated positioning." },
     ],
     competitorWhiteSpace: "Cross-domain ride control sold as an SdV feature (not a damper accessory) — no incumbent packages preview-comfort + roll-mitigation + motion-sickness reduction as a software-defined OTA-updatable function.",
@@ -1506,29 +1520,29 @@ const DATA = {
     ma: ["MEMS", "ECU", "Power Semiconductors", "IC", "ASICs", "Quantum Sensing"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
     pestel: {
       Political: [
-        { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission funds fabs, OSAT and design-linked incentives — a domestic silicon ecosystem is forming for the first time", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", subs: ["Semiconductor Tech"], c: [1] },
+        { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission funds fabs, OSAT and design-linked incentives — a domestic silicon ecosystem is forming for the first time", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", subs: ["Semiconductors"], c: [1] },
         { cat: "Government Schemes & Incentives", p: "5.9 GHz C-V2X and 77–81 GHz radar de-licensing (Jun-2026) are regulatory ENABLERS for sensing and communication content per vehicle", why: "The WPC exemptions remove spectrum-licensing barriers for V2X OBUs and imaging radar, aligning India with US/EU and de-risking sensing-heavy architectures [9]", sowhat: "Vehicle-as-Sensor and Comm. Tech sub-fields gain a cleared runway — content roadmaps can assume these bands without regulatory contingency", i: "medium", enabler: true, subs: ["Vehicle as Sensor", "Comm. Tech"], c: [9] },
       ],
       Economic: [
         { cat: "Economic Growth & Consumer Spending", p: "E/E content per vehicle rises steeply even in budget segments — safety mandates, EVs and connectivity multiply ECUs regardless of GDP cycle", why: "Safety mandates (6 airbags-class features, ESC), EVs and connectivity multiply ECUs and semiconductors per vehicle [2]", sowhat: "Volume-driven demand for cost-optimised ECUs and zonal consolidation — both Bosch home turf", i: "high", subs: ["Distributed Compute", "Edge Compute"], c: [2] },
-        { cat: "Currency & Exchange Rate", p: "INR weakness is a structural cost risk for advanced-node silicon — every zonal computer's BOM is dollar-denominated at the chip level", why: "Leading-edge SoCs and memory are imported; rupee depreciation flows directly into vehicle-computer costs [10]", sowhat: "ISM-qualified local silicon (as it matures) plus ASIC partnerships become genuine cost hedges — another reason to anchor the ISM qualification role", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [10] },
+        { cat: "Currency & Exchange Rate", p: "INR weakness is a structural cost risk for advanced-node silicon — every zonal computer's BOM is dollar-denominated at the chip level", why: "Leading-edge SoCs and memory are imported; rupee depreciation flows directly into vehicle-computer costs [10]", sowhat: "ISM-qualified local silicon (as it matures) plus ASIC partnerships become genuine cost hedges — another reason to anchor the ISM qualification role", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [10] },
       ],
       Social: [
-        { cat: "Consumer Behavior & Values", p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs — localisation is strategic, not just cost-driven", why: "2021–23 shortages cost Indian OEMs real volume; semiconductor localisation is now a CXO agenda item [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction", i: "medium", subs: ["Semiconductor Tech", "Distributed Compute"], c: [3] },
-        { cat: "Workforce & Labor", p: "India hosts the world's largest concentration of silicon-design talent inside vendor GCCs — the constraint is organising it, not finding it", why: "Qualcomm/NVIDIA/Intel-class GCCs employ tens of thousands of Indian chip designers; DLI incentives make targeted team-builds economical [1]", sowhat: "Acqui-hire or DLI-backed design-team builds close Bosch's India silicon-design gap faster than organic growth — the competency tab's named route", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [1] },
+        { cat: "Consumer Behavior & Values", p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs — localisation is strategic, not just cost-driven", why: "2021–23 shortages cost Indian OEMs real volume; semiconductor localisation is now a CXO agenda item [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction", i: "medium", subs: ["Semiconductors", "Distributed Compute"], c: [3] },
+        { cat: "Workforce & Labor", p: "India hosts the world's largest concentration of silicon-design talent inside vendor GCCs — the constraint is organising it, not finding it", why: "Qualcomm/NVIDIA/Intel-class GCCs employ tens of thousands of Indian chip designers; DLI incentives make targeted team-builds economical [1]", sowhat: "Acqui-hire or DLI-backed design-team builds close Bosch's India silicon-design gap faster than organic growth — the competency tab's named route", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [1] },
       ],
       Technological: [
         { cat: "Pace of Change", p: "The distributed-ECU → zonal + central-compute shift is the once-a-decade re-sourcing window — every socket reopens", why: "Global zonal transition reaches Indian platforms via global OEMs first; architecture transitions reset incumbency [4]", sowhat: "Zonal controllers and vehicle-computer sockets are being re-sourced now — win the blueprint, the sockets follow", i: "high", subs: ["Edge Compute", "Distributed Compute"], c: [4] },
-        { cat: "Interoperability & Standards", p: "DIR-V (Shakti/Vega cores) pushes sovereign RISC-V toward automotive — a standards bet worth funded optionality, not commitment", why: "Government-backed RISC-V may become a procurement criterion in sovereignty-sensitive programmes; automotive toolchains are still maturing [4]", sowhat: "One evaluation programme now buys the option; scale only on a real procurement trigger — as the competency tab prices it", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [4] },
-        { cat: "Emerging Technologies", p: "Chiplet-based custom compute (UCIe) offers a route to differentiated vehicle computers without owning leading-edge fabs", why: "Chiplet standards let system houses compose custom silicon from best-of-breed dies — exactly the position of a fab-less Tier-1 with ASIC competence [4]", sowhat: "ASIC/chiplet alliances are the partner-down half of the silicon strategy — pursue alongside the ISM qualification white space", i: "medium", subs: ["Semiconductor Tech", "AI Compute"], c: [4] },
+        { cat: "Interoperability & Standards", p: "DIR-V (Shakti/Vega cores) pushes sovereign RISC-V toward automotive — a standards bet worth funded optionality, not commitment", why: "Government-backed RISC-V may become a procurement criterion in sovereignty-sensitive programmes; automotive toolchains are still maturing [4]", sowhat: "One evaluation programme now buys the option; scale only on a real procurement trigger — as the competency tab prices it", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [4] },
+        { cat: "Emerging Technologies", p: "Chiplet-based custom compute (UCIe) offers a route to differentiated vehicle computers without owning leading-edge fabs", why: "Chiplet standards let system houses compose custom silicon from best-of-breed dies — exactly the position of a fab-less Tier-1 with ASIC competence [4]", sowhat: "ASIC/chiplet alliances are the partner-down half of the silicon strategy — pursue alongside the ISM qualification white space", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [4] },
       ],
       Environmental: [
         { cat: "Climate Policy & Emission Regulations", p: "CAFE-III turns electronics efficiency into a compliance line — every ECU's power draw now has regulatory value", why: "Fleet fuel-consumption targets (3.73→3.01 L/100km, Apr-2027–Mar-2032) make electrical-load reduction a CAFE credit; consolidation from many ECUs to few computers cuts standby drain [11]", sowhat: "Sell zonal consolidation partly as a CAFE-compliance measure — an OEM finance argument on top of the architecture one", i: "medium", subs: ["Edge Compute", "Distributed Compute"], c: [11] },
-        { cat: "Natural Resources", p: "Power efficiency (SiC/GaN) is the EV electronics battleground — wide-bandgap devices cut inverter losses meaningfully", why: "ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Power-semiconductor positioning spans Energy and ECA fields — coordinate the play", i: "medium", subs: ["Semiconductor Tech"], c: [5] },
+        { cat: "Natural Resources", p: "Power efficiency (SiC/GaN) is the EV electronics battleground — wide-bandgap devices cut inverter losses meaningfully", why: "ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Power-semiconductor positioning spans Energy and ECA fields — coordinate the play", i: "medium", subs: ["Semiconductors"], c: [5] },
       ],
       Legal: [
-        { cat: "Cybersecurity & Digital Regulations", p: "Functional-safety and cybersecurity certification deepen to silicon level — ISO 26262 + AIS-189 push requirements into chips and ECUs", why: "Security/safety requirements now flow down to silicon; certification depth becomes a structural barrier [6]", sowhat: "Certification depth favours established Tier-1s — Bosch's pedigree compounds with every regulation cycle", i: "medium", subs: ["Semiconductor Tech", "Edge Compute"], c: [6] },
-        { cat: "IP Law", p: "Chip co-design partnerships only work if design IP is legally protected — India's IP regime is now strong enough to make them safe", why: "Custom-silicon work exposes core design IP; partners commit only where courts will enforce protection [6]", sowhat: "Put layered IP protection into every ISM design partnership before the qualification play scales — a one-time legal setup", i: "low", subs: ["Semiconductor Tech"], c: [6] },
+        { cat: "Cybersecurity & Digital Regulations", p: "Functional-safety and cybersecurity certification deepen to silicon level — ISO 26262 + AIS-189 push requirements into chips and ECUs", why: "Security/safety requirements now flow down to silicon; certification depth becomes a structural barrier [6]", sowhat: "Certification depth favours established Tier-1s — Bosch's pedigree compounds with every regulation cycle", i: "medium", subs: ["Semiconductors", "Edge Compute"], c: [6] },
+        { cat: "IP Law", p: "Chip co-design partnerships only work if design IP is legally protected — India's IP regime is now strong enough to make them safe", why: "Custom-silicon work exposes core design IP; partners commit only where courts will enforce protection [6]", sowhat: "Put layered IP protection into every ISM design partnership before the qualification play scales — a one-time legal setup", i: "low", subs: ["Semiconductors"], c: [6] },
       ],
     },
     swot: {
@@ -1596,7 +1610,7 @@ const DATA = {
         },
         valuePool: "Commodity ECU value is compressing; profit concentrates in zonal controllers, vehicle computers and the qualification/integration layer between Indian silicon and vehicle programmes.",
         whiteSpace: [
-          { p: "Automotive qualification of ISM silicon", why: "New fabs need a qualification partner; nobody owns the role yet", sub: "Semiconductor Tech" },
+          { p: "Automotive qualification of ISM silicon", why: "New fabs need a qualification partner; nobody owns the role yet", sub: "Semiconductors" },
           { p: "Zonal controllers for India-built EV platforms", why: "Sourcing opens now; incumbency resets in architecture transitions", sub: "Edge Compute" },
           { p: "Vehicle-as-Sensor data products", why: "MEMS franchise + connectivity platforms make it a natural extension", sub: "Vehicle as Sensor" },
         ],
@@ -1644,7 +1658,8 @@ const DATA = {
         { sub: "Edge Compute", play: "LEAD", why: "Zonal/vehicle-computer sockets — the decade's entry window" },
         { sub: "Distributed Compute", play: "LEAD", why: "Existing ECU base migrating under Bosch architecture leadership" },
         { sub: "Vehicle as Sensor", play: "LEAD", why: "MEMS franchise + data platforms from Connectivity field" },
-        { sub: "Semiconductor Tech", play: "PARTNER", why: "ASIC/chiplet alliances + ISM qualification role; no fab ambition" },
+        { sub: "Semiconductors", play: "PARTNER", why: "ASIC and chiplet alliances plus the automotive-qualification role for ISM silicon. No fab ambition — Bosch qualifies and integrates other people's wafers rather than making them" },
+        { sub: "EMS & Modules", play: "LEAD", why: "A different business from silicon: module assembly and ECU build on Bosch's own IATF-certified India lines, where the constraint is capacity utilisation rather than wafer access. Coordinate with the Manufacturing field's MaaS play so the two are not sold twice" },
         { sub: "AI Compute", play: "PARTNER", why: "NPU/accelerator via silicon partners; Bosch owns integration" },
         { sub: "Comm. Tech", play: "WATCH", why: "In-vehicle networking tracked within architecture scope" },
       ],
@@ -2358,7 +2373,7 @@ const DATA = {
       { name: "BEL (Bharat Electronics)", type: "indian-incumbent", x_price_position: 5, y_tech_depth: 6, moat: "DPSU procurement relationships + domestic preference", reasoning: "Government procurement incumbent; Bosch needs them as a consortium partner, not a competitor." },
       { name: "Bosch (target position)", type: "global", x_price_position: 7, y_tech_depth: 8, moat: "MLFF heritage + both-sides V2X (vehicle + infra)", reasoning: "Unique both-sides-of-the-air-gap position — no competitor covers vehicle-side AND infrastructure-side." },
     ],
-    competitorWhiteSpace: "Both-sides V2X technology (vehicle-side OBU + infrastructure-side RSU + cloud backend) from one supplier — no incumbent owns all three; Bosch's cross-field assets make this uniquely credible.",
+    competitorWhiteSpace: "The gap is at the integration level, not the element level. Tolling, V2X, traffic management, enforcement and charging are each supplied competently by someone today, but nobody makes them work as one system — every deployment is a fresh systems-integration problem solved from scratch. Bosch is the only player holding vehicle-side OBU, infrastructure-side RSU and the cloud backend at once, which makes it credible as the integration authority rather than another element vendor. The commercial position to hold is solution provider at the integration layer: own the interfaces, the data model and the performance guarantee across elements, and let specialists supply the individual boxes underneath.",
     suppliers: [
       { input: "GNSS OBU hardware", supply_risk: 5, profit_impact: 7, quadrant: "leverage", reasoning: "Multiple automotive-grade GNSS suppliers; manageable." },
       { input: "RSU (Road-Side Unit) electronics", supply_risk: 6, profit_impact: 7, quadrant: "bottleneck", reasoning: "C-V2X RSU hardware is a specialised supply; limited certified vendors in India." },
@@ -2371,28 +2386,28 @@ const DATA = {
     ma: ["SW & Services", "Solutions in Tech Stack"], bbm: ["Circular Economy"],
     pestel: {
       Political: [
-        { cat: "Government Schemes & Incentives", p: "ELV Rules 2025 (steel-linked EPR) + Battery Waste Rules + advancing Right-to-Repair policy — regulation is manufacturing this field's demand", why: "MoEFCC EPR targets create audited compliance obligations; a national Right-to-Repair framework is in motion for automobiles [1][9]", sowhat: "Traceability, diagnostics and second-life services have regulation-guaranteed buyers — the data layer Bosch can own", i: "high", subs: ["Battery 2nd Life & Recycling", "Right to Repair"], c: [1, 9] },
-        { cat: "Government Schemes & Incentives", p: "The vehicle-scrapping market formalises from $12.8B (2026) to a projected $31.7B (2033) — policy is industrialising the reverse value chain", why: "ELV rules, registered scrapping facilities and fitness-test enforcement convert an informal sector into an auditable industry [9]", sowhat: "An industrialised reverse chain needs exactly the certification, diagnostics and traceability infrastructure Bosch's data-layer strategy provides", i: "high", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [9] },
+        { cat: "Government Schemes & Incentives", p: "ELV Rules 2025 (steel-linked EPR) + Battery Waste Rules + advancing Right-to-Repair policy — regulation is manufacturing this field's demand", why: "MoEFCC EPR targets create audited compliance obligations; a national Right-to-Repair framework is in motion for automobiles [1][9]", sowhat: "Traceability, diagnostics and second-life services have regulation-guaranteed buyers — the data layer Bosch can own", i: "high", subs: ["Battery Second Life", "Battery Recycling", "Right to Repair"], c: [1, 9] },
+        { cat: "Government Schemes & Incentives", p: "The vehicle-scrapping market formalises from $12.8B (2026) to a projected $31.7B (2033) — policy is industrialising the reverse value chain", why: "ELV rules, registered scrapping facilities and fitness-test enforcement convert an informal sector into an auditable industry [9]", sowhat: "An industrialised reverse chain needs exactly the certification, diagnostics and traceability infrastructure Bosch's data-layer strategy provides", i: "high", subs: ["Battery Second Life", "Battery Recycling", "Residual Value"], c: [9] },
       ],
       Economic: [
-        { cat: "Economic Growth & Consumer Spending", p: "Compliance-driven demand is GDP-cycle-independent — EPR obligations bind in good years and bad", why: "Producers must evidence collection and recycling regardless of market conditions; the demand floor is legal, not economic [1]", sowhat: "The traceability/compliance revenue line carries counter-cyclical resilience rare among the search fields", i: "medium", subs: ["Battery 2nd Life & Recycling"], c: [1] },
-        { cat: "Economic Growth & Consumer Spending", p: "EV battery value retention is a major TCO and financing lever — battery is ~40% of EV cost", why: "Second-life and accurate residual valuation unlock fleet economics and resale markets [2]", sowhat: "Residual-value estimation and second-life enablement are monetisable data services with cross-field synergy (Energy, Fintech)", i: "high", subs: ["Residual Value", "Battery 2nd Life & Recycling"], c: [2] },
+        { cat: "Economic Growth & Consumer Spending", p: "Compliance-driven demand is GDP-cycle-independent — EPR obligations bind in good years and bad", why: "Producers must evidence collection and recycling regardless of market conditions; the demand floor is legal, not economic [1]", sowhat: "The traceability/compliance revenue line carries counter-cyclical resilience rare among the search fields", i: "medium", subs: ["Battery Second Life", "Battery Recycling"], c: [1] },
+        { cat: "Economic Growth & Consumer Spending", p: "EV battery value retention is a major TCO and financing lever — battery is ~40% of EV cost", why: "Second-life and accurate residual valuation unlock fleet economics and resale markets [2]", sowhat: "Residual-value estimation and second-life enablement are monetisable data services with cross-field synergy (Energy, Fintech)", i: "high", subs: ["Residual Value", "Battery Second Life", "Battery Recycling"], c: [2] },
       ],
       Social: [
-        { cat: "Consumer Behavior & Values", p: "Corporate BRSR/scope-3 pressure outpaces consumer green premiums — the buyer of circularity is the enterprise, not the individual", why: "Disclosure mandates drive corporate demand while price-sensitive consumers won't pay green premiums [3]", sowhat: "Target B2B/regulatory-driven demand (OEMs, fleets, compliance), not consumer green premiums", i: "medium", subs: ["Carbon Credits", "Battery 2nd Life & Recycling"], c: [3] },
+        { cat: "Consumer Behavior & Values", p: "Corporate BRSR/scope-3 pressure outpaces consumer green premiums — the buyer of circularity is the enterprise, not the individual", why: "Disclosure mandates drive corporate demand while price-sensitive consumers won't pay green premiums [3]", sowhat: "Target B2B/regulatory-driven demand (OEMs, fleets, compliance), not consumer green premiums", i: "medium", subs: ["Carbon Credits", "Battery Second Life", "Battery Recycling"], c: [3] },
         { cat: "Lifestyle & Consumer Behavior", p: "India's deep repair-and-reuse culture is a structural ally of Right-to-Repair — formalising it creates the market rather than fighting behaviour", why: "Indian vehicle owners already repair and extend product life by default; policy formalisation channels existing behaviour through certified providers [1]", sowhat: "The workshop network converts cultural repair behaviour into certified, warranty-safe service revenue — a moat informal players can't match on trust", i: "medium", subs: ["Right to Repair"], c: [1] },
       ],
       Technological: [
-        { cat: "Data-Driven Insights", p: "Battery diagnostics + traceability are the technical heart of circularity — every downstream market prices on battery-state data quality", why: "Second-life grading, recycling routing and residual valuation all depend on accurate battery-state data and lifecycle traceability [4]", sowhat: "Bosch BMS/diagnostics + workshop network can generate and certify exactly this data — the defensible position", i: "high", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [4] },
-        { cat: "Emerging Technologies", p: "Battery-passport architectures (EU-style) are coming to India via export coupling — early passport capability is exportable compliance infrastructure", why: "Indian battery and vehicle exporters must meet EU battery-passport rules regardless of Indian timelines; domestic frameworks tend to follow [4]", sowhat: "Build passport-grade traceability once, sell it twice: EU-export compliance now, Indian EPR compliance as rules mature", i: "medium", subs: ["Battery 2nd Life & Recycling"], c: [4] },
+        { cat: "Data-Driven Insights", p: "Battery diagnostics + traceability are the technical heart of circularity — every downstream market prices on battery-state data quality", why: "Second-life grading, recycling routing and residual valuation all depend on accurate battery-state data and lifecycle traceability [4]", sowhat: "Bosch BMS/diagnostics + workshop network can generate and certify exactly this data — the defensible position", i: "high", subs: ["Battery Second Life", "Battery Recycling", "Residual Value"], c: [4] },
+        { cat: "Emerging Technologies", p: "Battery-passport architectures (EU-style) are coming to India via export coupling — early passport capability is exportable compliance infrastructure", why: "Indian battery and vehicle exporters must meet EU battery-passport rules regardless of Indian timelines; domestic frameworks tend to follow [4]", sowhat: "Build passport-grade traceability once, sell it twice: EU-export compliance now, Indian EPR compliance as rules mature", i: "medium", subs: ["Battery Second Life", "Battery Recycling"], c: [4] },
       ],
       Environmental: [
-        { cat: "Circular Economy & E-Waste", p: "Circular-economy mandates are the field's entire reason for being — producer responsibility tightens across the value chain", why: "Carbon accounting, recycled-content rules and producer responsibility are tightening [5]", sowhat: "Aligns directly with the mapped Circular-Economy BBM stream — strategic coherence", i: "high", subs: ["Battery 2nd Life & Recycling", "Carbon Credits"], c: [5] },
-        { cat: "Natural Resources", p: "The battery-retirement wave (first EV cohorts retiring post-2027) is the field's volume clock — feedstock scales with the parc's age, not policy", why: "End-of-life battery volumes ramp sharply as early EV cohorts age out; the material-recovery opportunity is demographically locked-in [7]", sowhat: "Time capacity and platform investments to the retirement curve — the trigger-based scaling in this field's verdict", i: "high", subs: ["Battery 2nd Life & Recycling"], c: [7] },
+        { cat: "Circular Economy & E-Waste", p: "Circular-economy mandates are the field's entire reason for being — producer responsibility tightens across the value chain", why: "Carbon accounting, recycled-content rules and producer responsibility are tightening [5]", sowhat: "Aligns directly with the mapped Circular-Economy BBM stream — strategic coherence", i: "high", subs: ["Battery Second Life", "Battery Recycling", "Carbon Credits"], c: [5] },
+        { cat: "Natural Resources", p: "The battery-retirement wave (first EV cohorts retiring post-2027) is the field's volume clock — feedstock scales with the parc's age, not policy", why: "End-of-life battery volumes ramp sharply as early EV cohorts age out; the material-recovery opportunity is demographically locked-in [7]", sowhat: "Time capacity and platform investments to the retirement curve — the trigger-based scaling in this field's verdict", i: "high", subs: ["Battery Second Life", "Battery Recycling"], c: [7] },
       ],
       Legal: [
         { cat: "Environmental & Sustainability Regulations", p: "Carbon-credit & EPR compliance frameworks are still maturing — rule risk is high, so platforms must be standards-agnostic", why: "Carbon markets and EPR mechanics in India are evolving; standards and pricing are unsettled [6]", sowhat: "Build flexible, standards-agnostic platforms; avoid betting on any single immature mechanism", i: "high", subs: ["Carbon Credits"], c: [6] },
-        { cat: "Government Schemes & Incentives", p: "MoRTH's draft scrappage incentives (rebates for scrapping against new purchases) would accelerate ELV volumes into the formal chain", why: "Purchase-linked scrappage rebates pull end-of-life vehicles out of informal channels and into registered facilities where traceability applies [10]", sowhat: "If notified, the incentive spikes certified-scrapping demand — a watch-trigger for scaling the traceability platform", i: "medium", subs: ["Battery 2nd Life & Recycling", "Residual Value"], c: [10] },
+        { cat: "Government Schemes & Incentives", p: "MoRTH's draft scrappage incentives (rebates for scrapping against new purchases) would accelerate ELV volumes into the formal chain", why: "Purchase-linked scrappage rebates pull end-of-life vehicles out of informal channels and into registered facilities where traceability applies [10]", sowhat: "If notified, the incentive spikes certified-scrapping demand — a watch-trigger for scaling the traceability platform", i: "medium", subs: ["Battery Second Life", "Battery Recycling", "Residual Value"], c: [10] },
       ],
     },
     swot: {
@@ -2460,9 +2475,9 @@ const DATA = {
         },
         valuePool: "Recycling chemistry belongs to specialists; the pool Bosch can own is the data layer — traceability, grading, certification and residual-value scoring that every downstream market depends on.",
         whiteSpace: [
-          { p: "EPR traceability-as-a-service", why: "Producers must evidence compliance; nobody owns the automotive layer yet", sub: "Battery 2nd Life & Recycling" },
+          { p: "EPR traceability-as-a-service", why: "Producers must evidence compliance; nobody owns the automotive layer yet", sub: "Battery Recycling" },
           { p: "Certified battery SoH reports for resale and finance", why: "The used-EV market needs a trust standard", sub: "Residual Value" },
-          { p: "EU battery-passport readiness for exporters", why: "Export coupling brings the requirement before Indian rules do", sub: "Battery 2nd Life & Recycling" },
+          { p: "EU battery-passport readiness for exporters", why: "Export coupling brings the requirement before Indian rules do", sub: "Battery Recycling" },
         ],
         profitability: "Data and certification services earn software-like margins; physical recycling is capital-heavy and not ours",
       },
@@ -2500,7 +2515,8 @@ const DATA = {
         "Market size and the SWOT posture cap it below full commitment: high growth, but policy-dependence and nascency demand patience",
       ],
       portfolio: [
-        { sub: "Battery 2nd Life & Recycling", play: "LEAD", why: "Diagnostics + collection network — the defensible data layer" },
+        { sub: "Battery Second Life", play: "LEAD", why: "State-of-health grading is the unbuilt gate to a 49.2 GWh India repurposing market — Bosch BMS data plus the workshop network is the only credible way to certify it at scale" },
+        { sub: "Battery Recycling", play: "PARTNER", why: "Own the traceability and EPR-compliance data layer; leave hydrometallurgy and plant capex to Attero, Lohum and Ace Green" },
         { sub: "Residual Value", play: "LEAD", why: "Reuses cross-field battery/vehicle data; Fintech & Energy synergy" },
         { sub: "Right to Repair", play: "PARTNER", why: "Workshop network + diagnostics align with emerging policy; co-shape standards" },
         { sub: "Carbon Credits", play: "WATCH", why: "Market mechanics immature; revisit on stable carbon pricing" },
@@ -4097,7 +4113,7 @@ const V7 = {
     pestelFA: {
       P: {
         for: [
-          { p: "BNCAP safety rating drives adaptive lighting adoption in mainstream cars", why: "Bharat NCAP adds lighting performance criteria; OEMs chasing 5-star ratings must adopt automatic high-beam and adaptive front lighting.", sowhat: "Position Bosch's adaptive lighting control as the BNCAP-grade solution; co-invest in homologation with partner lamp makers." },
+          { p: "BNCAP 2.0 (Oct-2027) scores Accident Avoidance as a named 10-point pillar — the first time lighting-adjacent function earns rating credit", why: "AIS-197 Rev 1 replaces the current protocol from Oct-2027 with a 100-point, five-pillar score. Adaptive driving beam and auto high-beam sit in the 10-point Accident Avoidance pillar, and a 5-star car cannot score zero in any pillar — so OEMs targeting the ≥70/100 threshold must source a compliant solution.", sowhat: "Sourcing decisions for Oct-2027 platforms are being taken now. Position Bosch's ADB control as the pillar-scoring solution and time the partner-led entry to those RFQs rather than to a vague 'safety race'." },
           { p: "Make-in-India preference in government vehicle tenders", why: "State and central fleet procurement increasingly requires India-manufactured content, including lighting systems.", sowhat: "Ensure controllers are assembled at Indian plants to qualify for local-content clauses in government fleet orders." },
           { p: "Vehicle safety regulations mandate DRL and AHB from 2024 onwards", why: "AIS standards now require daytime running lights and automatic high-beam assist on new model approvals.", sowhat: "Lead OEM advisory on AIS-compliant lighting control — regulatory compliance creates a guaranteed feature-adoption event." },
         ],
@@ -4184,7 +4200,7 @@ const V7 = {
         { area: "Process", p: "Lamp-maker co-development process not yet established — IP and revenue-sharing terms undefined", why: "Without clear co-development agreements with lamp Tier-1s, the partnership model for market entry cannot proceed.", sowhat: "Develop a standard lamp-partner co-development framework with pre-agreed IP terms — speed is critical as the RFQ window is open." },
       ],
       O: [
-        { area: "Market", p: "BNCAP 2024 lighting criteria opening safety lighting sourcing decisions at all OEMs", why: "BNCAP's inclusion of AHB scoring means every OEM seeking 5 stars must source a compliant automatic high-beam solution.", sowhat: "Map every OEM platform in active safety-homologation to identify sourcing decisions in progress and enter those conversations." },
+        { area: "Market", p: "BNCAP 2.0's Accident Avoidance pillar (Oct-2027) opens lighting sourcing decisions across every OEM platform now in design", why: "The 100-point AIS-197 Rev 1 score requires a non-zero result in all five pillars for 5 stars, and adaptive/auto high beam is a scoring item within Accident Avoidance. Platforms launching after Oct-2027 are specifying against it during 2026–27.", sowhat: "Map every OEM platform with a post-Oct-2027 SOP and enter those sourcing conversations in the next 12 months — the window is the design phase, not the launch." },
         { area: "Technology", p: "Communicative/projection lighting is emerging — no Indian incumbent owns the software layer", why: "Road-to-vehicle and vehicle-to-pedestrian communication via light projection is coming; Indian lamp makers have no software capability.", sowhat: "Develop a communicative-lighting SDK and demonstrate it to OEM design studios — be the software layer before the hardware market forms." },
         { area: "Market", p: "Premium OEMs (BMW, Mercedes, Audi India assembly) require India-sourced alternatives post-PLI", why: "Import-heavy premium-car assembly plants increasingly need India-sourced components to meet local-content thresholds.", sowhat: "Approach premium OEM India assembly plants with locally produced lighting control modules — meets localisation requirement and opens a high-margin slot." },
         { area: "Technology", p: "OTA software update capability enables feature-on-demand lighting revenue post-sale", why: "Connected lighting modules can receive firmware updates; OEMs can charge for additional lighting themes and modes after vehicle delivery.", sowhat: "Propose a revenue-sharing model where Bosch provides the OTA update infrastructure and earns a share of each FoD purchase." },
@@ -4265,7 +4281,7 @@ V7.cockpit = {
   pestelFA: {
     P: {
       for: [
-        { p: "BNCAP 2025 adds HMI distraction criteria — advanced cockpit improves OEM scores", why: "BNCAP updated protocols include driver distraction testing; OEMs chasing 5 stars must adopt intelligent HMI that minimises eyes-off-road time.", sowhat: "Position Bosch's gaze-aware HMI as a BNCAP compliance tool, not a luxury feature, in OEM programme discussions." },
+        { p: "BNCAP 2.0 (Oct-2027) creates a 10-point Safe Driving pillar — driver monitoring and low-distraction HMI become score-bearing, not optional", why: "AIS-197 Rev 1 allocates 10 of 100 points to Safe Driving, and a 5-star result requires a non-zero score in every pillar. Gaze-aware HMI and driver-state monitoring are the practical way an OEM earns that pillar.", sowhat: "Reposition Bosch's cockpit HMI and DMS from comfort feature to rating-critical content, and align the pitch to platforms with a post-Oct-2027 SOP." },
         { p: "AIS-189 cybersecurity mandate requires secure OTA for cockpit ECUs from 2025", why: "All new vehicle type approvals must demonstrate CSMS compliance; cockpit ECUs receiving software updates are directly in scope.", sowhat: "Ensure every Bosch cockpit ECU ships with AIS-189-compliant CSMS documentation — now a homologation hard requirement." },
         { p: "5G spectrum allocation enables real-time connected cockpit services nationwide", why: "India's 5.9 GHz de-licensing and 5G rollout creates network infrastructure for cockpit services (maps, OTA, streaming) previously unavailable at adequate bandwidth.", sowhat: "Design cockpit connectivity modules for 5G from the start; 4G-only cockpit platforms will be outdated by FY28." },
       ],
@@ -4489,7 +4505,7 @@ V7.suspension = {
   pestelFA: {
     P: {
       for: [
-        { p: "BNCAP 2025 adds vehicle dynamics and ABS/ESC scoring — active suspension improves ratings", why: "BNCAP's updated protocols credit electronic stability and dynamic safety; active chassis systems improve OEM star-rating performance.", sowhat: "Position Bosch iBooster and ESP as a BNCAP-grade bundle — safety certification is the entry point for the active suspension conversation." },
+        { p: "BNCAP 2.0 (Oct-2027) scores Accident Avoidance at 10 points, giving chassis-control content a rating value it never had", why: "AIS-197 Rev 1 credits accident-avoidance capability directly, and no pillar may score zero in a 5-star car. Electronic stability and coordinated chassis control are the established route to that pillar.", sowhat: "Lead with the ESP/iBooster pillar contribution as the door-opener, then extend the same domain controller into ride control — the rating argument funds the conversation the comfort argument cannot." },
         { p: "Bharat Stage VI Phase 2 and vehicle weight limits indirectly reward lighter suspension components", why: "Emission and efficiency targets push OEMs to reduce vehicle weight; lighter suspension components contribute to fuel and range targets.", sowhat: "Market Bosch lightweight suspension electronics as a fuel-efficiency and range contribution — frame it as an efficiency product, not comfort." },
         { p: "Make-in-India preference in FAME-III EV bus tenders includes suspension and chassis systems", why: "Government EV bus tenders require high local content across systems including suspension and ride management for publicly funded fleets.", sowhat: "Ensure Bosch India chassis electronics are assembled domestically to qualify for local-content clauses in government-funded fleet orders." },
       ],
@@ -5001,7 +5017,7 @@ V7.robotics = {
 
 V7.health = {
   pestelFA: {
-    P: { for: [{ p:"MoRTH eCall mandate under discussion — India emergency call system for road accidents", why:"India's discussion of an automotive eCall mandate analogous to EU eCall would make Bosch's telematics-integrated emergency response a legally required component.", sowhat:"Engage MoRTH's eCall technical working group to influence the standard toward Bosch's existing telematics platform architecture." },{ p:"Ayushman Bharat ABDM digital health ecosystem creates platform for vehicle-to-health integration", why:"India's national digital health mission (ABDM) is building a health ID and medical records ecosystem; Bosch's emergency call systems could integrate to transmit patient records to first responders.", sowhat:"Develop a proof-of-concept Bosch eCall integration with ABDM health ID for automatic medical record sharing in road accident emergencies." },{ p:"BNCAP safety mandate increasingly includes occupant health monitoring features", why:"BNCAP's evolving protocols are expected to add credit for in-vehicle health monitoring and emergency response; Bosch's health-tech automotive products align.", sowhat:"Track BNCAP protocol evolution on health features and pre-position Bosch health monitoring as a BNCAP credit-earner for OEM programmes." }], against: [{ p:"No formal eCall mandate exists yet — market is entirely pre-regulatory", why:"Without a legal mandate, the market is entirely pull-based; OEMs include eCall-equivalent features only in premium vehicles, limiting volume.", sowhat:"Bundle eCall as a telematics feature at minimal incremental cost to accelerate voluntary OEM adoption while advocating for the mandate." },{ p:"DEI mobility design has no regulatory mandate in India — NGO-driven advocacy only", why:"India lacks any legal requirement for vehicle accessibility for people with disabilities; the DEI mobility market is entirely values-driven, making commercial scale difficult.", sowhat:"Engage disability advocacy organisations (DRIDF) to co-advocate for inclusivity standards in vehicle design." },{ p:"DPDP Act creates strict health data consent requirements for in-vehicle biometric monitoring", why:"Health data is a sensitive personal data category under DPDP with heightened consent requirements; in-vehicle health monitoring requires explicit consent that is difficult to obtain in vehicle UX.", sowhat:"Design Bosch in-vehicle health monitoring with a robust one-time consent flow; ensure health data is processed on-device only unless user explicitly opts into cloud transmission." }] },
+    P: { for: [{ p:"MoRTH eCall mandate under discussion — India emergency call system for road accidents", why:"India's discussion of an automotive eCall mandate analogous to EU eCall would make Bosch's telematics-integrated emergency response a legally required component.", sowhat:"Engage MoRTH's eCall technical working group to influence the standard toward Bosch's existing telematics platform architecture." },{ p:"Ayushman Bharat ABDM digital health ecosystem creates platform for vehicle-to-health integration", why:"India's national digital health mission (ABDM) is building a health ID and medical records ecosystem; Bosch's emergency call systems could integrate to transmit patient records to first responders.", sowhat:"Develop a proof-of-concept Bosch eCall integration with ABDM health ID for automatic medical record sharing in road accident emergencies." },{ p:"BNCAP 2.0 (Oct-2027) makes Post-Crash Safety a named 5-point pillar — the first time automatic emergency notification carries rating credit in India", why:"AIS-197 Rev 1 allocates 5 of 100 points to post-crash response, and a 5-star car cannot score zero in any pillar. eCall is the primary way an OEM earns it, which converts Bosch's telematics-based crash notification from an optional feature into rating-bearing content.", sowhat:"This is the strongest near-term anchor the field has had. Pitch eCall against the Post-Crash pillar for every platform with a post-Oct-2027 SOP, without waiting for a standalone eCall mandate." }], against: [{ p:"No formal eCall mandate exists yet — market is entirely pre-regulatory", why:"Without a legal mandate, the market is entirely pull-based; OEMs include eCall-equivalent features only in premium vehicles, limiting volume.", sowhat:"Bundle eCall as a telematics feature at minimal incremental cost to accelerate voluntary OEM adoption while advocating for the mandate." },{ p:"DEI mobility design has no regulatory mandate in India — NGO-driven advocacy only", why:"India lacks any legal requirement for vehicle accessibility for people with disabilities; the DEI mobility market is entirely values-driven, making commercial scale difficult.", sowhat:"Engage disability advocacy organisations (DRIDF) to co-advocate for inclusivity standards in vehicle design." },{ p:"DPDP Act creates strict health data consent requirements for in-vehicle biometric monitoring", why:"Health data is a sensitive personal data category under DPDP with heightened consent requirements; in-vehicle health monitoring requires explicit consent that is difficult to obtain in vehicle UX.", sowhat:"Design Bosch in-vehicle health monitoring with a robust one-time consent flow; ensure health data is processed on-device only unless user explicitly opts into cloud transmission." }] },
     E: { for: [{ p:"India's road accident economic cost ₹1.47 lakh Cr annually — eCall ROI is compelling for government", why:"India's road accident cost (medical, productivity, legal) is enormous; faster emergency response demonstrably reduces mortality, creating a government investment justification.", sowhat:"Commission a Bosch India eCall ROI study quantifying life-saving and economic benefit to support MoRTH mandate advocacy." },{ p:"India health insurance market (₹90,000 Cr, growing 20% CAGR) creates pull for vehicle health data", why:"Insurers who can access in-vehicle health and driving data can price health and motor insurance more accurately; this creates commercial demand for Bosch's health monitoring telematics.", sowhat:"Explore a Bosch India vehicle health data partnership with a major health insurer as the commercial anchor for in-vehicle health monitoring." },{ p:"Ageing population (65+ projected at 19% by 2050) creates demand for assisted mobility", why:"India's demographic transition will create a massive assisted mobility market; vehicles adapted for elderly users are a growing segment.", sowhat:"Develop a Bosch Assisted Mobility product suite targeting the premium and fleet market for elderly users in major Indian cities." }], against: [{ p:"India's weak ambulance infrastructure limits eCall value — average response time 18–20 minutes in cities", why:"eCall's benefit depends on fast emergency response; India's slow ambulance response limits the life-saving impact that makes eCall commercially compelling.", sowhat:"Partner with 108/112 emergency service operators to improve dispatch efficiency as a joint Bosch eCall proof-of-value programme." },{ p:"Willingness-to-pay for health features is low among Indian mass market buyers", why:"Indian buyers prioritise cost, fuel efficiency, and visible features; invisible health monitoring is difficult to justify as a purchase driver in sub-₹15L vehicles.", sowhat:"Target health-monitoring features at ₹20L+ premium segment and fleet operators where health monitoring has direct liability and insurance value." },{ p:"India's low-speed urban driving reduces the emergency response urgency calibrated to European high-speed highway crashes", why:"Most Indian road accidents are low-speed urban; eCall systems calibrated for European highway crashes may generate false activations in India's frequent low-speed collisions.", sowhat:"Calibrate Bosch India eCall algorithms for India's accident pattern: high-frequency low-speed urban collision and lower-frequency high-severity highway crash." }] },
     S: { for: [{ p:"Post-COVID health consciousness in vehicles is a real and growing consumer priority", why:"In-cabin health sensors, air purification, and wellness monitoring resonated with Indian urban buyers post-pandemic and have maintained consumer interest.", sowhat:"Develop a Bosch Cabin Wellness Suite combining air quality + driver fatigue monitoring + biometric health alerts as a premium vehicle feature pack." },{ p:"India's disability community (2.21% of population, 26M+ people) is underserved by vehicle design", why:"India's mobility-impaired population is large and growing; very few vehicles are designed for accessibility.", sowhat:"Partner with a disability-focused NGO to co-design Bosch India's DEI mobility vehicle adaptations; use the partnership for grant funding and social licence." },{ p:"High wearable adoption among Indian urban buyers (Apple Watch, Fitbit) creates receptivity to vehicle health integration", why:"India has one of the world's highest wearable adoption rates in the 25–40 age group; extending health monitoring to the vehicle is a natural consumer extension.", sowhat:"Develop Bosch in-vehicle health monitoring that pairs with Apple Watch, Samsung Health, and Fitbit for a seamless wearable-to-vehicle health data experience." }], against: [{ p:"Patriarchal driving culture in India limits uptake of assisted driving for elderly", why:"In many Indian families, elderly members are not primary vehicle operators; assisted mobility features for elderly drivers have limited household penetration.", sowhat:"Focus Bosch assisted mobility on passenger-assist features (ease of ingress/egress, rear seat monitoring) that serve elderly passengers, not only drivers." },{ p:"Stigma around disability in India reduces demand for visible vehicle accessibility features", why:"Social stigma means families often avoid visible accessibility modifications that signal the presence of a mobility-impaired occupant.", sowhat:"Design Bosch DEI mobility features to be discreet and activatable on-demand — invisible accessibility is more likely to be adopted in India's current social context." },{ p:"Rural India eCall value limited by lack of digital addressing for emergency response", why:"Emergency responders in rural India cannot efficiently locate accident scenes without precise addressing; eCall GPS data is only as useful as the response system's ability to navigate to it.", sowhat:"Integrate what3words or India Post's PIN-based rural addressing into Bosch India eCall for rural-area emergency dispatch." }] },
     T: { for: [{ p:"Non-contact biometric sensing (cabin radar) enables vehicle health monitoring without wearables", why:"Bosch's cabin radar technology can detect driver heartrate and breathing rate without physical contact; this removes the adoption friction of wearable-dependent health monitoring.", sowhat:"Develop and patent Bosch in-vehicle non-contact biometric monitoring using cabin radar; target premium OEM programmes for FY28 launch." },{ p:"AI-based fatigue detection in existing DMS cameras enables health-grade drowsiness warning", why:"Bosch's DMS camera already tracks eye closure for ADAS; extending this to medical-grade fatigue scoring is a natural software extension of existing hardware.", sowhat:"Add health-grade fatigue scoring to Bosch's India DMS software stack and market it as a combined ADAS + health safety feature." },{ p:"Telematics integration with India's 112 emergency dispatch is technically feasible today", why:"Bosch's connected vehicle platform can already send GPS crash data; extending this to automatically dial 112 and share ABDM health ID is a software integration.", sowhat:"Develop a Bosch India 112-integrated eCall software module and pilot it with one India OEM for FY27 launch." }], against: [{ p:"Medical device regulation may apply to in-vehicle health monitoring — onerous compliance", why:"If Bosch's in-vehicle heartrate or SpO2 monitoring is classified as a medical device by CDSCO, it faces regulatory approval requirements that automotive products do not.", sowhat:"Design Bosch in-vehicle health features as 'wellness monitoring' (not medical diagnosis) to stay outside CDSCO medical device classification." },{ p:"False positive health alerts while driving could trigger unsafe responses", why:"An incorrect health alert while driving could cause dangerous distraction or panic; product liability risk from false health alerts in vehicles is high.", sowhat:"Set health alert thresholds conservatively; validate false positive rates to <0.01% before commercial launch; design alerts as background notifications, not urgent alarms while driving." },{ p:"Health AI models trained on non-Indian physiology reduce accuracy for India users", why:"Global health AI models are primarily trained on Western demographic datasets; heartrate detection accuracy may be lower for Indian skin tones and physiological profiles.", sowhat:"Retrain Bosch India health monitoring AI on a representative India demographic dataset; partner with AIIMS for clinical validation of India-specific accuracy." }] },
@@ -5343,6 +5359,8 @@ V8.suspension = {
     { name: "Bosch ADAS BU (internal)", category: "Internal Bosch Stakeholders", power: 3, stance: 1, boschInfluence: 5, boschInfluenceWhy: "Internal Bosch business unit — direct organizational control over the road-preview data sharing that makes the entry thesis work." },
   ],
   competitors: [
+    { name: "Hitachi Astemo", marketPosition: "High", futureMomentum: "Medium", why: "Holds a strong position in India passenger-car chassis supply across dampers, EPS and braking, but its adaptive-damping roadmap is incremental rather than category-defining — a leader growing at market pace." },
+    { name: "KYB Corporation (via Gabriel India JV)", marketPosition: "High", futureMomentum: "Low", why: "Dominates PC damper volume through the Gabriel JV, but investment is concentrated in conventional damper cost-down rather than electronic control — a large installed base with little forward momentum." },
     { name: "ZF Friedrichshafen (CDC / Air Suspension)", marketPosition: "High", futureMomentum: "High", why: "MagneRide is the world's most-deployed adaptive damping tech (5M+ units); heavy R&D into next-gen MR dampers and India-cost CDC marks aggressive momentum." },
     { name: "Mando Corporation (HL Mando)", marketPosition: "Medium", futureMomentum: "High", why: "Hyundai-Kia captive volume makes it a solid contender rather than overall leader; the i-Corner module concept is explicitly 'technology-leading'." },
     { name: "Gabriel India Limited", marketPosition: "High", futureMomentum: "Medium", why: "India's largest independent shock-absorber maker with all-OEM relationships is a volume leader; KYB-JV-enabled CDC entry is an incremental, not aggressive, tech move." },
@@ -6265,6 +6283,8 @@ DATA.energy.activity = [
   { d: "Aug 04, 2026", t: "PM E-DRIVE crosses 26.5 lakh EV sales milestone; ₹2,322 Cr of ₹10,900 Cr scheme outlay utilised to date", s: "ANI / PIB" },
   { d: "Aug 05, 2026", t: "6,562 EV chargers approved under PM E-DRIVE — none yet installed, exposing execution lag in the scheme's charging pillar", s: "Fuel Cells Works" },
   { d: "Jul 22, 2026", t: "India's public charging network reaches 52,718 stations, including 16,561 fast chargers", s: "PIB / Ministry of Power" },
+  { d: "Aug 22, 2026", t: "China's Dy/Tb export controls bite: India imports 100% of its sintered NdFeB magnet requirement, and SIAM asks to defer EV traction-motor localisation from Sept-2026 to Apr-2027", s: "SIAM / Business Standard" },
+  { d: "Aug 18, 2026", t: "Government moves on a ₹7,300 Cr rare-earth magnet manufacturing incentive plus ₹1,500 Cr for critical-minerals recycling under the National Critical Minerals Mission (2026–31)", s: "PIB / NCMM" },
   { d: "Jul 15, 2026", t: "Ola Electric's gigafactory scales toward 20 GWh cell capacity under the ACC-PLI programme", s: "Economic Times" },
   { d: "Jul 10, 2026", t: "Industry report flags India's BMS-engineer shortage: fewer than 3,000 trained professionals versus a projected 25,000+ need by 2028", s: "DIYguru / Samarth EV" },
 ];
@@ -6638,6 +6658,7 @@ V8.sustainability.competency = {
 DATA.sustainability.activity = [
   { d: "Jan 22, 2026", t: "NITI Aayog releases three Circular Economy reports (ELVs, waste tyres, lithium-ion batteries) at the International Material Recycling Conference in Jaipur", s: "NITI Aayog" },
   { d: "Jul 25, 2026", t: "Ace Green Recycling finalises its Mundra, Gujarat site for India's largest battery-recycling facility, targeting 10,000 tonnes/year LFP capacity by 2026", s: "S&P Global / AutoTech Insight" },
+  { d: "Aug 20, 2026", t: "Critical-minerals recycling reframed as supply security, not just environmental compliance — ₹1,500 Cr allocated under the National Critical Minerals Mission as China's processing dominance exceeds 90%", s: "NCMM / IEA" },
   { d: "Jul 20, 2026", t: "India's battery-scrap security emerges as the sector's next major challenge as near-100% cell-import dependence persists", s: "Autocar Professional" },
   { d: "Jul 10, 2026", t: "India's battery-recycling market reaches ₹17,000 Cr scale with EPR compliance driving Attero and Lohum capacity expansion", s: "DIYguru" },
   { d: "Jul 02, 2026", t: "V-VMP and SASCI Scheme funding accelerate Registered Vehicle Scrapping Facility (RVSF) rollout nationally", s: "Kar Parivartan" },
@@ -6762,14 +6783,285 @@ DATA.health.verdict.aiAnalyst = {
   bottomLine: "PARTNER & GATE — pursue the eCall/PM RAHAT wedge now via a clinical/medtech partnership for the regulatory gap; do not scale beyond eCall and wellness monitoring without a formal mandate.",
 };
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   SUB-FIELD DRILL-DOWN — several search fields are sectors in their own right,
+   and a single field-level verdict hides material differences between their
+   parts. Selecting a sub-field chip opens this layer: its own thesis, sizing,
+   white space, barriers and named triggers. Sub-fields do not get their own
+   nine-index score — they roll up to the parent field — but they do get their
+   own investment logic, which is what the field-level view was flattening.
+   Fields not listed here fall back to the parent-field view.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const SUB = {
+  sustainability: {
+    "Battery Second Life": {
+      play: "LEAD",
+      thesis: "Repurpose a working asset, don't destroy it. An EV battery retires from traction duty at 70–80% remaining capacity and still has 6–10 useful years in a stationary application. The barrier is not technology or demand — it is that nobody in India can yet certify what a used pack is actually worth.",
+      sizing: [
+        { k: "India repurposing potential", v: "49.2 GWh cumulative from retired EV batteries, 2022–2030", src: "WRI India" },
+        { k: "Retirement threshold", v: "Packs leave traction duty at 70–80% State of Health", src: "WRI India / industry" },
+        { k: "Life extension", v: "4–8 years of traction life becomes 10–15 years total", src: "WRI India" },
+        { k: "Global market anchor", v: "~$1.7B (2026), compounding fast off a small base", src: "KBV Research" },
+      ],
+      whyNow: [
+        { p: "The feedstock clock has started", why: "India's first meaningful EV cohorts (2020–22 registrations) reach end of traction life from 2027. Volume is demographically locked in — it does not depend on any policy decision." },
+        { p: "Battery Waste Management Rules 2022 formally recognise refurbishment and repurposing", why: "Second life is an accepted EPR discharge route, not a grey area. Producers can meet obligations through repurposing as well as recycling." },
+        { p: "The demand side already exists and is diesel-powered today", why: "India has 400,000+ telecom towers still running lead-acid banks with diesel gensets. That is a ready, quantifiable replacement market that does not need to be created." },
+      ],
+      boschFit: "This is the one circular-economy layer where Bosch's existing assets are decisive rather than adjacent. Certification needs three things: accurate State-of-Health estimation (Bosch BMS algorithms), a trusted physical collection and test network (10,000+ workshops), and lifecycle history from the vehicle (Bosch telematics). No recycler, no startup and no OEM has all three in India.",
+      whiteSpace: [
+        { p: "A standardised State-of-Health test and certification protocol", why: "Second-life assessment is essentially unregulated in India today. Standardised SoH testing, BMS re-flashing and health certification are explicitly the unbuilt unlocks — whoever defines the protocol sets the market's trust standard." },
+        { p: "Grading-as-a-service for repurposers", why: "Attero, Lohum and the stationary-storage integrators all need graded packs. They are buying capacity, not diagnostics capability — the grading layer is a supply-side gap they would rather rent than build." },
+        { p: "Telecom-tower BESS replacement bundles", why: "400,000+ towers, a known duty cycle, a single decision-maker per operator, and diesel displacement economics that work without subsidy. The most concentrated addressable demand in the field." },
+      ],
+      barriers: [
+        { p: "No accepted safety or performance standard for repurposed packs", why: "Buyers cannot underwrite what they cannot specify. This is simultaneously the biggest barrier and the reason the certification play is valuable." },
+        { p: "Liability for a repurposed pack is legally undefined", why: "If a second-life pack fails in a telecom or hospital installation, responsibility between the original OEM, the repurposer and the certifier is untested in India." },
+        { p: "Recyclers are moving up into grading", why: "Attero and Lohum are building diagnostics to capture more of the chain. The certification position is open now and will not stay open." },
+      ],
+      triggers: [
+        "First EV cohorts reaching end of traction life at volume — watch 2027 registrations data",
+        "BIS or CPCB opening a consultation on second-life battery standards",
+        "A telecom operator tendering for second-life BESS rather than lead-acid replacement",
+      ],
+      players: [
+        { name: "Attero Recycling", note: "India's only industrial-scale Li-ion recycler; expanding into grading — the direct threat to the data layer" },
+        { name: "Lohum Cleantech", note: "Material recovery plus second-life grading; closest to an integrated competitor" },
+        { name: "Stationary-storage integrators", note: "Buyers, not rivals — they need certified graded packs and have no interest in building diagnostics" },
+      ],
+    },
+    "Battery Recycling": {
+      play: "PARTNER",
+      thesis: "Material recovery is capital-heavy chemistry Bosch has no reason to enter. The defensible position is the traceability and compliance data layer that sits above it — proving to a regulator where every pack went and what came out.",
+      sizing: [
+        { k: "India battery recycling market", v: "~₹17,000 Cr", src: "DIYguru / industry" },
+        { k: "CPCB EPR obligation", v: "90% material recovery from EV batteries by FY2026-27", src: "CPCB EPR schedule" },
+        { k: "Critical-minerals recycling support", v: "₹1,500 Cr under the National Critical Minerals Mission, 2026–31", src: "NCMM" },
+      ],
+      whyNow: [
+        { p: "Recycling has become a sovereignty instrument, not only an environmental one", why: "With China controlling over 90% of rare-earth magnet processing and India importing 100% of its sintered NdFeB requirement, domestic material recovery is now framed as supply security. That reframing is what unlocked the ₹1,500 Cr allocation." },
+        { p: "EPR obligations bind regardless of the economic cycle", why: "Producers must evidence collection and recovery in good years and bad, which makes the compliance-data revenue line genuinely counter-cyclical." },
+      ],
+      boschFit: "Partial and deliberately bounded. Bosch has no hydrometallurgy capability and should not acquire one. What it has is the collection touchpoints and the vehicle-side data that makes a traceability claim auditable.",
+      whiteSpace: [
+        { p: "Audit-grade EPR traceability-as-a-service", why: "Producers must evidence compliance and no automotive-specific traceability layer exists. Recyclers can prove what they processed; only the vehicle side can prove what went in." },
+        { p: "EU battery-passport readiness for Indian exporters", why: "Exporters face EU passport rules before Indian rules mature. Build the capability once, sell it into export compliance now and domestic EPR later." },
+      ],
+      barriers: [
+        { p: "60%+ of end-of-life volume still moves through the informal sector", why: "Traceability only has value over material that enters the formal chain; informal leakage caps the addressable base." },
+        { p: "Recyclers are the natural owner of this data if Bosch is slow", why: "Attero already holds OEM EPR contracts. The window to be the neutral certifier rather than a recycler's subcontractor is narrowing." },
+      ],
+      triggers: ["CPCB enforcement action against a non-compliant producer", "A registered scrapping facility network reaching national coverage"],
+      players: [
+        { name: "Attero Recycling", note: "Industrial-scale recovery with OEM EPR contracts already signed" },
+        { name: "Ace Green Recycling", note: "Mundra facility targeting 10,000 t/yr LFP capacity" },
+        { name: "Lohum Cleantech", note: "Material recovery expanding into certification" },
+      ],
+    },
+    "Right to Repair": {
+      play: "PARTNER",
+      thesis: "India's repair-and-reuse culture is already the default consumer behaviour; policy is formalising it rather than creating it. The commercial question is who becomes the certified channel when informal repair is pushed toward accountability.",
+      sizing: [{ k: "Bosch channel", v: "10,000+ workshops — the largest organised automotive service network in India", src: "Bosch" }],
+      whyNow: [
+        { p: "Right-to-Repair obligations extend diagnostic data access to independent workshops", why: "What was a proprietary advantage becomes a regulated obligation — but the party that supplies the compliant diagnostic tooling captures a new channel rather than losing one." },
+      ],
+      boschFit: "Strong on channel and diagnostics, weak on nothing material. This is the lowest-risk sub-field in the umbrella, but also the smallest.",
+      whiteSpace: [{ p: "Certified diagnostic tooling for independent workshops", why: "The regulation creates the demand; Bosch already builds the tools and trains the network." }],
+      barriers: [{ p: "Monetisation is thin", why: "Repair is price-sensitive and the informal sector sets the reference price." }],
+      triggers: ["Right-to-Repair framework formally extending to EV batteries and traction systems"],
+      players: [{ name: "Informal repair sector", note: "Handles the majority of volume; the competitor is price, not a company" }],
+    },
+    "Residual Value": {
+      play: "LEAD",
+      thesis: "The battery is roughly 40% of an EV's cost, and nobody in India can price it reliably at resale. Certified State-of-Health turns an unpriceable asset into a financeable one — and the same measurement serves second life, insurance and lending.",
+      sizing: [{ k: "Battery share of EV cost", v: "~40%", src: "Industry" }, { k: "Buyers of the data", v: "Lenders, insurers, fleet operators, used-EV platforms", src: "Bosch analysis" }],
+      whyNow: [
+        { p: "EV financing and insurance are both blocked on the same missing number", why: "Lenders cannot set residual value and insurers cannot price battery risk without a trusted SoH figure. One measurement unlocks two markets." },
+      ],
+      boschFit: "The same BMS-plus-workshop asset that certifies second life produces this. Marginal cost is close to zero once the grading capability exists — which is why these two sub-fields should be built together rather than sequenced.",
+      whiteSpace: [{ p: "A certified battery health report accepted by lenders and insurers", why: "No trusted standard exists; whoever's number the finance industry accepts owns the category." }],
+      barriers: [{ p: "Requires financial-sector adoption, not just technical accuracy", why: "The number is only worth what an underwriter will accept it as." }],
+      triggers: ["An NBFC or insurer adopting a third-party SoH certificate in its underwriting"],
+      players: [{ name: "Battery-analytics startups", note: "Software-only; lack the physical inspection network needed for a trusted certificate" }],
+    },
+    "Carbon Credits": {
+      play: "WATCH",
+      thesis: "Genuinely outside the mobility umbrella today. India's Carbon Credit Trading Scheme has no finalised transport methodology, so there is nothing stable to build a product against.",
+      sizing: [{ k: "Transport CCTS methodology", v: "Not finalised", src: "BEE / CCTS" }],
+      whyNow: [{ p: "It is not now", why: "Carried in the field for completeness and to prevent the umbrella being re-broadened later without evidence. Revisit only on a concrete trigger." }],
+      boschFit: "Weak. No Bosch asset is decisive here and the standards risk is high — this is the clearest candidate for scoping out of the Sustainability umbrella.",
+      whiteSpace: [],
+      barriers: [{ p: "Mechanism risk", why: "Building against a draft methodology risks stranding the investment when the final rules differ." }],
+      triggers: ["BEE publishing a finalised transport-sector CCTS methodology with stable pricing"],
+      players: [{ name: "EKI Energy Services", note: "Advisory-led incumbent in India's voluntary carbon market" }],
+    },
+  },
+
+  health: {
+    "E-Call": {
+      play: "LEAD",
+      thesis: "The field's only regulation-anchored wedge, and it just got materially stronger. BNCAP 2.0 makes Post-Crash Safety a scored pillar from Oct-2027, which converts eCall from an optional feature into rating-bearing content — without waiting for a standalone eCall mandate.",
+      sizing: [
+        { k: "BNCAP 2.0 Post-Crash pillar", v: "5 of 100 points; no pillar may score zero in a 5-star car", src: "AIS-197 Rev 1" },
+        { k: "Bosch installed base", v: "2M+ vehicles already carrying AIS-140 telematics", src: "Bosch" },
+        { k: "Funded response layer", v: "PM RAHAT — ₹1.5 lakh cashless golden-hour cover, integrated with ERSS 112", src: "MoRTH, 2026" },
+      ],
+      whyNow: [
+        { p: "Rating credit arrives before any mandate does", why: "OEMs specifying post-Oct-2027 platforms need the Post-Crash pillar now. That is a sourcing window open in 2026–27, independent of eCall legislation." },
+        { p: "The receiving infrastructure is finally funded", why: "eCall only saves lives if someone acts on it. PM RAHAT's cashless golden-hour cover plus ERSS 112 integration closes the loop that previously made the business case theoretical." },
+      ],
+      boschFit: "Near-zero incremental cost. Crash sensing and connectivity are already in production and already deployed across an AIS-140 base — eCall is a software extension of shipped hardware, not a new product bet.",
+      whiteSpace: [
+        { p: "MOBILITY → HEALTH: crash telemetry as pre-arrival trauma triage", why: "Delta-v, occupancy, seatbelt state and rollover data already exist in the airbag ECU at the moment of impact. Sent ahead to the receiving hospital via ABDM, they let a trauma team prepare before the ambulance arrives. The data is captured today and simply discarded." },
+        { p: "HEALTH → MOBILITY: ABDM health ID as an emergency occupant profile", why: "Blood group, allergies and existing conditions retrieved at the crash scene change first-responder decisions. India is one of very few markets with the national digital health rails to make this work." },
+      ],
+      barriers: [
+        { p: "Response quality varies sharply by state", why: "The value of a faster alert is bounded by local ambulance and police capacity, which Bosch does not control." },
+        { p: "Health data carries DPDP's strictest consent class", why: "Linking vehicle telemetry to a health ID is the highest-sensitivity data combination in the portfolio and needs consent architecture designed in, not retrofitted." },
+      ],
+      triggers: ["OEM RFQs naming the BNCAP 2.0 Post-Crash pillar", "ABDM opening an emergency-access API to non-clinical parties"],
+      players: [{ name: "Stoneridge / Continental", note: "Direct eCall system competitors" }, { name: "Ziqitza", note: "Ambulance network — the response partner, not a rival" }],
+    },
+    "Assisted Motion": {
+      play: "PARTNER",
+      thesis: "Wellness-grade only. The moment a claim becomes diagnostic, the product falls under CDSCO medical-device regulation — a pathway Bosch has no experience navigating and no reason to enter alone.",
+      sizing: [{ k: "Sensor base", v: "DMS cameras and 60GHz cabin radar already in production for Interior Systems", src: "Bosch" }],
+      whyNow: [{ p: "The sensing hardware is already paid for", why: "Fatigue and vitals monitoring are software extensions of sensors shipped for occupant detection — the marginal cost is development, not bill of materials." }],
+      boschFit: "Strong on sensing, absent on clinical validation. The gap is categorical rather than incremental, which is why this is a partnership and not a build.",
+      whiteSpace: [
+        { p: "MOBILITY → HEALTH: the commute as a longitudinal health record", why: "A driver sits in the same instrumented seat twice a day for years. Contactless radar can trend heart rate and respiration over that period — a screening dataset no clinic gets, and a genuinely India-relevant one given the cardiac disease burden." },
+        { p: "HEALTH → MOBILITY: medical fitness as an input to vehicle behaviour", why: "An ageing licence-holder population plus high diabetes prevalence makes fitness-to-drive a live safety question. A vehicle that adapts — alerting, limiting, or escalating — is a health-informed mobility product rather than a medical device." },
+        { p: "MOBILITY → HEALTH: cabin air quality as a respiratory intervention", why: "Bosch already measures cabin PM2.5 for the Interior field. In cities where ambient AQI is a chronic exposure, cumulative in-cabin exposure data is clinically interesting and commercially ownable." },
+      ],
+      barriers: [
+        { p: "CDSCO classification risk", why: "Any diagnostic claim triggers a medical-device pathway. The commercial line must be held at wellness language, deliberately and in writing." },
+        { p: "Health AI trained on non-Indian physiology", why: "Accuracy across Indian skin tones and body types needs local clinical validation before any launch." },
+      ],
+      triggers: ["A clear regulatory line between wellness and medical monitoring in vehicles", "A medtech partner willing to carry clinical validation"],
+      players: [{ name: "Dozee", note: "Contactless vitals, clinically validated across 100+ Indian hospitals — the natural partner rather than a competitor" }],
+    },
+    "DEI Mobility Design": {
+      play: "PARTNER",
+      thesis: "Values-driven with no regulatory pull today. Real social value, thin commercial pull — pursue through public and fleet procurement where accessibility criteria are appearing, not through consumer product.",
+      sizing: [{ k: "Addressable population", v: "26M+ people with disabilities in India", src: "Census / RPwD" }, { k: "Ageing cohort", v: "65+ projected at ~19% of population by 2050", src: "Population projections" }],
+      whyNow: [{ p: "Accessibility criteria are entering public and fleet tenders", why: "Procurement is where the requirement is appearing first, well ahead of any consumer willingness to pay." }],
+      boschFit: "Design and sensing capability exist; accessibility specialism does not. Best pursued with an advocacy partner who brings both credibility and co-design input.",
+      whiteSpace: [
+        { p: "HEALTH → MOBILITY: assistive access built on occupant-sensing hardware", why: "The same radar and camera stack that detects occupancy can recognise reduced mobility and pre-adapt seat, door and climate settings — accessibility as a software layer on shipped sensors." },
+      ],
+      barriers: [
+        { p: "Social stigma suppresses visible accessibility features", why: "Families often avoid modifications that signal disability, which argues for discreet, on-demand adaptation rather than visible hardware." },
+        { p: "No mandate", why: "RPwD does not currently reach vehicle design, so demand depends entirely on procurement criteria." },
+      ],
+      triggers: ["RPwD Act interpretation extending to private vehicle design", "Accessibility scoring entering public transport tenders at scale"],
+      players: [{ name: "Disability advocacy organisations", note: "Co-design and legitimacy partners rather than market participants" }],
+    },
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PORTFOLIO CALIBRATION — computed once, across all 15 fields.
+
+   Reviewer finding: most index values sit close to 0, which makes fields hard
+   to tell apart. That observation is correct, and it is a property of the
+   formulas rather than a scoring error:
+
+     • PESTEL Index is (ΣTailwind − ΣHeadwind) / (ΣTailwind + ΣHeadwind) over 36
+       scored points. Summing 18 products on each side pulls the ratio toward the
+       ratio of the means — every field has both good and bad macro forces, so the
+       result gravitates to the middle. Observed spread is only ~18% of the scale.
+     • SPI blends two such ratios, so it inherits the same compression.
+     • MGI is a weighted average of averages, which compresses once more.
+
+   Changing the arithmetic would break compliance with the scoring document. So
+   instead we keep the absolute scale exactly as specified and add a portfolio-
+   relative lens on top: rank, percentile and the observed range per index. The
+   absolute value answers "is this good?"; the relative position answers "is this
+   better than the alternatives?" — which is the actual investment question.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function computeAllIndices(id) {
+  const v8 = V8[id];
+  if (!v8) return null;
+  const pi = v8.pestel ? computePESTELIndex(v8.pestel) : null;
+  const sw = v8.swot ? computeSWOTPosture(v8.swot) : null;
+  const mas = v8.market ? computeMAS(v8.market) : null;
+  const iai = v8.iai ? computeIAI(v8.iai) : null;
+  const cgi = v8.competency ? computeCGI(v8.competency) : null;
+  const svi = v8.stakeholders?.length ? computeSVI(v8.stakeholders) : null;
+  const threats = (v8.competitors || []).map(c => competitorThreat(c.marketPosition, c.futureMomentum)).filter(Boolean);
+  const adv = v8.boschStrength && v8.marketGapSignificance ? boschAdvantage(v8.boschStrength, v8.marketGapSignificance) : null;
+  const cpi = threats.length && adv ? computeCPI(+avg(threats.map(t => t.s)).toFixed(2), adv.s) : null;
+  const scvi = v8.supplyChainMaturity && v8.boschControl ? computeSCVI(v8.supplyChainMaturity, v8.boschControl) : null;
+  const tpi = v8.techVelocity && v8.commReadiness ? computeTPI(v8.techVelocity, v8.commReadiness) : null;
+  const mgi = (mas && pi && cgi && sw && cpi && scvi && svi && tpi)
+    ? computeMGI({ mai: mas.mai, pi: pi.index, cgi: cgi.cgi, spi: sw.spi, cpi: cpi.cpi, scvi: scvi.scvi, svi: svi.svi, tpi: tpi.tpi })
+    : null;
+  return {
+    mgi: mgi?.mgi ?? null, pi: pi?.index ?? null, spi: sw?.spi ?? null, mai: mas?.mai ?? null,
+    iai: iai?.iai ?? null, cgi: cgi?.cgi ?? null, svi: svi?.svi ?? null, cpi: cpi?.cpi ?? null,
+    scvi: scvi?.scvi ?? null, tpi: tpi?.tpi ?? null,
+    mp: mgi?.marketPotential ?? null, rtw: mgi?.rightToWin ?? null, ev: mgi?.executionViability ?? null,
+    band: mgi?.band ?? null,
+  };
+}
+
+const INDEX_KEYS = [
+  { k: "mgi", label: "Master Growth Index", short: "MGI" },
+  { k: "pi", label: "PESTEL Index", short: "PI" },
+  { k: "spi", label: "SWOT Posture", short: "SPI" },
+  { k: "mai", label: "Market Attractiveness", short: "MAI" },
+  { k: "iai", label: "Industry Attractiveness", short: "IAI" },
+  { k: "cgi", label: "Competency Gap", short: "CGI" },
+  { k: "svi", label: "Stakeholder Viability", short: "SVI" },
+  { k: "cpi", label: "Competitive Posture", short: "CPI" },
+  { k: "scvi", label: "Supply Chain Viability", short: "SCVI" },
+  { k: "tpi", label: "Technology Prognosis", short: "TPI" },
+];
+
+/* Every field's every index, computed once at module load (pure arithmetic). */
+const PORTFOLIO = Object.fromEntries(FIELDS.map(f => [f.id, computeAllIndices(f.id)]).filter(([, v]) => v));
+
+/* Per-index observed range across the portfolio, plus a discrimination read.
+   "Spread" is the share of the −1..+1 scale the 15 fields actually occupy —
+   a low spread means that index separates fields weakly and small differences
+   in it should not drive a decision on their own. */
+const PORTFOLIO_STATS = Object.fromEntries(INDEX_KEYS.map(({ k, label, short }) => {
+  const rows = Object.entries(PORTFOLIO).map(([id, v]) => ({ id, v: v[k] })).filter(r => r.v != null);
+  const vals = rows.map(r => r.v);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const mean = avg(vals);
+  const sd = Math.sqrt(avg(vals.map(v => (v - mean) ** 2)));
+  const spread = (max - min) / 2; // share of the full −1..+1 scale in use
+  const ranked = [...rows].sort((a, b) => b.v - a.v);
+  return [k, {
+    label, short, min: +min.toFixed(2), max: +max.toFixed(2), mean: +mean.toFixed(2),
+    sd: +sd.toFixed(3), spread: +spread.toFixed(2), n: rows.length,
+    rankOf: Object.fromEntries(ranked.map((r, i) => [r.id, i + 1])),
+    rows: ranked,
+    power: spread >= 0.6 ? "Strong separator" : spread >= 0.35 ? "Moderate separator" : "Weak separator",
+  }];
+}));
+
+function indexRank(key, fieldId) {
+  const st = PORTFOLIO_STATS[key];
+  if (!st || !st.rankOf[fieldId]) return null;
+  const rank = st.rankOf[fieldId];
+  return { rank, of: st.n, pct: Math.round(100 * (st.n - rank) / (st.n - 1)) };
+}
+
 /* ════════════════════════════ UI atoms ═══════════════════════════════════ */
-/* Hover tooltip — wrap any child; `label` shows in the floating box */
-const Tip = ({ label, children }) => {
-  // Fixed-position tooltip: measured against the viewport on hover, so it can
-  // never be clipped by card borders, overflow containers or scroll areas.
+/* Hover tooltip — wrap any child; `label` shows in the floating box.
+   Opens after a short dwell so tooltips don't flash while the pointer crosses
+   a dense table; closes immediately on leave. */
+const TIP_DELAY_MS = 450;
+const Tip = ({ label, children, delay = TIP_DELAY_MS }) => {
+  // Fixed-position tooltip: measured against the viewport at the moment it opens,
+  // so it can never be clipped by card borders, overflow containers or scroll areas.
   const [pos, setPos] = React.useState(null);
   const ref = React.useRef(null);
-  const onEnter = () => {
+  const timer = React.useRef(null);
+
+  const open = () => {
     const r = ref.current?.getBoundingClientRect();
     if (!r) return;
     const w = 288; // matches w-72
@@ -6782,17 +7074,56 @@ const Tip = ({ label, children }) => {
       maxH: Math.max(120, (below ? window.innerHeight - r.bottom : r.top) - 24),
     });
   };
+  const onEnter = () => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(open, delay);
+  };
+  const onLeave = () => {
+    clearTimeout(timer.current);
+    setPos(null);
+  };
+  React.useEffect(() => () => clearTimeout(timer.current), []);
+
   return (
-    <span ref={ref} className="relative inline-block cursor-help" onMouseEnter={onEnter} onMouseLeave={() => setPos(null)}>
+    <span ref={ref} className="relative inline-block cursor-help" onMouseEnter={onEnter} onMouseLeave={onLeave}>
       {children}
       {pos && label && (
         <span
-          className="fixed z-[999] w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none whitespace-pre-line overflow-hidden"
+          className="fixed z-[999] w-72 bg-slate-900 text-white text-xs rounded-xl p-3 shadow-2xl leading-relaxed pointer-events-none whitespace-pre-line overflow-hidden tip-in"
           style={{ left: pos.left, top: pos.top ?? "auto", bottom: pos.bottom ?? "auto", maxHeight: pos.maxH }}
         >
           {label}
         </span>
       )}
+    </span>
+  );
+};
+
+/* Inline citation marker — reviewers asked to see the source next to the claim
+   rather than having to match a bracketed number against a list at the bottom
+   of the page. Hover names the source; click opens it where a URL exists. */
+const Cite = ({ ids, fieldId }) => {
+  if (!ids?.length) return null;
+  const labels = DATA[fieldId]?.sources || [];
+  const urls = V7[fieldId]?.sources || [];
+  return (
+    <span className="inline-flex flex-wrap gap-0.5 ml-1 align-baseline">
+      {ids.map(i => {
+        const label = labels[i - 1];
+        const url = urls[i - 1]?.url;
+        const body = (
+          <span className={`text-[10px] font-mono px-1 rounded border ${url ? "text-teal-700 border-teal-200 bg-teal-50 hover:bg-teal-100" : "text-slate-500 border-slate-200 bg-slate-50"}`}>
+            {i}
+          </span>
+        );
+        return (
+          <Tip key={i} label={label ? `Source [${i}] — ${label}${url ? `\n\n${url}\n\nClick to open.` : "\n\nNo URL on file for this source."}` : `Source [${i}] — not listed for this field.`}>
+            {url
+              ? <a href={url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>{body}</a>
+              : body}
+          </Tip>
+        );
+      })}
     </span>
   );
 };
@@ -6806,34 +7137,90 @@ const Chip = ({ children, tone = "slate" }) => {
   return <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 };
 
-/* One card per independent V8 index — score, verdict/quadrant label, colour, formula on hover. */
-const IndexCard = ({ title, score, scoreMax = 5, band, formula, tabTarget, onGoTo }) => (
-  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-    <div className="flex items-center justify-between mb-1">
-      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{title}</span>
-      {tabTarget && <button onClick={() => onGoTo(tabTarget)} className="text-[10px] text-teal-700 hover:underline">detail →</button>}
-    </div>
-    {score == null ? (
-      <div className="text-xs text-slate-400 italic py-2">Scoring data not yet compiled for this field.</div>
-    ) : (
-      <>
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-2xl font-extrabold" style={{ color: band?.color || INK }}>{score}</span>
-          {scoreMax != null && <span className="text-xs text-slate-400">/ {scoreMax}</span>}
+/* Where this field sits against the other 14 on the same index.
+   Absolute values cluster near zero on several indices, so this strip is what
+   actually lets a reviewer tell two fields apart. */
+const PortfolioStrip = ({ indexKey, fieldId, color }) => {
+  const st = PORTFOLIO_STATS[indexKey];
+  if (!st || st.n < 3) return null;
+  const rk = indexRank(indexKey, fieldId);
+  const lo = Math.min(st.min, -0.05), hi = Math.max(st.max, 0.05);
+  const at = v => `${Math.max(2, Math.min(98, ((v - lo) / (hi - lo)) * 100))}%`;
+  const zeroPct = lo < 0 && hi > 0 ? at(0) : null;
+  return (
+    <Tip label={`Portfolio position — ${st.label}\n\nThis field ranks ${rk ? `${rk.rank} of ${rk.of}` : "—"}.\nObserved across the 15 fields: lowest ${st.min}, highest ${st.max}, average ${st.mean}.\n\nThe 15 fields occupy ${Math.round(st.spread * 100)}% of the −1…+1 scale on this index, which makes it a ${st.power.toLowerCase()}. ${st.spread < 0.35 ? "Small differences here are not meaningful on their own — read them alongside the stronger separators." : "Differences here are meaningful and can carry a decision."}`}>
+      <div className="mt-2 cursor-help">
+        <div className="flex items-center justify-between text-[9px] text-slate-400 mb-1">
+          <span>{st.min}</span>
+          <span className="font-semibold text-slate-500">{rk ? `rank ${rk.rank}/${rk.of}` : ""}</span>
+          <span>{st.max}</span>
         </div>
-        {band && (
-          <Tip label={formula}>
-            <div className="mt-1 inline-flex items-center gap-1 cursor-help">
-              <span className="w-2 h-2 rounded-full inline-block" style={{ background: band.color }} />
-              <span className="text-xs font-semibold" style={{ color: band.color }}>{band.v}</span>
+        <div className="relative h-4 rounded bg-slate-100">
+          {zeroPct && <div className="absolute top-0 bottom-0 w-px bg-slate-300" style={{ left: zeroPct }} />}
+          {st.rows.map(r => (
+            <span key={r.id}
+              className="absolute top-1/2 rounded-full"
+              style={{
+                left: at(r.v), transform: "translate(-50%,-50%)",
+                width: r.id === fieldId ? 11 : 6, height: r.id === fieldId ? 11 : 6,
+                background: r.id === fieldId ? (color || INK) : "#CBD5E1",
+                border: r.id === fieldId ? "2px solid #fff" : "none",
+                boxShadow: r.id === fieldId ? "0 0 0 1.5px " + (color || INK) : "none",
+                zIndex: r.id === fieldId ? 2 : 1,
+              }} />
+          ))}
+        </div>
+      </div>
+    </Tip>
+  );
+};
+
+/* One card per independent V8 index — score, verdict/quadrant label, colour,
+   formula on hover, and the field's rank against the rest of the portfolio. */
+const IndexCard = ({ title, score, scoreMax = 5, band, formula, tabTarget, onGoTo, indexKey, fieldId }) => {
+  const st = indexKey ? PORTFOLIO_STATS[indexKey] : null;
+  const rk = indexKey && fieldId ? indexRank(indexKey, fieldId) : null;
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{title}</span>
+        {tabTarget && <button onClick={() => onGoTo(tabTarget)} className="text-[10px] text-teal-700 hover:underline">detail →</button>}
+      </div>
+      {score == null ? (
+        <div className="text-xs text-slate-400 italic py-2">Scoring data not yet compiled for this field.</div>
+      ) : (
+        <>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl font-extrabold" style={{ color: band?.color || INK }}>{score}</span>
+            {scoreMax != null && <span className="text-xs text-slate-400">/ {scoreMax}</span>}
+            {rk && (
+              <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                style={{ background: rk.rank <= 5 ? "#DCFCE7" : rk.rank <= 10 ? "#FEF3C7" : "#FEE2E2",
+                         color: rk.rank <= 5 ? "#166534" : rk.rank <= 10 ? "#92400E" : "#991B1B" }}>
+                #{rk.rank} of {rk.of}
+              </span>
+            )}
+          </div>
+          {band && (
+            <Tip label={formula}>
+              <div className="mt-1 inline-flex items-center gap-1 cursor-help">
+                <span className="w-2 h-2 rounded-full inline-block" style={{ background: band.color }} />
+                <span className="text-xs font-semibold" style={{ color: band.color }}>{band.v}</span>
+              </div>
+            </Tip>
+          )}
+          {band?.m && <div className="text-[11px] text-slate-500 mt-1.5 leading-snug">{band.m}</div>}
+          {indexKey && <PortfolioStrip indexKey={indexKey} fieldId={fieldId} color={band?.color} />}
+          {st && st.spread < 0.35 && (
+            <div className="text-[9px] text-amber-700 bg-amber-50 border border-amber-100 rounded px-1.5 py-0.5 mt-1.5 inline-block">
+              Weak separator — only {Math.round(st.spread * 100)}% of scale in use
             </div>
-          </Tip>
-        )}
-        {band?.m && <div className="text-[11px] text-slate-500 mt-1.5 leading-snug">{band.m}</div>}
-      </>
-    )}
-  </div>
-);
+          )}
+        </>
+      )}
+    </div>
+  );
+};
 
 const Card = ({ title, children, right }) => (
   <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -6844,12 +7231,467 @@ const Card = ({ title, children, right }) => (
   </div>
 );
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   REVIEWER NOTES — review found mismatches between individual data points and
+   market reality, so reviewers need a way to record a correction against the
+   exact point they are looking at rather than in a separate document.
+
+   Scope boundary, stated plainly: this captures and exports structured review
+   notes. It does not edit the underlying data. Applying a correction is a
+   deliberate authoring step — the export is written as an instruction set that
+   an agent run consumes, so every change stays traceable to the reviewer who
+   asked for it and nothing is silently rewritten in the background.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const REVIEW_KEY = "sfi.review.v1";
+const SEVERITIES = [
+  { k: "factual", label: "Factual error", tone: "red", hint: "The figure or claim is wrong and needs correcting" },
+  { k: "stale", label: "Out of date", tone: "amber", hint: "Was right, has since been overtaken by events" },
+  { k: "scope", label: "Scope / framing", tone: "violet", hint: "Wrong level, too broad, or the wrong lens on the problem" },
+  { k: "missing", label: "Missing content", tone: "teal", hint: "Something material is absent — a competitor, a driver, a risk" },
+  { k: "score", label: "Disagree with score", tone: "slate", hint: "The rubric input looks wrong to me" },
+];
+
+function useReviewNotes() {
+  const [notes, setNotes] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(REVIEW_KEY) || "[]"); } catch { return []; }
+  });
+  React.useEffect(() => {
+    try { localStorage.setItem(REVIEW_KEY, JSON.stringify(notes)); } catch { /* quota or private mode — notes stay in memory */ }
+  }, [notes]);
+  return {
+    notes,
+    add: n => setNotes(p => [{ id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), ts: new Date().toISOString(), ...n }, ...p]),
+    remove: id => setNotes(p => p.filter(x => x.id !== id)),
+    clear: () => setNotes([]),
+  };
+}
+
+/* Markdown export — deliberately written as an actionable brief rather than a
+   log dump, so it can be handed straight to an authoring run. */
+function notesToMarkdown(notes) {
+  const byField = {};
+  notes.forEach(n => { (byField[n.fieldName] ||= []).push(n); });
+  const lines = [
+    "# Search-Field Intelligence — reviewer corrections",
+    "",
+    `Exported ${new Date().toLocaleString()} · ${notes.length} note${notes.length === 1 ? "" : "s"}`,
+    "",
+    "Each note below is a requested change against a specific location in the platform.",
+    "Apply only what the evidence supports; where a note conflicts with a cited source, flag the conflict rather than silently choosing a side.",
+    "",
+  ];
+  Object.entries(byField).forEach(([fname, ns]) => {
+    lines.push(`## ${fname}`, "");
+    ns.forEach(n => {
+      const sev = SEVERITIES.find(s => s.k === n.severity);
+      lines.push(`### ${sev ? sev.label : n.severity} — ${n.tab}${n.sub && n.sub !== "All" ? ` · ${n.sub}` : ""}`);
+      if (n.anchor) lines.push(`**Point referenced:** ${n.anchor}`);
+      lines.push(`**Reviewer:** ${n.author || "unattributed"}  ·  **Logged:** ${new Date(n.ts).toLocaleString()}`, "");
+      lines.push(n.text, "");
+    });
+  });
+  return lines.join("\n");
+}
+
+const ReviewNotes = ({ fieldId, fieldName, sub, tab }) => {
+  const { notes, add, remove, clear } = useReviewNotes();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [anchor, setAnchor] = useState("");
+  const [severity, setSeverity] = useState("factual");
+  const [author, setAuthor] = useState(() => { try { return localStorage.getItem("sfi.reviewer") || ""; } catch { return ""; } });
+  const [scope, setScope] = useState("field");
+  const [copied, setCopied] = useState(false);
+
+  const forField = notes.filter(n => n.field === fieldId);
+  const shown = scope === "field" ? forField : notes;
+
+  const submit = () => {
+    if (!text.trim()) return;
+    try { localStorage.setItem("sfi.reviewer", author); } catch { /* ignore */ }
+    add({ field: fieldId, fieldName, sub, tab, severity, text: text.trim(), anchor: anchor.trim(), author: author.trim() });
+    setText(""); setAnchor("");
+  };
+  const download = (body, name, type) => {
+    const url = URL.createObjectURL(new Blob([body], { type }));
+    const a = document.createElement("a");
+    a.href = url; a.download = name; a.click();
+    URL.revokeObjectURL(url);
+  };
+  const copyMd = async () => {
+    try { await navigator.clipboard.writeText(notesToMarkdown(notes)); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* clipboard blocked */ }
+  };
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}
+        className="fixed bottom-5 right-5 z-[900] flex items-center gap-2 px-4 py-2.5 rounded-full text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-shadow"
+        style={{ background: INK }}>
+        <span>Review notes</span>
+        {notes.length > 0 && (
+          <span className="bg-white text-slate-900 rounded-full text-xs font-bold px-2 py-0.5">{notes.length}</span>
+        )}
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-[950] flex justify-end">
+          <div className="absolute inset-0 bg-slate-900/30" onClick={() => setOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col">
+            <div style={{ height: 4, background: GRAD }} />
+            <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <div className="font-bold text-slate-900">Review notes</div>
+                <div className="text-[11px] text-slate-500">Captured in this browser · export to apply</div>
+              </div>
+              <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-700 text-xl leading-none px-2">×</button>
+            </div>
+
+            <div className="p-5 border-b border-slate-200 bg-slate-50">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">New note</div>
+              <div className="text-[11px] text-slate-500 mb-2">
+                Logging against <b>{fieldName}</b>{sub !== "All" && <> · <b>{sub}</b></>} · <b>{tab}</b> tab
+              </div>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {SEVERITIES.map(sv => (
+                  <Tip key={sv.k} label={sv.hint}>
+                    <button onClick={() => setSeverity(sv.k)}
+                      className={`px-2 py-1 rounded-full text-[11px] font-medium border ${severity === sv.k ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-300 text-slate-600 hover:border-slate-400"}`}>
+                      {sv.label}
+                    </button>
+                  </Tip>
+                ))}
+              </div>
+              <input value={anchor} onChange={e => setAnchor(e.target.value)}
+                placeholder="Which point? (paste or paraphrase the line — optional but speeds up the fix)"
+                className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 mb-2" />
+              <textarea value={text} onChange={e => setText(e.target.value)} rows={4}
+                placeholder="What is wrong, and what should it say instead? Include a source if you have one."
+                className="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 mb-2" />
+              <div className="flex gap-2">
+                <input value={author} onChange={e => setAuthor(e.target.value)} placeholder="Your name"
+                  className="flex-1 text-xs border border-slate-300 rounded-lg px-2.5 py-2" />
+                <button onClick={submit} disabled={!text.trim()}
+                  className="px-4 py-2 rounded-lg text-white text-xs font-semibold disabled:opacity-40"
+                  style={{ background: INK }}>Add note</button>
+              </div>
+            </div>
+
+            <div className="px-5 py-2 border-b border-slate-200 flex items-center gap-2">
+              <button onClick={() => setScope("field")} className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${scope === "field" ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-300 text-slate-600"}`}>
+                This field ({forField.length})
+              </button>
+              <button onClick={() => setScope("all")} className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${scope === "all" ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-300 text-slate-600"}`}>
+                All fields ({notes.length})
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 space-y-2">
+              {shown.length === 0 && (
+                <div className="text-xs text-slate-400 italic text-center py-8">
+                  No notes yet. Add one above while you have the point in front of you.
+                </div>
+              )}
+              {shown.map(n => {
+                const sv = SEVERITIES.find(s => s.k === n.severity);
+                return (
+                  <div key={n.id} className="border border-slate-200 rounded-lg p-3">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Chip tone={sv?.tone || "slate"}>{sv?.label || n.severity}</Chip>
+                        <span className="text-[10px] text-slate-400">{n.fieldName} · {n.tab}{n.sub && n.sub !== "All" ? ` · ${n.sub}` : ""}</span>
+                      </div>
+                      <button onClick={() => remove(n.id)} className="text-slate-300 hover:text-red-600 text-sm leading-none">×</button>
+                    </div>
+                    {n.anchor && <div className="text-[11px] text-slate-500 italic border-l-2 border-slate-200 pl-2 mb-1">“{n.anchor}”</div>}
+                    <div className="text-xs text-slate-800 whitespace-pre-line">{n.text}</div>
+                    <div className="text-[10px] text-slate-400 mt-1.5">{n.author || "unattributed"} · {new Date(n.ts).toLocaleString()}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="p-4 border-t border-slate-200 bg-slate-50">
+              <div className="text-[11px] text-slate-600 mb-2">
+                Export hands these notes to an authoring run as an instruction set. Nothing in the platform changes until that run is reviewed and merged.
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={copyMd} disabled={!notes.length}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-40" style={{ background: "#0F766E" }}>
+                  {copied ? "Copied ✓" : "Copy as brief"}
+                </button>
+                <button onClick={() => download(notesToMarkdown(notes), "review-notes.md", "text/markdown")} disabled={!notes.length}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white disabled:opacity-40">
+                  Download .md
+                </button>
+                <button onClick={() => download(JSON.stringify(notes, null, 2), "review-notes.json", "application/json")} disabled={!notes.length}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white disabled:opacity-40">
+                  Download .json
+                </button>
+                <button onClick={() => { if (confirm(`Delete all ${notes.length} notes? This cannot be undone — export first if you need them.`)) clear(); }}
+                  disabled={!notes.length}
+                  className="ml-auto px-3 py-1.5 rounded-lg text-xs font-semibold text-red-700 border border-red-200 bg-white disabled:opacity-40">
+                  Clear all
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+/* Sub-field drill-down — opens when a sub-field chip is selected and SUB has
+   detail for it. Gives the sub-sector its own investment logic without pretending
+   it has its own nine-index score. */
+const SubFieldDrill = ({ fieldId, sub, fieldName }) => {
+  const d = SUB[fieldId]?.[sub];
+  if (!d) {
+    return (
+      <div className="mt-3 text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+        Sub-field lens: <b>{sub}</b> — content across the tabs is tagged to this sub-field where relevant, and the
+        verdict always rolls up to <b>{fieldName}</b> as a whole. A dedicated drill-down for this sub-field is not
+        compiled yet.
+      </div>
+    );
+  }
+  const pf = { LEAD: "green", PARTNER: "teal", WATCH: "amber", SKIP: "red" }[d.play] || "slate";
+  const Block = ({ title, note, children }) => (
+    <div className="border border-slate-200 rounded-lg p-3">
+      <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">{title}</div>
+      {note && <div className="text-[10px] text-slate-400 mb-2">{note}</div>}
+      {children}
+    </div>
+  );
+  return (
+    <div className="mt-3 bg-white rounded-xl border-2 border-slate-300 shadow-sm">
+      <div className="px-4 pt-3 pb-2 border-b border-slate-100 flex flex-wrap items-center gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sub-field drill-down</span>
+        <span className="text-sm font-bold">{sub}</span>
+        <Chip tone={pf}>{d.play}</Chip>
+        <span className="ml-auto text-[10px] text-slate-400">rolls up to {fieldName} · no separate index score</span>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="text-sm text-slate-700 bg-slate-50 rounded-lg p-3 leading-relaxed">{d.thesis}</div>
+
+        {d.sizing?.length > 0 && (
+          <Block title="Sizing and anchors">
+            <table className="w-full text-xs">
+              <tbody>
+                {d.sizing.map(x => (
+                  <tr key={x.k} className="border-t border-slate-100 first:border-0">
+                    <td className="py-1.5 pr-3 font-semibold text-slate-600 align-top whitespace-nowrap">{x.k}</td>
+                    <td className="py-1.5 pr-3 text-slate-800">{x.v}</td>
+                    <td className="py-1.5 text-[10px] text-slate-400 align-top whitespace-nowrap">{x.src}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Block>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {d.whyNow?.length > 0 && (
+            <Block title="Why now">
+              {d.whyNow.map((x, i) => (
+                <div key={i} className="mb-2 last:mb-0">
+                  <div className="text-xs font-medium text-slate-800">{x.p}</div>
+                  <div className="text-[11px] text-slate-600 mt-0.5">{x.why}</div>
+                </div>
+              ))}
+            </Block>
+          )}
+          {d.barriers?.length > 0 && (
+            <Block title="Barriers and risks">
+              {d.barriers.map((x, i) => (
+                <div key={i} className="mb-2 last:mb-0">
+                  <div className="text-xs font-medium text-red-800 flex gap-1.5"><span>⚠</span>{x.p}</div>
+                  <div className="text-[11px] text-slate-600 mt-0.5 ml-4">{x.why}</div>
+                </div>
+              ))}
+            </Block>
+          )}
+        </div>
+
+        {d.boschFit && (
+          <Block title="Bosch fit">
+            <div className="text-xs text-slate-700">{d.boschFit}</div>
+          </Block>
+        )}
+
+        {d.whiteSpace?.length > 0 && (
+          <Block title="White space" note="Openings with no established owner. Direction tags show which way value flows between the two domains.">
+            {d.whiteSpace.map((x, i) => {
+              const dir = /^MOBILITY → HEALTH:/.test(x.p) ? "mob" : /^HEALTH → MOBILITY:/.test(x.p) ? "hea" : null;
+              const text = dir ? x.p.replace(/^(MOBILITY → HEALTH|HEALTH → MOBILITY):\s*/, "") : x.p;
+              return (
+                <div key={i} className="border border-teal-100 bg-teal-50/40 rounded-lg p-2.5 mb-2 last:mb-0">
+                  {dir && (
+                    <Chip tone={dir === "mob" ? "violet" : "teal"}>
+                      {dir === "mob" ? "Mobility → Health" : "Health → Mobility"}
+                    </Chip>
+                  )}
+                  <div className={`text-xs font-medium text-slate-800 ${dir ? "mt-1" : ""}`}>{text}</div>
+                  <div className="text-[11px] text-teal-800 mt-1">{x.why}</div>
+                </div>
+              );
+            })}
+          </Block>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {d.triggers?.length > 0 && (
+            <Block title="Triggers to watch" note="Observable events that should change the play on this sub-field.">
+              {d.triggers.map((t, i) => (
+                <div key={i} className="text-xs text-slate-700 flex gap-1.5 mb-1 last:mb-0"><span className="text-teal-600">▸</span>{t}</div>
+              ))}
+            </Block>
+          )}
+          {d.players?.length > 0 && (
+            <Block title="Who else is here">
+              {d.players.map((p, i) => (
+                <div key={i} className="mb-1.5 last:mb-0">
+                  <div className="text-xs font-semibold text-slate-800">{p.name}</div>
+                  <div className="text-[11px] text-slate-600">{p.note}</div>
+                </div>
+              ))}
+            </Block>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* How to read the scores — the reviewer-facing answer to "why is everything
+   near zero?". States the scale, the bands, and how much each index actually
+   separates the 15 fields, so weak separators aren't over-read. */
+const ScoringLegend = ({ fieldId }) => {
+  const [open, setOpen] = useState(false);
+  const mgiSt = PORTFOLIO_STATS.mgi;
+  const weak = INDEX_KEYS.filter(({ k }) => k !== "mgi" && PORTFOLIO_STATS[k]?.spread < 0.35);
+  const strong = INDEX_KEYS.filter(({ k }) => k !== "mgi" && PORTFOLIO_STATS[k]?.spread >= 0.6);
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3 text-left">
+        <div>
+          <span className="text-sm font-semibold text-slate-800">How to read these scores</span>
+          <span className="text-xs text-slate-400 ml-2">
+            the scale, the bands, and how far apart the 15 fields actually sit
+          </span>
+        </div>
+        <span className="text-xs text-teal-700 font-medium shrink-0">{open ? "collapse ▲" : "expand ▼"}</span>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="border border-slate-200 rounded-lg p-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">The scale</div>
+              <p className="text-xs text-slate-600 mb-2">
+                Every index is normalised to <b>−1 … +1</b>, where +1 is best. That is what makes nine different
+                frameworks comparable with each other and across all 15 search fields.
+              </p>
+              <div className="relative h-6 rounded bg-gradient-to-r from-red-200 via-amber-100 to-green-200 mb-1">
+                <div className="absolute inset-y-0 left-1/2 w-px bg-slate-400" />
+              </div>
+              <div className="flex justify-between text-[10px] text-slate-500">
+                <span>−1 · worst case</span><span>0 · neutral</span><span>+1 · best case</span>
+              </div>
+            </div>
+            <div className="border border-slate-200 rounded-lg p-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">MGI verdict bands</div>
+              {MGI_BANDS.map(b => (
+                <div key={b.v} className="flex items-start gap-2 mb-1.5 last:mb-0">
+                  <span className="w-2 h-2 rounded-full mt-1 shrink-0" style={{ background: b.color }} />
+                  <div>
+                    <span className="text-xs font-semibold" style={{ color: b.color }}>{b.v}</span>
+                    <span className="text-[10px] text-slate-400 ml-1.5">
+                      {b.min <= -1 ? "below −0.30" : `${b.min >= 0 ? "≥" : "≥"} ${b.min.toFixed(2)}`}
+                    </span>
+                    <div className="text-[10px] text-slate-500 leading-snug">{b.m.split(".")[0]}.</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-amber-200 bg-amber-50/50 rounded-lg p-3">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-amber-800 mb-1.5">
+              Why most values sit close to zero — and what to do about it
+            </div>
+            <p className="text-xs text-slate-700 mb-2">
+              This is a property of the formulas, not a scoring error. The PESTEL Index is
+              (tailwinds − headwinds) ÷ (tailwinds + headwinds) across 36 scored points; summing 18 products on each
+              side pulls the ratio toward the middle, because every field has both favourable and unfavourable macro
+              forces. SPI blends two such ratios and inherits the same compression, and the MGI is a weighted average
+              of averages, which compresses once more. Across the portfolio the MGI spans just{" "}
+              <b>{mgiSt.min} to {mgiSt.max}</b> — {Math.round(mgiSt.spread * 100)}% of the available scale.
+            </p>
+            <p className="text-xs text-slate-700">
+              Rather than change the arithmetic and break compliance with the scoring document, every index card shows
+              a <b>portfolio strip</b>: the field's rank and its position against the other 14. The absolute value
+              answers "is this good?"; the rank answers "is this better than the alternatives?" — which is the actual
+              investment question. Read the rank first when two fields look similar.
+            </p>
+          </div>
+
+          <div className="border border-slate-200 rounded-lg p-3">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+              How much each index separates the portfolio
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="text-left text-slate-400">
+                  <th className="pb-1.5 pr-2">Index</th><th className="pb-1.5 pr-2 text-center">This field</th>
+                  <th className="pb-1.5 pr-2 text-center">Rank</th><th className="pb-1.5 pr-2 text-center">Portfolio range</th>
+                  <th className="pb-1.5 pr-2 text-center">Scale used</th><th className="pb-1.5">Separating power</th>
+                </tr></thead>
+                <tbody>
+                  {INDEX_KEYS.map(({ k, label }) => {
+                    const st = PORTFOLIO_STATS[k];
+                    if (!st) return null;
+                    const rk = indexRank(k, fieldId);
+                    const mine = PORTFOLIO[fieldId]?.[k];
+                    const pct = Math.round(st.spread * 100);
+                    const tone = st.spread >= 0.6 ? "green" : st.spread >= 0.35 ? "amber" : "red";
+                    return (
+                      <tr key={k} className={`border-t border-slate-100 ${k === "mgi" ? "bg-slate-50 font-semibold" : ""}`}>
+                        <td className="py-1.5 pr-2">{label}</td>
+                        <td className="py-1.5 pr-2 text-center font-mono">{mine ?? "—"}</td>
+                        <td className="py-1.5 pr-2 text-center">{rk ? `${rk.rank}/${rk.of}` : "—"}</td>
+                        <td className="py-1.5 pr-2 text-center text-slate-500 font-mono">{st.min} … {st.max}</td>
+                        <td className="py-1.5 pr-2 text-center">
+                          <div className="flex items-center gap-1.5">
+                            <div className="flex-1 h-1.5 bg-slate-100 rounded-full min-w-[40px]">
+                              <div className="h-1.5 rounded-full" style={{ width: `${pct}%`, background: tone === "green" ? "#16A34A" : tone === "amber" ? "#D97706" : "#DC2626" }} />
+                            </div>
+                            <span className="text-[10px] text-slate-500 w-8">{pct}%</span>
+                          </div>
+                        </td>
+                        <td className="py-1.5"><Chip tone={tone === "green" ? "green" : tone === "amber" ? "amber" : "red"}>{st.power}</Chip></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="text-[10px] text-slate-500 mt-2 leading-snug">
+              {strong.length > 0 && <>Lean on <b>{strong.map(x => x.short).join(", ")}</b> when ranking fields — these genuinely separate the portfolio. </>}
+              {weak.length > 0 && <>Treat <b>{weak.map(x => x.short).join(", ")}</b> with care: the 15 fields sit close together on them, so a small gap is not a real difference.</>}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* Why/So-what block used across all framework tabs */
-const Reasoned = ({ point, why, sowhat, cites, tag, badge }) => (
+const Reasoned = ({ point, why, sowhat, cites, tag, badge, citeField }) => (
   <div className="border border-slate-200 rounded-lg p-3 mb-2 last:mb-0">
     <div className="flex items-start gap-2">
       {tag}
-      <div className="text-sm font-medium flex-1">{point}{cites?.length ? <span className="text-slate-400 text-xs font-normal"> [{cites.join(",")}]</span> : null}</div>
+      <div className="text-sm font-medium flex-1">{point}{cites?.length ? <Cite ids={cites} fieldId={citeField} /> : null}</div>
     </div>
     {why && <div className="text-xs text-slate-600 mt-1.5 flex gap-1.5"><span className="font-bold text-teal-700 shrink-0">WHY</span><span>{why}</span></div>}
     {sowhat && <div className="text-xs text-slate-600 mt-1 flex gap-1.5"><span className="font-bold text-purple-700 shrink-0">SO WHAT</span><span>{sowhat}</span></div>}
@@ -6970,7 +7812,7 @@ export default function App() {
                 </button>
               ))}
             </div>
-            {sub !== "All" && <div className="mt-2 text-xs text-amber-700 bg-amber-50 inline-block px-2 py-1 rounded">Sub-field lens: <b>{sub}</b> — the verdict always rolls up to <b>{field.name}</b> as a whole.</div>}
+            {sub !== "All" && <SubFieldDrill fieldId={fieldId} sub={sub} fieldName={field.name} />}
           </div>
 
           {!hasData ? (
@@ -7037,37 +7879,39 @@ export default function App() {
                     </div>
                   )}
 
+                  <ScoringLegend fieldId={fieldId} />
+
                   <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                    The 9 component indices below feed the MGI above. Each is computed live from its own 1/3/5 (or Low/Medium/High) inputs — hover a verdict for the formula, click "detail" to see the full working.
+                    The 9 component indices below feed the MGI above. Each is computed live from its own 1/3/5 (or Low/Medium/High) inputs — hover a verdict for the formula, click "detail" to see the full working. The strip on each card shows where this field sits against the other 14.
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <IndexCard title="PESTEL Index" score={pestelIdx?.index} scoreMax={null} band={pestelIdx?.band}
                       formula={pestelIdx ? `Index = (Tailwinds ${pestelIdx.tail} − Headwinds ${pestelIdx.head}) ÷ (Tailwinds + Headwinds), from ${pestelIdx.tailN + pestelIdx.headN} scored points (impact × certainty)` : null}
-                      tabTarget="PESTEL" onGoTo={setTab} />
+                      indexKey="pi" fieldId={fieldId} tabTarget="PESTEL" onGoTo={setTab} />
                     <IndexCard title="SWOT Posture (SPI)" score={swotIdx?.spi} scoreMax={null} band={swotIdx?.band}
                       formula={swotIdx ? `0.3×IRI(${swotIdx.iri}) + 0.7×EAI(${swotIdx.eai}) — Quadrant ${swotIdx.quadrant?.key}: ${swotIdx.quadrant?.name}` : null}
-                      tabTarget="SWOT" onGoTo={setTab} />
+                      indexKey="spi" fieldId={fieldId} tabTarget="SWOT" onGoTo={setTab} />
                     <IndexCard title="Market Attractiveness (MAI)" score={masResult?.mai} scoreMax={null} band={masResult?.band}
                       formula={masResult ? `MAS ${masResult.mas} → (MAS−3)÷2. MAS = 0.35×ScaleVelocity(${masResult.scaleVelocity}) + 0.2×S-Curve(${masResult.scurveScore}) + 0.2×RevQuality(${masResult.revenueQualityScore}) + 0.25×Profitability(${masResult.profitabilityScore})` : null}
-                      tabTarget="Market" onGoTo={setTab} />
+                      indexKey="mai" fieldId={fieldId} tabTarget="Market" onGoTo={setTab} />
                     <IndexCard title="Industry Attractiveness (IAI)" score={iaiResult?.iai} scoreMax={null} band={iaiResult?.band}
                       formula={iaiResult ? `Raw IAI ${iaiResult.iaiRaw} → (3−raw)÷2. Avg of 5 Porter forces: ${Object.entries(iaiResult.forceAvgs).map(([k, v]) => `${k} ${v}`).join(" · ")}` : null}
-                      tabTarget="Attractiveness" onGoTo={setTab} />
+                      indexKey="iai" fieldId={fieldId} tabTarget="Attractiveness" onGoTo={setTab} />
                     <IndexCard title="Competency Gap (CGI)" score={cgiResult?.cgi} scoreMax={null} band={cgiResult?.band}
                       formula={cgiResult ? `Σ(Gap×Weight)÷3 across 7 competency areas — ${cgiResult.rows.map(r => `${r.label} gap ${r.gap > 0 ? "+" : ""}${r.gap}`).join(", ")}` : null}
-                      tabTarget="Competency" onGoTo={setTab} />
+                      indexKey="cgi" fieldId={fieldId} tabTarget="Competency" onGoTo={setTab} />
                     <IndexCard title="Stakeholder Viability (SVI)" score={sviResult?.svi} scoreMax={null} band={sviResult?.band}
                       formula={sviResult ? `Base SVI (${sviResult.baseSVI}) × VSF (${sviResult.vsf}) — TES ${sviResult.TES} vs TET ${sviResult.TET}` : null}
-                      tabTarget="Stakeholders" onGoTo={setTab} />
+                      indexKey="svi" fieldId={fieldId} tabTarget="Stakeholders" onGoTo={setTab} />
                     <IndexCard title="Competitive Posture (CPI)" score={cpiResult?.cpi} scoreMax={null} band={cpiResult ? { ...cpiResult.band, v: `${cpiResult.band.v} — ${cpiResult.label}` } : null}
                       formula={cpiResult ? `Strategic Value Score ${cpiResult.svs} → (SVS−5)÷4. Advantage ${cpiResult.advantageScore} vs avg threat ${cpiResult.avgThreatScore}` : null}
-                      tabTarget="Competitors" onGoTo={setTab} />
+                      indexKey="cpi" fieldId={fieldId} tabTarget="Competitors" onGoTo={setTab} />
                     <IndexCard title="Supply Chain Viability (SCVI)" score={scviResult?.scvi} scoreMax={null} band={scviResult ? { ...scviResult.band, v: `${scviResult.band.v} — ${scviResult.label}` } : null}
                       formula={scviResult ? `SCVS ${scviResult.scvs} → (SCVS−3)÷2. Matrix: Supply Chain Maturity × Bosch Control & Leverage → "${scviResult.label}"` : null}
-                      tabTarget="Suppliers" onGoTo={setTab} />
+                      indexKey="scvi" fieldId={fieldId} tabTarget="Suppliers" onGoTo={setTab} />
                     <IndexCard title="Technology Prognosis (TPI)" score={tpiResult?.tpi} scoreMax={null} band={tpiResult ? { ...tpiResult.band, v: `${tpiResult.band.v} — ${tpiResult.label}` } : null}
                       formula={tpiResult ? `TPS ${tpiResult.tps} → (TPS−3)÷2. Matrix: Technological Velocity × Commercialization Readiness → "${tpiResult.label}"` : null}
-                      tabTarget="3 Horizons" onGoTo={setTab} />
+                      indexKey="tpi" fieldId={fieldId} tabTarget="3 Horizons" onGoTo={setTab} />
                   </div>
 
                   {d.verdict.aiAnalyst && (
@@ -7247,7 +8091,7 @@ export default function App() {
                               {x.enabler && <Chip tone="violet">enabler</Chip>}
                               <Chip tone={x.i === "high" ? "red" : x.i === "medium" ? "amber" : "slate"}>{x.i}</Chip>
                             </div>
-                            <div className="text-sm font-medium">{x.p}{x.c?.length ? <span className="text-slate-400 text-xs font-normal"> [{x.c.join(",")}]</span> : null}</div>
+                            <div className="text-sm font-medium">{x.p}<Cite ids={x.c} fieldId={fieldId} /></div>
                             {x.why && <div className="text-xs text-slate-600 mt-1.5 flex gap-1.5"><b className="text-teal-700 shrink-0">WHY</b><span>{x.why}</span></div>}
                             {x.sowhat && <div className="text-xs text-slate-600 mt-1 flex gap-1.5"><b className="text-purple-700 shrink-0">SO WHAT</b><span>{x.sowhat}</span></div>}
                             {x.subs?.length > 0 && (
@@ -8194,6 +9038,7 @@ export default function App() {
         <span style={{ color: "#fff", fontWeight: 600 }}>© 2026 Search-Field Intelligence — created by MBS team @ M/MBR-IN</span>
         <span style={{ fontSize: 10 }}>Bosch Mobility · India Market · BBM Strategy Agent · scores computed, not generated</span>
       </div>
+      <ReviewNotes fieldId={fieldId} fieldName={field.name} sub={sub} tab={tab} />
     </div>
   );
 }
