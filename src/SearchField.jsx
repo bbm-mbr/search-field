@@ -32,14 +32,28 @@ const FIELDS = [
      three fields with the SAM divided between them, not triplicated. */
   { id: "connectivity", name: "Connectivity", subs: ["Embedded Telematics", "eSIM & Carriage", "V2X Vehicle Side", "OTA Pipeline", "Connected Services"] },
   { id: "cyber", name: "Cybersecurity", subs: ["CSMS (AIS-189)", "SUMS (AIS-190)", "Managed Vehicle SOC", "Secure OTA & Keys", "Pen-Test & Homologation"] },
-  { id: "clouddata", name: "Cloud & Data Architecture", subs: ["Vehicle Cloud", "Data Platforms", "SDV Data Architecture", "Federated Data Exchange", "DPDP Compliance Layer"] },
-  /* Reviewed as too coarse: silicon and module manufacture are different businesses
-     with different capital profiles, different partners and different Bosch fit.
-     "Semiconductors" is split into Semiconductors (design/qualification) and
-     EMS & Modules (assembly and module build). */
-  { id: "eca", name: "Electronic Control Architectures", subs: ["Semiconductors", "EMS & Modules", "Edge Compute", "Distributed Compute", "AI Compute", "Comm. Tech", "Vehicle as Sensor"] },
+  /* Gains "Vehicle as Sensor" from the former ECA field. The sensing hardware is
+     a Semiconductors asset, but the revenue is a data product -- and the ECA
+     verdict already routed its monetisation through this field. */
+  { id: "clouddata", name: "Cloud & Data Architecture", subs: ["Vehicle Cloud", "Data Platforms", "SDV Data Architecture", "Vehicle as Sensor", "Federated Data Exchange", "DPDP Compliance Layer"] },
+  /* Reviewed as a sector rather than a search field. It bundled four businesses
+     that share almost nothing commercially: vehicle compute (sold to OEM E/E
+     teams, won on the zonal blueprint), semiconductors (sold to fabs, OSATs and
+     government, won on the qualification role), module assembly (a capacity
+     business the Manufacturing field already covers) and vehicle-as-sensor data
+     (a platform business the Cloud & Data field already monetises). Narrowed to
+     compute and architecture; the other three are reallocated, not deleted. */
+  { id: "eca", name: "Vehicle Compute & E/E Architecture", subs: ["Zonal Controllers", "Central Compute (HPC)", "Domain ECUs", "In-Vehicle Networking", "Power Net & Distribution", "Architecture Toolchain"] },
+  /* Silicon is its own search field: the buyer is a fab, an OSAT or a government
+     programme rather than an OEM, the capital profile is fab-adjacent rather than
+     Tier-1, and the win condition -- owning automotive qualification of Indian
+     silicon -- has no equivalent anywhere else in the portfolio. */
+  { id: "semis", name: "Semiconductors", subs: ["Automotive Qualification (ISM)", "ASIC & Custom Silicon", "Chiplets (UCIe)", "Power Semiconductors (SiC/GaN)", "MEMS & Sensor Silicon", "RISC-V & Sovereign Compute"] },
   { id: "software", name: "Software", subs: ["Interoperable Functions", "Comm. Technologies", "Middleware/OS", "AI/ML", "Simulations", "Digital Twin", "WASM"] },
-  { id: "manufacturing", name: "Manufacturing", subs: ["EMS", "Contract Mfg (MaaS)", "Industry 5.0", "Dark Factories"] },
+  /* Gains "Automotive Module Assembly" from the former ECA field. That business
+     was being scored in two places at once -- the ECA verdict itself warned the
+     two plays must not be sold twice -- so it now lives only here. */
+  { id: "manufacturing", name: "Manufacturing", subs: ["Automotive Module Assembly", "EMS", "Contract Mfg (MaaS)", "Industry 5.0", "Dark Factories"] },
   { id: "energy", name: "Energy", subs: ["V2G & Charging", "Battery & BMS", "New Energy Tech"] },
   { id: "fintech", name: "Fintech", subs: ["In-Vehicle Payment", "Insurance", "Vehicle Aadhar", "Vehicle Monetization"] },
   { id: "infrastructure", name: "Infrastructure", subs: ["V2X", "Urban Traffic Mgmt", "Tolling & Parking", "Map Services", "Intermodal"] },
@@ -1527,103 +1541,125 @@ const DATA = {
     ma: ["MEMS", "ECU", "Power Semiconductors", "IC", "ASICs", "Quantum Sensing"], bbm: ["SW System for SdV", "Future Vehicle System for SdV"],
     pestel: {
       Political: [
-        { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission funds fabs, OSAT and design-linked incentives — a domestic silicon ecosystem is forming for the first time", why: "Approved fab/OSAT projects (incl. Dholera, Sanand) and DLI schemes are creating a domestic silicon ecosystem [1]", sowhat: "Automotive-grade packaging/test and design partnerships become locally possible — Bosch can anchor automotive qualification of Indian silicon", i: "high", subs: ["Semiconductors"], c: [1] },
-        { cat: "Government Schemes & Incentives", p: "5.9 GHz C-V2X and 77–81 GHz radar de-licensing (Jun-2026) are regulatory ENABLERS for sensing and communication content per vehicle", why: "The WPC exemptions remove spectrum-licensing barriers for V2X OBUs and imaging radar, aligning India with US/EU and de-risking sensing-heavy architectures [9]", sowhat: "Vehicle-as-Sensor and Comm. Tech sub-fields gain a cleared runway — content roadmaps can assume these bands without regulatory contingency", i: "medium", enabler: true, subs: ["Vehicle as Sensor", "Comm. Tech"], c: [9] },
+        { cat: "Government Schemes & Incentives", p: "Cyber Rules 125-T/125-U in force from Oct-2026 push security requirements down into the compute layer — the architecture and the security architecture become one sourcing decision", why: "A certified CSMS has to be demonstrated at vehicle level, which means the zonal controller and its update path are inside the audit scope rather than beside it [6]", sowhat: "Sell the zonal blueprint and the security architecture together; an OEM specifying one is specifying the other, and Bosch is the only supplier credible on both", i: "high", subs: ["Zonal Controllers", "Central Compute (HPC)"], c: [6] },
+        { cat: "Government Schemes & Incentives", p: "5.9 GHz C-V2X and 77–81 GHz radar de-licensing (Jun-2026) removed the last regulatory contingency from sensing-heavy and communication-heavy architectures", why: "The WPC exemptions mean an E/E roadmap can now assume those bands are available, so compute and networking capacity can be specified without a spectrum caveat [9]", sowhat: "In-Vehicle Networking and compute headroom planning can be committed rather than hedged — it de-risks the architecture proposal, not just the radio", i: "medium", enabler: true, subs: ["In-Vehicle Networking", "Central Compute (HPC)"], c: [9] },
       ],
       Economic: [
-        { cat: "Economic Growth & Consumer Spending", p: "E/E content per vehicle rises steeply even in budget segments — safety mandates, EVs and connectivity multiply ECUs regardless of GDP cycle", why: "Safety mandates (6 airbags-class features, ESC), EVs and connectivity multiply ECUs and semiconductors per vehicle [2]", sowhat: "Volume-driven demand for cost-optimised ECUs and zonal consolidation — both Bosch home turf", i: "high", subs: ["Distributed Compute", "Edge Compute"], c: [2] },
-        { cat: "Currency & Exchange Rate", p: "INR weakness is a structural cost risk for advanced-node silicon — every zonal computer's BOM is dollar-denominated at the chip level", why: "Leading-edge SoCs and memory are imported; rupee depreciation flows directly into vehicle-computer costs [10]", sowhat: "ISM-qualified local silicon (as it matures) plus ASIC partnerships become genuine cost hedges — another reason to anchor the ISM qualification role", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [10] },
+        { cat: "Economic Growth & Consumer Spending", p: "E/E content per vehicle rises steeply even in budget segments — safety mandates, EVs and connectivity multiply ECUs regardless of GDP cycle", why: "Safety mandates (6 airbags-class features, ESC), EVs and connectivity multiply ECUs and semiconductors per vehicle [2]", sowhat: "Volume-driven demand for cost-optimised ECUs and zonal consolidation — both Bosch home turf", i: "high", subs: ["Domain ECUs", "Zonal Controllers"], c: [2] },
+        { cat: "Currency & Exchange Rate", p: "INR weakness is a structural cost risk for advanced-node silicon — every zonal computer's BOM is dollar-denominated at the chip level", why: "Leading-edge SoCs and memory are imported; rupee depreciation flows directly into vehicle-computer costs [10]", sowhat: "The hedge sits in the Semiconductors field rather than this one — but the exposure lands here, on every vehicle-computer BOM, so the two fields have to plan sourcing together", i: "medium", subs: ["Central Compute (HPC)", "Zonal Controllers"], c: [10] },
       ],
       Social: [
-        { cat: "Consumer Behavior & Values", p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs — localisation is strategic, not just cost-driven", why: "2021–23 shortages cost Indian OEMs real volume; semiconductor localisation is now a CXO agenda item [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction", i: "medium", subs: ["Semiconductors", "Distributed Compute"], c: [3] },
-        { cat: "Workforce & Labor", p: "India hosts the world's largest concentration of silicon-design talent inside vendor GCCs — the constraint is organising it, not finding it", why: "Qualcomm/NVIDIA/Intel-class GCCs employ tens of thousands of Indian chip designers; DLI incentives make targeted team-builds economical [1]", sowhat: "Acqui-hire or DLI-backed design-team builds close Bosch's India silicon-design gap faster than organic growth — the competency tab's named route", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [1] },
+        { cat: "Consumer Behavior & Values", p: "Chip-shortage memory makes supply resilience a board topic for Indian OEMs — localisation is strategic, not just cost-driven", why: "2021–23 shortages cost Indian OEMs real volume; semiconductor localisation is now a CXO agenda item [3]", sowhat: "'Resilient, India-qualified electronics supply' is a sales narrative with CXO traction — and it is an architecture argument as much as a component one, because a consolidated architecture has fewer parts to be short of", i: "medium", subs: ["Domain ECUs", "Zonal Controllers"], c: [3] },
+        { cat: "Workforce & Labor", p: "India hosts the world's largest concentration of silicon-design talent inside vendor GCCs — the constraint is organising it, not finding it", why: "Qualcomm/NVIDIA/Intel-class GCCs employ tens of thousands of Indian chip designers; DLI incentives make targeted team-builds economical [1]", sowhat: "For this field the scarce skill is architecture rather than silicon design — engineers who can partition functions across a zonal topology and hold the safety case together. Convert existing embedded engineers rather than hiring architects who then have to learn the vehicle", i: "medium", subs: ["Architecture Toolchain", "Central Compute (HPC)"], c: [1] },
       ],
       Technological: [
-        { cat: "Pace of Change", p: "The distributed-ECU → zonal + central-compute shift is the once-a-decade re-sourcing window — every socket reopens", why: "Global zonal transition reaches Indian platforms via global OEMs first; architecture transitions reset incumbency [4]", sowhat: "Zonal controllers and vehicle-computer sockets are being re-sourced now — win the blueprint, the sockets follow", i: "high", subs: ["Edge Compute", "Distributed Compute"], c: [4] },
-        { cat: "Interoperability & Standards", p: "DIR-V (Shakti/Vega cores) pushes sovereign RISC-V toward automotive — a standards bet worth funded optionality, not commitment", why: "Government-backed RISC-V may become a procurement criterion in sovereignty-sensitive programmes; automotive toolchains are still maturing [4]", sowhat: "One evaluation programme now buys the option; scale only on a real procurement trigger — as the competency tab prices it", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [4] },
-        { cat: "Emerging Technologies", p: "Chiplet-based custom compute (UCIe) offers a route to differentiated vehicle computers without owning leading-edge fabs", why: "Chiplet standards let system houses compose custom silicon from best-of-breed dies — exactly the position of a fab-less Tier-1 with ASIC competence [4]", sowhat: "ASIC/chiplet alliances are the partner-down half of the silicon strategy — pursue alongside the ISM qualification white space", i: "medium", subs: ["Semiconductors", "AI Compute"], c: [4] },
+        { cat: "Pace of Change", p: "The distributed-ECU → zonal + central-compute shift is the once-a-decade re-sourcing window — every socket reopens", why: "Global zonal transition reaches Indian platforms via global OEMs first; architecture transitions reset incumbency [4]", sowhat: "Zonal controllers and vehicle-computer sockets are being re-sourced now — win the blueprint, the sockets follow", i: "high", subs: ["Zonal Controllers", "Domain ECUs"], c: [4] },
+        { cat: "Interoperability & Standards", p: "DIR-V (Shakti/Vega cores) pushes sovereign RISC-V toward automotive — a standards bet worth funded optionality, not commitment", why: "Government-backed RISC-V may become a procurement criterion in sovereignty-sensitive programmes; automotive toolchains are still maturing [4]", sowhat: "The sovereign-compute bet belongs to the Semiconductors field; what matters here is that the architecture stays instruction-set agnostic so a core change is a recompile rather than a redesign", i: "medium", subs: ["Architecture Toolchain", "Central Compute (HPC)"], c: [4] },
+        { cat: "Emerging Technologies", p: "Chiplet-based custom compute (UCIe) offers a route to differentiated vehicle computers without owning leading-edge fabs", why: "Chiplet standards let system houses compose custom silicon from best-of-breed dies — exactly the position of a fab-less Tier-1 with ASIC competence [4]", sowhat: "Chiplet composition is pursued in the Semiconductors field; this field's job is to design the compute platform so a chiplet-based part can drop into it later without re-opening the safety case", i: "medium", subs: ["Central Compute (HPC)", "Architecture Toolchain"], c: [4] },
       ],
       Environmental: [
-        { cat: "Climate Policy & Emission Regulations", p: "CAFE-III turns electronics efficiency into a compliance line — every ECU's power draw now has regulatory value", why: "Fleet fuel-consumption targets (3.73→3.01 L/100km, Apr-2027–Mar-2032) make electrical-load reduction a CAFE credit; consolidation from many ECUs to few computers cuts standby drain [11]", sowhat: "Sell zonal consolidation partly as a CAFE-compliance measure — an OEM finance argument on top of the architecture one", i: "medium", subs: ["Edge Compute", "Distributed Compute"], c: [11] },
-        { cat: "Natural Resources", p: "Power efficiency (SiC/GaN) is the EV electronics battleground — wide-bandgap devices cut inverter losses meaningfully", why: "ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Power-semiconductor positioning spans Energy and ECA fields — coordinate the play", i: "medium", subs: ["Semiconductors"], c: [5] },
+        { cat: "Climate Policy & Emission Regulations", p: "CAFE-III turns electronics efficiency into a compliance line — every ECU's power draw now has regulatory value", why: "Fleet fuel-consumption targets (3.73→3.01 L/100km, Apr-2027–Mar-2032) make electrical-load reduction a CAFE credit; consolidation from many ECUs to few computers cuts standby drain [11]", sowhat: "Sell zonal consolidation partly as a CAFE-compliance measure — an OEM finance argument on top of the architecture one", i: "medium", subs: ["Zonal Controllers", "Power Net & Distribution"], c: [11] },
+        { cat: "Natural Resources", p: "Power efficiency (SiC/GaN) is the EV electronics battleground — wide-bandgap devices cut inverter losses meaningfully", why: "ME-SiC/GaN hook already mapped in Energy field — shared frontier [5]", sowhat: "Efficient power distribution is an architecture decision — a zonal power net with smart fusing cuts harness mass and standby drain together, which is this field's contribution rather than the device physics", i: "medium", subs: ["Power Net & Distribution"], c: [5] },
       ],
       Legal: [
-        { cat: "Cybersecurity & Digital Regulations", p: "Functional-safety and cybersecurity certification deepen to silicon level — ISO 26262 + AIS-189 push requirements into chips and ECUs", why: "Security/safety requirements now flow down to silicon; certification depth becomes a structural barrier [6]", sowhat: "Certification depth favours established Tier-1s — Bosch's pedigree compounds with every regulation cycle", i: "medium", subs: ["Semiconductors", "Edge Compute"], c: [6] },
-        { cat: "IP Law", p: "Chip co-design partnerships only work if design IP is legally protected — India's IP regime is now strong enough to make them safe", why: "Custom-silicon work exposes core design IP; partners commit only where courts will enforce protection [6]", sowhat: "Put layered IP protection into every ISM design partnership before the qualification play scales — a one-time legal setup", i: "low", subs: ["Semiconductors"], c: [6] },
+        { cat: "Cybersecurity & Digital Regulations", p: "Functional-safety and cybersecurity certification deepen to silicon level — ISO 26262 + AIS-189 push requirements into chips and ECUs", why: "Security/safety requirements now flow down to silicon; certification depth becomes a structural barrier [6]", sowhat: "Certification depth favours established Tier-1s — Bosch's pedigree compounds with every regulation cycle", i: "medium", subs: ["Zonal Controllers", "Central Compute (HPC)"], c: [6] },
+        { cat: "IP Law", p: "Chip co-design partnerships only work if design IP is legally protected — India's IP regime is now strong enough to make them safe", why: "Custom-silicon work exposes core design IP; partners commit only where courts will enforce protection [6]", sowhat: "Architecture IP is the asset here — the partitioning, the safety concept and the toolchain. Protect it in every OEM co-development agreement, because a co-developed blueprint is easy to hand to a second supplier", i: "low", subs: ["Architecture Toolchain"], c: [6] },
       ],
     },
     swot: {
       S: [
-        { area: "Technology", p: "ECU & MEMS franchises with India manufacturing, M&A hooks across the silicon stack", why: "Bosch is among the world's largest ECU/MEMS makers; hooks (ECU, MEMS, power semis, ASICs) map the whole sub-field", sowhat: "Defend and grow the ECU base while leading the zonal consolidation wave" },
+        { area: "Technology", p: "One of the world's largest ECU franchises, with India manufacturing already qualified", why: "Bosch builds controllers at a scale and certification depth very few suppliers match, and the Indian plants are already IATF-qualified for safety parts", sowhat: "Defend and migrate the ECU base — it is both the revenue that funds the transition and the customer list the zonal offer is sold into" },
         { area: "Leadership", p: "Cross-domain vehicle-computer & zonal architecture leadership", why: "Bosch ships central/zonal computing globally; architecture know-how is the scarce asset in the transition", sowhat: "Sell architecture-led: win the zonal blueprint, the sockets follow" },
       ],
       W: [
-        { area: "Technology", p: "No wafer fab; advanced-node access is bought", why: "Leading-edge SoCs come from foundries and vendors (Qualcomm/NVIDIA class) outside Bosch control", sowhat: "Position as architecture integrator and qualifier of silicon — not a node competitor; ASIC/chiplet partnerships for differentiation" },
-        { area: "People", p: "India silicon-design scale is sub-critical vs the GCC giants", why: "India hosts massive chip-design talent, but mostly inside vendor GCCs, not Bosch", sowhat: "Targeted design-team build/acqui-hire under ISM DLI incentives" },
+        { area: "Technology", p: "No control over the silicon the architecture runs on", why: "Central compute performance, cost and availability are decided by Qualcomm, NVIDIA and their foundries, and Bosch is one automotive customer among many", sowhat: "Handled through the Semiconductors field rather than pretended away here — this field integrates and certifies what that field qualifies" },
+        { area: "People", p: "India has embedded engineers, not E/E architects", why: "Partitioning functions across a zonal topology while holding one coherent ISO 26262 argument is a distinct discipline, and the India bench is thin even though the raw engineering depth is not", sowhat: "Run a structured conversion programme — faster and cheaper than hiring architects who then have to learn the vehicle" },
       ],
       O: [
         { p: "Once-a-decade re-sourcing as zonal architectures land in India-built platforms", why: "Architecture transitions reopen every ECU socket; incumbentship resets", sowhat: "Aggressive zonal-controller and vehicle-computer bids on upcoming Indian EV platforms" },
-        { p: "ISM creates automotive-qualification white space", why: "New Indian fabs/OSATs need automotive-grade process qualification partners; nobody owns this role yet", sowhat: "Anchor automotive qualification of Indian silicon — strategic, government-aligned, defensible" },
+        { p: "Mid-tier OEMs need an architecture partner and cannot fund a captive team", why: "Below the top two or three, no Indian OEM can staff a hundred-engineer E/E architecture group, yet they all face the same zonal transition on the same timeline", sowhat: "Productise architecture co-development for this tier — it is the segment the majors' in-housing does not reach" },
       ],
       T: [
-        { p: "SoC vendors absorbing ECU value into central compute silicon", why: "As functions consolidate onto big SoCs, value shifts from many ECUs to few chips owned by silicon vendors", sowhat: "Move up (architecture, SW, integration) and down (ASIC/chiplet partnerships) simultaneously" },
+        { p: "SoC vendors absorbing controller value into central compute silicon and its bundled software", why: "As functions consolidate onto large SoCs, value shifts from many Bosch controllers to few vendor chips — and increasingly to the certified software the chip vendor ships with them", sowhat: "Move up into partitioning, integration and the safety case, where a chip vendor selling from outside the vehicle cannot follow" },
         { p: "OEM in-housing of E/E architecture design", why: "Top OEMs build architecture teams to control their destiny, demoting Tier-1s to build-to-print", sowhat: "Offer co-development models; monetise IP and tooling rather than only hardware" },
       ],
       tows: {
-        SO: "Use zonal architecture leadership + ECU/MEMS franchise (S) to win aggressive bids on Indian EV platform zonal controllers during the once-a-decade E/E re-sourcing window (O) — incumbency resets and Bosch's architecture knowhow is the scarce asset.",
-        ST: "Use cross-domain architecture + MEMS/ECU depth (S) to position as the integration-and-qualification integrator above the SoC (T) — moving up the value stack before silicon vendors absorb it.",
-        WO: "Overcome sub-critical India design scale (W) by anchoring the ISM automotive-qualification white space (O) using DLI incentives to build/acqui-hire chip-design teams — government alignment converts the weakness into an opportunity.",
-        WT: "Mitigate fab-absent + sub-critical design (W) against SoC absorption and OEM in-housing (T) by staying indispensable at the architecture/integration layer where both silicon vendors and OEM captives need a trusted neutral partner.",
+        SO: "Use zonal architecture leadership and the ECU franchise (S) to win the blueprint on Indian EV platforms during the once-a-decade re-sourcing window (O) — incumbency resets, and architecture know-how is the scarce input that decides who benefits.",
+        ST: "Use cross-domain architecture depth and the certified safety case (S) to hold the integration layer above the SoC (T), moving up before silicon vendors absorb it with bundled software.",
+        WO: "Overcome the thin India architect bench (W) by converting existing embedded engineers and selling architecture co-development to mid-tier OEMs who have no captive team at all (O) — one investment closes the gap and creates the customer.",
+        WT: "Mitigate no-silicon-control and a thin architect bench (W) against SoC absorption and top-tier in-housing (T) by being indispensable at the partitioning and safety-case layer, which neither a chip vendor nor a young captive team can do alone.",
       },
       targetStrategy: {
         growth: [
-          { lever: "ECU/MEMS scale + zonal architecture know-how", action: "Bid aggressively for zonal-controller and vehicle-computer sockets on upcoming Indian EV platforms" },
-          { lever: "Automotive qualification expertise", action: "Anchor automotive qualification of ISM fab/OSAT output — the unclaimed strategic role" },
+          { lever: "ECU scale plus zonal architecture know-how", action: "Bid architecture-first on every Indian platform with a post-2028 SOP, and take the controller sockets that follow the blueprint" },
+          { lever: "Certified safety-separation capability", action: "Lead the one-box cockpit-ADAS consolidation conversation, where the certification argument is the differentiator rather than the raw compute" },
         ],
         improvement: [
-          { gap: "No advanced-node silicon ownership", action: "ASIC/chiplet partnerships up and down the stack; qualify ISM silicon as it matures" },
-          { gap: "Sub-scale India chip-design team", action: "Targeted design-team build or acqui-hire under ISM DLI incentives" },
+          { gap: "No control over the silicon underneath", action: "Formalise SoC roadmap access, and source qualification through the Semiconductors field rather than duplicating it here" },
+          { gap: "Thin India E/E architect bench", action: "Convert 40–50 existing India embedded engineers into architects through a structured programme, ahead of the 2026–27 blueprint window" },
         ],
       },
-      strategy: "Lead the zonal/central-compute transition on Indian platforms, anchor automotive qualification of ISM silicon, hold the power-semiconductor line with Energy-field coordination, and watch RISC-V for sovereignty-driven programmes.",
-      scoreRationale: "Two franchise-grade strengths and a genuine once-a-decade opportunity, tempered by the structural fab gap and value migration toward SoC vendors. Strong but contested ground.",
+      strategy: "Lead the zonal and central-compute transition on Indian platforms by winning the blueprint before the RFQ, defend and migrate the domain-ECU base that funds it, attach power distribution to prove the harness saving, and source silicon through the Semiconductors field rather than pretending to control it.",
+      scoreRationale: "Franchise-grade ECU scale and genuine architecture leadership meet a once-a-decade re-sourcing window — a strong position. Tempered by no control over the silicon layer and by top-tier OEM in-housing, both real and neither closable by this field alone. Strong, contested, and time-limited.",
     },
     market: {
-      tam: 7400, sam: 2300, cagr: 16, year: 2030,
+      tam: 4600, sam: 1350, cagr: 16, year: 2030,
       derivation: [
-        { step: "India vehicle production 2030 × E/E + semiconductor content per vehicle", value: "~30M vehicles (all segments) @ blended $240 E/E-relevant content", src: "Production forecasts × content curves [7]" },
-        { step: "= TAM (ECUs, controllers, automotive semis, architecture, 2030)", value: "$7.4B", src: "Derived — estimate" },
-        { step: "Serviceable filter: merchant ECU/controller/architecture value Bosch-addressable (excl. captive silicon, in-house OEM electronics)", value: "≈31% of TAM", src: "Estimate" },
-        { step: "= SAM (2030)", value: "$2.3B", src: "Derived — estimate" },
+        { step: "India vehicle production 2030 (all segments)", value: "~30M vehicles/yr", src: "SIAM / production forecasts [7]" },
+        { step: "× compute, controller and networking content per vehicle (excl. silicon device value, excl. module assembly)", value: "blended ~$153/vehicle", src: "Teardown benchmarks; estimate [7]" },
+        { step: "= TAM (vehicle compute, ECUs, in-vehicle networking, power distribution, architecture services, 2030)", value: "$4.6B", src: "Derived — estimate" },
+        { step: "Less OEM-captive architecture and in-house electronics", value: "−48% of TAM", src: "In-housing share analysis; estimate" },
+        { step: "Less commodity ECU value Bosch will not defend on price", value: "−23% of TAM", src: "Estimate" },
+        { step: "= SAM (2030)", value: "$1.35B", src: "Derived — estimate" },
       ],
-      crossCheck: "Sanity check: India automotive semiconductor consumption alone projected $4–5B by 2030; adding ECU/controller value-add reaches the TAM corridor [1][7].",
+      buildup: {
+        tamNote: "TAM is the full India spend on vehicle compute, controllers, in-vehicle networking and the architecture services around them. Silicon device value now sits in the Semiconductors field and module assembly in Manufacturing, so nothing is counted twice.",
+        tam: [
+          { k: "Zonal controllers", v: 1150, why: "Roughly 4–6 zonal units per vehicle on a consolidated architecture, at India-cost content" },
+          { k: "Central compute / vehicle HPC", v: 980, why: "One high-performance unit per platform, concentrated in the ADAS-equipped and EV mix" },
+          { k: "Domain ECUs (residual)", v: 1420, why: "The legacy base, still the largest single slice in 2030 because consolidation is not complete" },
+          { k: "In-vehicle networking", v: 560, why: "Automotive Ethernet switches, gateways, PHYs and harness electronics" },
+          { k: "Power net & smart distribution", v: 310, why: "Smart junction boxes, solid-state fusing, zonal power management" },
+          { k: "Architecture services & toolchain", v: 180, why: "Co-development NRE, integration and the tooling sold alongside it" },
+        ],
+        samNote: "SAM is the slice Bosch can realistically win: merchant architecture and compute value, after removing what OEM captives will build themselves and the commodity ECU volume Bosch should not chase on price.",
+        sam: [
+          { k: "Zonal controllers", v: 420, why: "The decade's entry window — incumbency resets in an architecture transition", sub: "Zonal Controllers" },
+          { k: "Central compute / HPC", v: 300, why: "Bosch ships these globally; India adaptation rather than new development", sub: "Central Compute (HPC)" },
+          { k: "Domain ECUs (defensible base)", v: 390, why: "The existing franchise, migrating rather than growing", sub: "Domain ECUs" },
+          { k: "In-vehicle networking", v: 105, why: "Follows the architecture win; standards-defined so margin is thin", sub: "In-Vehicle Networking" },
+          { k: "Power net & distribution", v: 90, why: "Adjacent to existing Bosch body-electronics lines", sub: "Power Net & Distribution" },
+          { k: "Architecture services & toolchain", v: 45, why: "Small revenue, disproportionate influence — it decides the sockets below it", sub: "Architecture Toolchain" },
+        ],
+      },
+      crossCheck: "Sanity check on the split: the combined ECA field previously carried a $2.3B SAM across silicon, modules, compute and sensing data. That total is now divided — $1.35B here, $0.72B in the new Semiconductors field, $0.15B moved into Manufacturing with module assembly and $0.08B into Cloud & Data with vehicle-as-sensor. The four sum to $2.3B exactly, so the portfolio total is unchanged and each field is now scored against the market it actually serves [1][7].",
       customers: [
-        { s: "OEMs (all segments)", buy: "Zonal controllers, vehicle computers, domain ECUs", note: "Architecture transitions are the sourcing windows" },
-        { s: "Indian fabs/OSATs (ISM)", buy: "Automotive qualification, design partnerships", note: "White-space strategic channel" },
-        { s: "Tier-1s & EMS players", buy: "MEMS, power semis, ASICs", note: "Existing merchant business to defend & grow" },
+        { s: "OEM E/E architecture teams", buy: "Zonal controllers, vehicle computers, the architecture blueprint itself", note: "The real buyer — and a different room from component procurement" },
+        { s: "OEM programme directors", buy: "Integration accountability and schedule certainty", note: "They buy risk reduction; architecture failure is the biggest programme risk they carry" },
+        { s: "Mid-tier OEMs without captive E/E teams", buy: "Full architecture co-development", note: "The segment the top tier's in-housing does not reach" },
       ],
       attractiveness: {
         maturity: "Growth",
         histCagr: "~14–16% (2020–25, mandate-driven content; estimate)",
         fwdCagr: "16% (2025–30)",
-        drivers: ["Safety mandates and EV mix multiply electronics per vehicle", "Zonal transition reopens every ECU socket", "ISM building a domestic silicon ecosystem"],
-        constraints: ["Value migrating to SoC vendors at the silicon layer", "OEMs in-housing E/E architecture design", "Import dependence on advanced nodes (currency exposure)"],
+        drivers: ["Safety mandates and EV mix multiply electronics per vehicle", "Zonal transition reopens every controller socket at once", "Cyber Rules 125-T/U make the security architecture part of the compute decision"],
+        constraints: ["Value migrating into SoC vendors' software stacks", "OEMs in-housing E/E architecture design at the top tier", "Advanced-node silicon cost is dollar-denominated and outside Bosch's control"],
         access: {
-          channels: "OEM platform RFQs (architecture-led); merchant component sales; ISM partnerships",
-          partners: "Foundries & OSATs, SoC vendors, chiplet alliances",
-          barriers: "Automotive qualification and functional safety — high walls that protect incumbents",
-          localization: "ISM-qualified silicon and local ECU manufacturing — Bosch plants already qualify",
-          cac: "Architecture wins are long-cycle but very sticky; merchant components ride existing relationships",
+          channels: "OEM platform RFQs won architecture-first; co-development NRE; merchant controller sales into the migrating base",
+          partners: "SoC vendors for compute, the Semiconductors field for silicon qualification, Manufacturing for module build",
+          barriers: "ISO 26262 and AIS-189 depth — high walls that protect established Tier-1s rather than blocking them",
+          localization: "Local ECU and controller manufacturing already qualifies; the localisation gap is silicon, handled in the Semiconductors field",
+          cac: "Architecture wins are long-cycle and very sticky — one blueprint decision carries a platform generation of sockets",
         },
-        valuePool: "Commodity ECU value is compressing; profit concentrates in zonal controllers, vehicle computers and the qualification/integration layer between Indian silicon and vehicle programmes.",
+        valuePool: "Commodity controller value is compressing under annual price-downs. The profit concentrates in the zonal blueprint, the central compute unit and the architecture services that decide both — a small revenue line with disproportionate control over everything beneath it.",
         whiteSpace: [
-          { p: "Automotive qualification of ISM silicon", why: "New fabs need a qualification partner; nobody owns the role yet", sub: "Semiconductors" },
-          { p: "Zonal controllers for India-built EV platforms", why: "Sourcing opens now; incumbency resets in architecture transitions", sub: "Edge Compute" },
-          { p: "Vehicle-as-Sensor data products", why: "MEMS franchise + connectivity platforms make it a natural extension", sub: "Vehicle as Sensor" },
+          { p: "Zonal controllers for India-built EV platforms", why: "Sourcing is opening now, and an architecture transition resets incumbency — technology decides rather than history", sub: "Zonal Controllers" },
+          { p: "Architecture co-development for mid-tier OEMs with no captive E/E team", why: "The majors are in-housing; below them nobody can fund a hundred-engineer architecture group and they know it", sub: "Architecture Toolchain" },
+          { p: "Zonal power net with solid-state distribution", why: "Harness mass and standby drain are both CAFE-relevant, and no Indian supplier is selling the two together", sub: "Power Net & Distribution" },
         ],
-        profitability: "Commodity ECUs margin-compressed; architecture wins and qualification services carry durable margin",
+        profitability: "Commodity controllers margin-compressed; the zonal blueprint, central compute and architecture services carry durable margin",
       },
-      scoreRationale: "Large SAM with structural content growth, discounted for value migration to SoC vendors and OEM captives. Evidence base: content-per-vehicle curves and merchant-share splits are estimates.",
+      scoreRationale: "$1.35B SAM at 16% CAGR once silicon, modules and sensing data are scored as their own businesses. Growth is structural because safety mandates and EV mix add electronics regardless of the economic cycle, discounted for value migration into SoC vendors' software and for top-tier OEM in-housing. Evidence base: production forecasts are firm; the content-per-vehicle split and the in-housing share are ours.",
     },
     porter: [
       { force: "Rivalry", v: 6.5, why: "Global Tier-1s (Continental, Aptiv, Denso, Visteon) plus rising Indian electronics players compete for the zonal wave; discipline holds because validation costs deter price wars.", drivers: ["Tier-1 set converging on zonal", "Indian EMS/electronics risers"], c: [8] },
@@ -1636,41 +1672,73 @@ const DATA = {
     competency: [
       { name: "ECU design & manufacturing", bosch: 9, req: 8, whyReq: "Cost-optimised, safety-certified controllers at Indian volumes (8)", whyBosch: "Among world's largest; India plants operating (9)", gap: "none — exceed", gapWhy: "The base to defend and migrate" },
       { name: "Zonal/central-compute architecture", bosch: 9, req: 9, whyReq: "The transition is the entry window; blueprint owners win sockets (9)", whyBosch: "Global vehicle-computer programmes shipping (9)", gap: "none — match", gapWhy: "Lead asset for the decade" },
-      { name: "Advanced silicon (SoC/chiplet) access", bosch: 5, req: 8, whyReq: "Central compute performance defined at silicon level (8)", whyBosch: "ASIC capability + partnerships, no leading-edge ownership (5)", gap: "partner", gapWhy: "Chiplet/ASIC alliances; qualify ISM silicon" },
-      { name: "MEMS & power semiconductors", bosch: 9, req: 7, whyReq: "Sensing + efficient power conversion across EVs (7)", whyBosch: "Franchise businesses with hooks mapped (9)", gap: "none — exceed", gapWhy: "Cash-generative defensive base; Energy-field synergy" },
-      { name: "RISC-V / sovereign compute", bosch: 4, req: 6, whyReq: "DIR-V momentum may make RISC-V a procurement criterion in sovereignty-sensitive programmes (6)", whyBosch: "Limited RISC-V automotive investment to date (4)", gap: "build (watch)", gapWhy: "Low-cost optionality: one evaluation programme, scale on trigger" },
+      { name: "Advanced silicon (SoC) access", bosch: 5, req: 8, whyReq: "Central compute performance is decided at silicon level, and Bosch does not own that level (8)", whyBosch: "Strong ASIC competence and vendor partnerships, no leading-edge ownership (5)", gap: "partner", gapWhy: "Sourced through the Semiconductors field rather than closed here — this field integrates and certifies what that field qualifies" },
+      { name: "In-vehicle networking & gateway design", bosch: 8, req: 7, whyReq: "Automotive Ethernet, service-oriented gateways and deterministic timing across a zonal topology (7)", whyBosch: "Established gateway and networking franchise, standards-defined so no differentiation gap (8)", gap: "none — exceed", gapWhy: "Comes with the architecture win; not worth pursuing standalone" },
+      { name: "Power net & smart distribution", bosch: 7, req: 7, whyReq: "Solid-state fusing, zonal power management and harness reduction at India cost (7)", whyBosch: "Adjacent to existing body-electronics and semiconductor-switch competence (7)", gap: "none — match", gapWhy: "Attach to the zonal offer — it is where the harness saving is actually realised" },
+      { name: "Architecture partitioning & safety case", bosch: 8, req: 9, whyReq: "Splitting functions across a zonal topology while holding one coherent ISO 26262 argument is the scarce skill in the transition (9)", whyBosch: "Deep globally, thinner in India where the architects have to be converted from embedded teams (8)", gap: "build", gapWhy: "Convert existing India embedded engineers into architects — faster than hiring architects who then learn the vehicle" },
     ],
     horizons: {
       h1: [
-        { item: "Domain ECUs & MEMS/power-semi merchant growth on rising E/E content", why: "Safety mandates and EV mix grow today's sockets — revenue now" },
+        { item: "Domain ECUs and gateways on rising E/E content", why: "Safety mandates and EV mix grow today's sockets whatever happens to the architecture — this is the revenue that funds the transition" },
+        { item: "Architecture co-development NRE with platforms now in design", why: "Tata AVINYA and Mahindra INGLO are fixing their blueprints in 2026–27; the consulting revenue is billable before any hardware ships" },
       ],
       h2: [
-        { item: "Zonal controllers + vehicle computers on Indian EV platforms", why: "Global zonal designs reach India-built platforms over the next 2–4 years; sourcing already opening", trigger: "First India-built volume platform sourcing zonal architecture" },
-        { item: "Automotive qualification of ISM fab/OSAT output", why: "Indian fabs reach production in this window; automotive-grade comes after consumer", trigger: "ISM fab achieving automotive-relevant process maturity" },
+        { item: "Zonal controllers on India-built EV platforms", why: "Global zonal designs reach India-built platforms over 2–4 years, and the sourcing window is already opening", trigger: "First India-built volume platform sourcing a zonal architecture" },
+        { item: "Central compute unit on an India platform", why: "The silicon is available today; OEM architecture cycles put volume 2–4 years out", trigger: "An Indian OEM sourcing a single vehicle computer across ADAS and body domains" },
+        { item: "Zonal power net with solid-state distribution", why: "The harness saving is provable now but needs a zonal platform to land on", trigger: "A platform specifying smart junction boxes in place of conventional fusing" },
       ],
       h3: [
-        { item: "Chiplet-based custom vehicle compute & RISC-V programmes", why: "Chiplet standards (UCIe) and automotive RISC-V toolchains are 5+ years from Indian volume", trigger: "UCIe-based automotive design wins announced globally" },
-        { item: "Quantum sensing in vehicles (hook mapped)", why: "Lab-to-vehicle transition for quantum MEMS/magnetometers exceeds 5 years", trigger: "Quantum sensor cost crossing automotive thresholds" },
+        { item: "Chiplet-composed vehicle compute", why: "UCIe automotive parts and the toolchains around them are 5+ years from Indian volume; the design decision that matters now is keeping the platform able to accept one", trigger: "UCIe-based automotive design wins announced globally" },
+        { item: "Software-defined power topology", why: "Fully software-controlled power distribution needs solid-state switching at commodity cost, which is not there yet", trigger: "Solid-state fusing reaching cost parity with conventional fuses" },
       ],
-      rationale: "H1 grows on mandates, H2 holds the decisive architecture window plus the ISM white space, H3 is speculative but hook-mapped. Depth across horizons with India-specific triggers.",
+      rationale: "H1 is real revenue today from the migrating ECU base plus billable architecture NRE, H2 holds the decisive blueprint window with three observable triggers, and H3 is a design-for-optionality position rather than an investment. Removing the silicon items to their own field makes this pipeline honest — it is an architecture roadmap now, not a mixed bag.",
     },
     verdict: {
-      entry: "Lead the zonal transition on Indian platforms while defending the ECU/MEMS/power-semi base; anchor automotive qualification of ISM silicon; ASIC/chiplet partnerships for compute differentiation; RISC-V as funded optionality.",
+      entry: "Win the blueprint, not the box. Bid architecture-first on the Indian platforms fixing their E/E topology in 2026–27, take the zonal and central-compute sockets that follow, and defend the domain-ECU base that funds the transition. Silicon is sourced through the Semiconductors field and module build through Manufacturing. Convert India embedded engineers into architects now, because the scarce skill in this transition is partitioning rather than coding.",
       reasoning: [
-        "Competency fit and horizon depth: franchise strength meets a once-a-decade architecture re-sourcing window",
-        "The market is structurally growing but industry structure flags real value migration to SoC vendors — hence the partner-up/partner-down silicon strategy",
-        "The SWOT posture nets to contested-but-favourable ground; the ISM qualification white space is the differentiated, India-specific move",
+        "Architecture know-how is the scarce input in an E/E transition, and it is the one thing Bosch has more of than any competitor in India — silicon can be bought, a blueprint cannot",
+        "The window is a design-phase window: platforms with a post-2028 SOP are being partitioned now, and that decision carries a full platform generation of sockets",
+        "Narrowing the field removes the two arguments that used to muddy it — Bosch does not need a fab, and does not need to win module assembly twice, to win here",
+        "The honest constraint is that the buyer is an OEM architecture team rather than component procurement, and that relationship has to be built deliberately",
       ],
       portfolio: [
-        { sub: "Edge Compute", play: "LEAD", why: "Zonal/vehicle-computer sockets — the decade's entry window" },
-        { sub: "Distributed Compute", play: "LEAD", why: "Existing ECU base migrating under Bosch architecture leadership" },
-        { sub: "Vehicle as Sensor", play: "LEAD", why: "MEMS franchise + data platforms from Connectivity field" },
-        { sub: "Semiconductors", play: "PARTNER", why: "ASIC and chiplet alliances plus the automotive-qualification role for ISM silicon. No fab ambition — Bosch qualifies and integrates other people's wafers rather than making them" },
-        { sub: "EMS & Modules", play: "LEAD", why: "A different business from silicon: module assembly and ECU build on Bosch's own IATF-certified India lines, where the constraint is capacity utilisation rather than wafer access. Coordinate with the Manufacturing field's MaaS play so the two are not sold twice" },
-        { sub: "AI Compute", play: "PARTNER", why: "NPU/accelerator via silicon partners; Bosch owns integration" },
-        { sub: "Comm. Tech", play: "WATCH", why: "In-vehicle networking tracked within architecture scope" },
+        { sub: "Zonal Controllers", play: "LEAD",
+          what: "Zonal control units — typically four to six per vehicle — plus the partitioning that decides what runs on each one.",
+          why: "This is the decade's re-sourcing event. When an OEM moves from seventy distributed ECUs to a handful of zonal units, every socket in the vehicle is decided again from scratch and history counts for very little. Bosch already ships vehicle computers globally, so it arrives with a production reference rather than a proposal. The harness saving — around 40% less copper, 10 to 15 kg per vehicle — usually pays for the controller cost on its own, which is what carries the case through a cost review it would otherwise lose.",
+          winCondition: "Bosch has to be in the architecture conversation during platform design, not at the RFQ. That means an OEM-architect relationship rather than a procurement one.",
+          ifWrong: "If the top-tier OEMs complete their in-housing faster than expected, this becomes a mid-tier-only play and the addressable pool roughly halves." },
+        { sub: "Central Compute (HPC)", play: "LEAD",
+          what: "The single high-performance vehicle computer running ADAS, body and increasingly cockpit workloads together, with the safety separation between them certified.",
+          why: "One-box consolidation cuts ECU count, wiring and assembly cost at the same time, and the silicon to do it exists today. What does not exist at most suppliers is the ability to certify freedom from interference between a braking function and an infotainment app sharing the same hardware. Bosch's ISO 26262 pedigree is exactly that capability, and it is not something a competitor can acquire in a year.",
+          winCondition: "A formal roadmap-access agreement with Qualcomm or NVIDIA. Without allocation visibility Bosch is quoting a platform it cannot promise to deliver.",
+          ifWrong: "If SoC vendors bundle a complete certified software stack with the chip, the integration value compresses and this drops to PARTNER." },
+        { sub: "Domain ECUs", play: "LEAD",
+          what: "The existing controller franchise — body, chassis and powertrain ECUs — plus the migration path that carries their functions onto zonal hardware.",
+          why: "This is the cash-generative base and it has to be defended and migrated at once. Safety mandates keep adding controllers in the near term, so the base grows before it shrinks. The strategic point is that if Bosch does not carry its own ECU customers into the zonal architecture, a competitor will offer to — and that competitor then owns the blueprint.",
+          winCondition: "Migration has to be offered proactively as a de-risking service. OEMs fear transition risk considerably more than they mind transition cost.",
+          ifWrong: "If legacy ECU revenue declines faster than zonal wins replace it, the field is shrinking rather than transforming. That crossover is the single metric to watch." },
+        { sub: "Power Net & Distribution", play: "LEAD",
+          what: "Smart junction boxes, solid-state fusing and zonal power management — the electrical half of the zonal architecture.",
+          why: "Nobody in India is selling harness reduction and standby-drain reduction as one proposition, and CAFE-III makes both count from Apr-2027. It is a small revenue line, but it is where the zonal harness saving is actually realised, which makes it the proof point for the whole architecture argument rather than an accessory to it.",
+          winCondition: "Attach it to the zonal controller offer. Sold standalone it looks like a fuse box and loses on price, because the buyer cannot see the system saving.",
+          ifWrong: "If solid-state switching stays materially more expensive than conventional fusing, this remains a premium-segment feature rather than a volume one." },
+        { sub: "Architecture Toolchain", play: "LEAD",
+          what: "Co-development of the E/E blueprint itself, plus the partitioning, simulation and safety-case tooling sold alongside it.",
+          why: "The smallest revenue line in the field and by a distance the most influential — whoever writes the blueprint has effectively chosen the supplier for everything beneath it. Mid-tier OEMs are the clearest customers, because they face the same architecture problem as the majors with a fraction of the engineering headcount and would rather buy the answer than staff it.",
+          winCondition: "Bosch has to be willing to sell the blueprint even where it does not yet hold the hardware award. The consulting revenue is small; the positional value is not.",
+          ifWrong: "If OEMs treat a co-developed blueprint as their own IP and hand it to a second supplier, the influence evaporates — which is why the Legal dimension flags the IP clauses." },
+        { sub: "In-Vehicle Networking", play: "PARTNER",
+          what: "Automotive Ethernet switching, gateways and service-oriented communication within the architecture scope.",
+          why: "Standards-defined and therefore commoditising, which leaves very little room to differentiate. It comes with the architecture win rather than being sold separately, and pursuing it alone would mean competing on price in a layer whose specification is written by a standards body rather than by Bosch.",
+          winCondition: "Bundle it. There is no standalone case worth resourcing.",
+          ifWrong: "Only a networking technology shift large enough to reopen sourcing independently of the architecture would change this." },
       ],
-      risks: ["Value concentration at SoC layer outpacing Bosch's move up-stack", "ISM timelines slipping, deferring the qualification white space", "OEM architecture in-housing reducing Tier-1 scope"],
+      risks: [
+        "SoC vendors bundling certified software stacks and absorbing the integration value faster than Bosch moves up into architecture services",
+        "Tata and Mahindra completing E/E in-housing, which would cap this field to the mid-tier and roughly halve the addressable SAM",
+        "Legacy domain-ECU revenue declining faster than zonal wins replace it — the crossover metric that decides whether this field is transforming or shrinking",
+        "Architecture IP leaking through co-development agreements, letting an OEM hand Bosch's blueprint to a cheaper supplier",
+      ],
     },
     activity: [
       { d: "Jun 05, 2026", t: "ISM fab project announces process milestone; automotive qualification roadmap teased", s: "Mint" },
@@ -1687,16 +1755,17 @@ const DATA = {
     competitors: [
       { name: "Continental (VDC / E/E architecture)", type: "global", x_price_position: 7, y_tech_depth: 9, moat: "Full E/E architecture portfolio + domain controller leadership", reasoning: "The closest global peer; competes on architecture and domain controllers." },
       { name: "ZF (ZF ProAI / compute platform)", type: "global", x_price_position: 7, y_tech_depth: 8, moat: "Central compute + ADAS integration", reasoning: "Moving up from chassis into compute; overlaps with Bosch vehicle-computer strategy." },
-      { name: "Qualcomm / NVIDIA (silicon-led architecture)", type: "global", x_price_position: 9, y_tech_depth: 10, moat: "Leading-edge SoC + OEM software platforms", reasoning: "The value-absorption threat; Bosch must stay above as the architecture integrator." },
+    { name: "Qualcomm / NVIDIA (silicon-led architecture)", type: "global", x_price_position: 9, y_tech_depth: 10, moat: "Leading-edge SoC plus an increasingly complete certified software stack shipped with it", reasoning: "The value-absorption threat rather than a like-for-like rival. Bosch stays above them at the partitioning and safety-case layer, which a supplier selling from outside the vehicle cannot occupy." },
       { name: "Tata Elxsi / LTTS (E/E consulting)", type: "indian-incumbent", x_price_position: 4, y_tech_depth: 6, moat: "India OEM relationships + E/E consulting", reasoning: "Services-led; Bosch counters with product IP and engineering accountability." },
-      { name: "Bosch (target position)", type: "global", x_price_position: 7, y_tech_depth: 9, moat: "Zonal architecture IP + ECU/MEMS franchise + India manufacturing", reasoning: "Defends ECU base, leads zonal transition, anchors ISM qualification — multi-layer position." },
+    { name: "Bosch (target position)", type: "global", x_price_position: 7, y_tech_depth: 9, moat: "Zonal architecture IP + one of the world's largest ECU franchises + certified safety separation + India manufacturing", reasoning: "Wins by owning the blueprint rather than the box: partitioning, the safety case and the controllers that follow from both — a position neither a chip vendor nor a services house can hold." },
     ],
-    competitorWhiteSpace: "Automotive qualification of Indian ISM silicon — no incumbent owns this role yet; being the first to certify India-fab parts for series production creates a defensible, government-aligned moat.",
+  competitorWhiteSpace: "Architecture co-development for the mid-tier OEMs the majors' in-housing does not reach. Continental competes on breadth, KPIT on services cost and the SoC vendors on silicon — but none of them offers a mid-size Indian OEM a partitioned zonal blueprint with the safety case already argued. That is a specific, currently unoccupied position, and it decides every controller socket beneath it.",
     suppliers: [
-      { input: "Automotive SoCs (Qualcomm/NVIDIA class)", supply_risk: 9, profit_impact: 9, quadrant: "strategic", reasoning: "Most critical external dependency; allocation risk is structural — manage via multi-source and ASIC/chiplet strategy." },
-      { input: "MEMS sensors (internal + STMicro/Infineon)", supply_risk: 5, profit_impact: 7, quadrant: "leverage", reasoning: "Bosch is itself a MEMS leader; partial internal supply reduces risk." },
-      { input: "SiC/GaN power semiconductors", supply_risk: 7, profit_impact: 8, quadrant: "strategic", reasoning: "EV power electronics; supply constrained and performance-critical — coordinate with Energy field." },
-      { input: "PCB / OSAT (OSATs in India)", supply_risk: 5, profit_impact: 5, quadrant: "leverage", reasoning: "India OSAT ecosystem growing; lower risk than offshore assembly." },
+    { input: "Automotive SoCs (Qualcomm/NVIDIA class)", supply_risk: 9, profit_impact: 9, quadrant: "strategic", reasoning: "The most critical external dependency in the field. Allocation risk is structural and Bosch has no leverage over it — which is why roadmap-access agreements matter commercially, not just technically." },
+    { input: "Automotive MCUs (domain and zonal controllers)", supply_risk: 6, profit_impact: 8, quadrant: "strategic", reasoning: "Infineon, Renesas and NXP dominate; allocation-sensitive but multi-sourceable at the design stage if the architecture is written to allow it." },
+    { input: "Automotive Ethernet switches and PHYs", supply_risk: 5, profit_impact: 6, quadrant: "leverage", reasoning: "Standards-defined with several credible vendors — competitive supply and no chokepoint." },
+    { input: "Power switches for smart distribution", supply_risk: 6, profit_impact: 6, quadrant: "bottleneck", reasoning: "Solid-state fusing depends on a narrow set of qualified high-current switches; the Semiconductors field carries the device-level exposure." },
+    { input: "Module assembly capacity", supply_risk: 4, profit_impact: 5, quadrant: "leverage", reasoning: "Sourced from Bosch's own IATF lines through the Manufacturing field rather than bought externally — an internal transfer, not a supply risk." },
     ],
     sources: ["ISM project approvals & DLI scheme", "E/E content-per-vehicle curves", "Chip-shortage impact retrospectives", "Zonal architecture & DIR-V briefings", "SiC/GaN efficiency studies", "ISO 26262/AIS-189 silicon implications", "Production & semiconductor consumption forecasts", "Tier-1 competitive award trackers", "WPC 5.9 GHz & 77–81 GHz de-licensing notifications (Jun-2026)", "RBI MPC Aug-2026", "BEE CAFE-III draft"],
   },
@@ -1944,7 +2013,7 @@ const DATA = {
       scoreRationale: "Genuinely scarce assets (certified capacity, digitalisation practice) meet a structural margin-model weakness. The strategy works only with strict scope discipline — this assessment prices that execution risk.",
     },
     market: {
-      tam: 12000, sam: 1800, cagr: 18, year: 2030,
+      tam: 12000, sam: 1950, cagr: 18, year: 2030,
       derivation: [
         { step: "India EMS/electronics contract manufacturing 2030 (all industries)", value: "$12B+", src: "Industry forecasts [7]" },
         { step: "Of which automotive-grade & high-reliability segments", value: "~$3.2B", src: "Segment split; estimate" },
@@ -2015,6 +2084,11 @@ const DATA = {
         "The horizon pipeline and SWOT posture support a bounded capacity-utilisation-plus-solutions play rather than an EMS empire — a gated bet, not full commitment",
       ],
       portfolio: [
+        { sub: "Automotive Module Assembly", play: "LEAD",
+          what: "ECU and electronics module build on Bosch's own IATF 16949-certified India lines, sold as capacity to global Tier-1s and OEMs rather than consumed internally.",
+          why: "This business used to be scored inside the Electronic Control Architectures field, where the old verdict itself warned that the two plays must not be sold twice. It belongs here, because the constraint is capacity utilisation rather than wafer access or architecture know-how. The powertrain transition is freeing certified lines exactly as China+1 buyers are looking for them, and certified capacity — not capacity — is the scarce asset.",
+          winCondition: "A dedicated commercial team that can sell manufacturing as a service. Plant organisations cannot carry this sale and component account managers do not reach the buyer.",
+          ifWrong: "If the EMS champions acquire automotive-grade certification at scale, the premium this niche commands erodes and the play narrows to Bosch's own internal build." },
         { sub: "Contract Mfg (MaaS)", play: "LEAD", why: "Certified spare capacity for China+1 — the scarce-asset play" },
         { sub: "Industry 5.0", play: "LEAD", why: "Digitalisation solutions — software margins on manufacturing know-how" },
         { sub: "EMS", play: "PARTNER", why: "Commodity EMS via partnerships/customer role only — never head-on" },
@@ -3431,12 +3505,12 @@ const V6 = {
   eca: {
     market: {
       scurve: "Early Adoption",
-      bizModel: "HW sales (ECUs, controllers, MEMS) + NRE fees (architecture co-development) + qualification services (ISM silicon)",
-      revenue: [
-        { k: "Hardware", v: "~75% today", note: "ECUs, zonal controllers, MEMS, power semis — the franchise base" },
-        { k: "Software", v: "~12%, rising", note: "Basic software, drivers, architecture tooling" },
-        { k: "Services", v: "~10%", note: "Architecture co-development NRE + ISM qualification — strategic" },
-        { k: "Data monetization", v: "~3%", note: "Vehicle-as-Sensor data products with Connectivity field" },
+    bizModel: "Controller and compute hardware + architecture co-development NRE + basic-software and toolchain licences. Silicon device revenue sits in the Semiconductors field and module build in Manufacturing, so this mix is compute and architecture only.",
+    revenue: [
+      { k: "Hardware", v: "~72%", note: "Zonal controllers, vehicle computers, domain ECUs, gateways — the volume base" },
+      { k: "Software", v: "~18%, rising", note: "Basic software, partitioning and safety tooling, architecture licences" },
+      { k: "Services", v: "~10%", note: "Architecture co-development NRE and integration — small revenue, decisive influence" },
+      { k: "Data monetization", v: "~0%", note: "Deliberately none — vehicle-derived data is monetised in the Cloud & Data field" },
       ],
     },
     porterDetail: {
@@ -3457,8 +3531,8 @@ const V6 = {
       { cat: "Leadership", need: "Long-cycle commitment to the ISM qualification role", current: 6, target: 8, priority: "Medium" },
       { cat: "Collaboration", need: "Foundries, OSATs, chiplet alliances, DIR-V programme", current: 5, target: 8, priority: "High" },
     ],
-    competencyRemark: "Bosch's ECU/MEMS franchise is the strongest asset in the portfolio. The two builds that matter: an India silicon-design team (DLI makes it affordable) and the ISM qualification role — claim it before anyone else defines it.",
-    competitorDynamics: { count: "Global Tier-1s (Continental, Aptiv, Denso, Visteon) + rising Indian EMS/electronics players + SoC vendors moving up", concentration: "Moderate — the zonal transition is re-shuffling established positions", winWhere: "Zonal controllers and vehicle computers on India-built platforms; ISM qualification white space; merchant MEMS/power-semi defence", positioning: "The architecture leader with manufacturing scale — the only player spanning silicon partnerships to vehicle computers in India" },
+    competencyRemark: "The ECU franchise and the zonal architecture knowledge are the two strongest assets Bosch brings to any field in this portfolio. Neither of the remaining gaps is a technology gap: the field needs E/E architects converted from the existing India embedded organisation, and it needs a relationship with the OEM architecture team rather than with procurement. Both are organisational builds with known lead times, and both have to start before the 2026–27 blueprint window rather than during it.",
+    competitorDynamics: { count: "Global Tier-1s (Continental, Aptiv, Denso, Visteon), India software houses moving up (KPIT, Tata Elxsi), SoC vendors moving down, plus OEM captives", concentration: "In flux — the zonal transition is actively re-shuffling positions that had been stable for a decade", winWhere: "The zonal blueprint on India-built platforms, and architecture co-development for the mid-tier OEMs the majors' in-housing does not reach", positioning: "The architecture authority with manufacturing scale behind it — Bosch can both design the topology and build what sits on it, which neither a services house nor a chip vendor can claim" },
     competitorAssessment: { strengths: "Global Tier-1s: equivalent qualification pedigree and global OEM ties. SoC vendors: silicon ownership and software ecosystems.", weaknesses: "Most rivals lack Indian manufacturing depth; SoC vendors lack vehicle-integration accountability — OEMs complain about integration support.", opportunities: "ISM qualification role (unclaimed), zonal sockets on Indian EV platforms, RISC-V optionality via DIR-V.", threats: "Value migrating into SoCs faster than Bosch moves up-stack; an OEM-captive architecture team cutting Tier-1s to build-to-print." },
     supplierAnalysis: {
       tech: "EDA tools (Synopsys/Cadence — duopoly, manage via alliances), foundry access (TSMC-class — allocation risk).",
@@ -3478,14 +3552,13 @@ const V6 = {
     },
     research: { note: "RISC-V (DIR-V/Shakti) and chiplet research in India is ahead of any automotive deployment — a sovereignty-driven pipeline forming outside classic Tier-1 channels.", gap: "Automotive-grade qualification is the missing bridge between ISM research output and vehicle programmes — exactly the role Bosch should claim." },
     activityMeta: [
-      { sf: "+", bosch: "+", impact: "Fab progress moves the automotive-qualification white space from theoretical to addressable." },
-      { sf: "+", bosch: "+", impact: "Security requirements reaching silicon widen the certification moat that favours established Tier-1s." },
-      { sf: "+", bosch: "0", impact: "Component sovereignty policy is directionally helpful but does not yet change Bosch's silicon access." },
-      { sf: "+", bosch: "+", impact: "Cabinet-level commitment gives the qualification-partner role a multi-year policy foundation." },
-      { sf: "+", bosch: "+", impact: "Committed capital at this scale makes India-qualified automotive silicon a planning assumption rather than a hope." },
-      { sf: "+", bosch: "+", impact: "A funded talent pipeline eases the design-team build Bosch's competency gap requires." },
-      { sf: "+", bosch: "+", impact: "Priority status improves Bosch's standing when bidding for qualification and design partnerships." },
-      { sf: "+", bosch: "+", impact: "The architecture transition is the once-a-decade re-sourcing window Bosch's zonal leadership targets." },
+      { sf: "+", bosch: "+", impact: "Security folded into the architecture decision plays to the one claim a chip vendor cannot make — a certified safety and security case argued at vehicle level." },
+      { sf: "+", bosch: "+", impact: "This is the window itself. Blueprints being fixed now decide controller sourcing for a platform generation." },
+      { sf: "+", bosch: "+", impact: "More reserved compute and sensing headroom means a larger and more defensible architecture rather than a cheaper one." },
+      { sf: "+", bosch: "+", impact: "A regulated reason to care about standby drain turns the zonal power-net argument from engineering preference into compliance value." },
+      { sf: "+", bosch: "-", impact: "Bundled vendor software eats exactly the integration layer Bosch is trying to occupy — the clearest structural threat in this field." },
+      { sf: "+", bosch: "-", impact: "Top-tier in-housing caps the addressable market and pushes Bosch toward the mid-tier, which is smaller but genuinely unserved." },
+      { sf: "+", bosch: "+", impact: "A saving a finance director can verify is what lets the architecture case survive the cost review it would otherwise lose." },
     ],
     activityTrend: [{ p: "2011–15", n: 5 }, { p: "2016–20", n: 12 }, { p: "2021–25", n: 26 }, { p: "2026 YTD", n: 7 }],
   },
@@ -5515,7 +5588,7 @@ V8.eca = {
     T: [{impact:3,probability:5},{impact:5,probability:3},{impact:3,probability:3},{impact:3,probability:3},{impact:3,probability:3}],
   },
   market: {
-    samUSD: 2300000000, cagrPct: 16,
+    samUSD: 1350000000, cagrPct: 16,
     scurveScore: 5, scurveWhy: "V6 explicitly tags ECA as Early Adoption — AIS-189/zonal standards are crystallising now and Bosch can lock in proprietary architecture designs via the ISM qualification role.",
     revenueQualityScore: 3, revenueQualityWhy: "75% hardware, ~12% software, ~10% services (NRE/qualification) — a hybrid HW+NRE model, not SaaS-dominant, so mid-tier revenue quality.",
     profitabilityScore: 3, profitabilityWhy: "Franchise ECU/MEMS margins are standard Tier-1; commodity ECU value is compressing while architecture/qualification services carry a premium, netting to standard automotive margins overall.",
@@ -5607,7 +5680,7 @@ V8.manufacturing = {
     T: [{impact:3,probability:5},{impact:3,probability:3},{impact:3,probability:1},{impact:1,probability:5},{impact:3,probability:5}],
   },
   market: {
-    samUSD: 1800000000, cagrPct: 18,
+    samUSD: 1950000000, cagrPct: 18,
     scurveScore: 4, scurveWhy: "V6 tags manufacturing as Early Majority — PLI and China+1 are driving mass adoption of contract manufacturing, with Bosch's certified-niche strategy positioned at the premium edge of that wave.",
     revenueQualityScore: 3, revenueQualityWhy: "70% one-time build-fee hardware revenue, but a rising 15% digitalisation-solutions licence stream explicitly called 'the margin engine' makes this a genuine HW+SW hybrid, not pure commodity.",
     profitabilityScore: 1, profitabilityWhy: "Commodity EMS margins (3-5%) sit structurally below Bosch's hurdle rate — the dominant characterisation across both market and Porter data — even though the certified niche and solutions business carry better economics.",
@@ -6580,31 +6653,30 @@ V8.eca.competency = {
 };
 
 DATA.eca.activity = [
-  { d: "Sep 04, 2026", t: "ISM 2.0 progresses with 12 approved semiconductor units and ₹1.64 lakh Cr committed — automotive-grade qualification remains the unclaimed bridge between Indian fabs and vehicle programmes", s: "India Semiconductor Mission" },
-  { d: "Sep 01, 2026", t: "AIS-189 compliance from Oct-2026 pushes cybersecurity requirements down to the ECU and silicon layer, widening the certification moat around established Tier-1s", s: "MoRTH" },
-  { d: "Aug 25, 2026", t: "₹7,300 Cr rare-earth magnet scheme and ₹1,500 Cr critical-minerals recycling allocation signal that component sovereignty now drives electronics policy", s: "PIB / NCMM" },
-  { d: "Jul 15, 2026", t: "Union Cabinet approves India Semiconductor Mission 2.0 framework spanning chip design, fabrication, packaging and talent development", s: "PIB / IMPRI" },
-  { d: "Jul 18, 2026", t: "12 semiconductor manufacturing units now approved under ISM with over ₹1.64 lakh Cr cumulative committed investment", s: "India Semiconductor Mission" },
-  { d: "Aug 01, 2026", t: "First batch of the ISM–NAMTECH manufacturing-leadership talent programme begins, targeting the automotive-chip skills pipeline", s: "NAMTECH" },
-  { d: "Jul 20, 2026", t: "Automotive electronics named a priority growth vertical under the expanded India Semiconductor Mission 2.0 scope", s: "Invest India" },
-  { d: "Jul 08, 2026", t: "Zonal E/E architecture transition continues to reshape OEM electronics sourcing as AIS-189 compliance requirements bite", s: "Industry analysis" },
+  { d: "Sep 09, 2026", t: "Cyber Rules 125-T/125-U take effect for L3+ ADAS models from Oct-2026, pulling the zonal controller and its update path inside the vehicle-level CSMS audit — the architecture and the security architecture become one sourcing decision", s: "MoRTH" },
+  { d: "Sep 05, 2026", t: "Indian platforms with post-2028 start of production move into E/E partitioning, opening the blueprint window that decides controller sourcing for a full platform generation", s: "Industry analysis" },
+  { d: "Sep 01, 2026", t: "BNCAP 2.0 (Oct-2027) adds a scored 10-point Accident Avoidance pillar, raising the compute and sensing headroom an architecture must reserve rather than leaving it to trim level", s: "MoRTH / AIS-197 Rev 1" },
+  { d: "Aug 27, 2026", t: "CAFE-III fleet targets (Apr-2027 onward) make standby electrical drain a compliance line, strengthening the harness-and-power case for zonal consolidation", s: "BEE draft" },
+  { d: "Aug 14, 2026", t: "SoC vendors continue bundling certified software stacks with automotive silicon, compressing the middleware layer between the chip and the vehicle function", s: "Industry analysis" },
+  { d: "Aug 02, 2026", t: "Tata and Mahindra deepen in-house E/E architecture capability, narrowing third-party blueprint scope at the top tier while leaving the mid-tier unserved", s: "Industry analysis" },
+  { d: "Jul 22, 2026", t: "Zonal architectures cut wiring-harness copper by around 40%, worth 10–15 kg per vehicle — a saving a finance director can verify, which is what carries the architecture case through a cost review", s: "Architecture analysis" },
 ];
 
 DATA.eca.verdict.aiAnalyst = {
   whereWeWin: [
-    "ECU/MEMS franchise businesses and zonal architecture leadership are core Bosch DNA — a decisive competency moat that doesn't depend on the fab-access gap being solved",
-    "ISM 2.0's ₹1,27,500 Cr July 2026 approval and automotive electronics being named a priority vertical create a multi-year policy tailwind for India-qualified silicon partners like Bosch",
-    "AIS-189's mandatory CSMS requirement (October 2026 deadline for L3+ vehicles) makes Bosch's certified ECA platform the compliance-ready answer OEMs need now, not eventually",
-    "Tata AVINYA and Mahindra INGLO SdV platform programmes are actively defining their ECA architecture today — a live, narrow window Bosch can still win",
+    "Architecture know-how is the scarce input in an E/E transition, and Bosch has more of it than any competitor in India — silicon can be bought, a blueprint cannot",
+    "Cyber Rules 125-T/125-U from October 2026 fold the security architecture into the compute decision, which is the one argument a chip vendor selling from outside the vehicle cannot make",
+    "Tata AVINYA and Mahindra INGLO are partitioning their architectures right now — a live, dated window rather than a general opportunity",
+    "The harness saving from zonal consolidation is around 40% of copper and 10–15 kg per vehicle, and a finance director can verify it, which is what carries the case through a cost review",
   ],
   exposure: [
-    "On the single most critical, highest-value input — foundry-fabricated SoCs — Bosch remains one of many customers with no allocation leverage, and ISM 2.0 fab capacity is still years from automotive-grade volume",
-    "Continental's full E/E architecture breadth and domain-controller leadership make it the closest global peer with comparable scale",
-    "KPIT Technologies is expanding aggressively into India OEM ECA software with credible BMW-validated middleware credentials",
-    "Prior ECA programme struggles at US/European OEMs have made conservative India OEM engineering leadership genuinely cautious about full ECA commitments",
+    "SoC vendors are bundling certified software stacks with their silicon, compressing exactly the integration layer this field is trying to occupy",
+    "Tata and Mahindra are building genuine in-house E/E capability, which caps the addressable market to the mid-tier and roughly halves the SAM if it completes",
+    "The buyer is an OEM architecture team, and Bosch's India relationships are deeper in procurement than in the room where partitioning is decided",
+    "India has embedded engineers rather than architects — the conversion programme has to start before the blueprint window, not during it",
   ],
-  narrative: "ECA is a structurally strong field for Bosch built on real, durable competency — ECU/MEMS franchise businesses and zonal architecture leadership are decisive moats regardless of the silicon-supply-chain gap. The macro environment has also gotten more favourable: ISM 2.0's July 2026 approval names automotive electronics a priority vertical, and AIS-189's October 2026 CSMS deadline converts Bosch's certification-ready platform into a hard requirement for every new OEM programme. The live opportunity is time-limited, though — Tata AVINYA and Mahindra INGLO are defining their ECA architecture right now, and KPIT is moving fast to win the same design-in windows. The one gap that doesn't close on Bosch's own timeline is SoC supply-chain leverage, which depends on India's fab ecosystem maturing over several more years. This is a Core Bet field where the near-term priority is winning the live OEM design-in windows before they close, not waiting for the supply chain to resolve itself.",
-  bottomLine: "INVEST — assign the strongest India ECA technical resources to the live Tata AVINYA and Mahindra INGLO design-in windows now; treat SoC supply-chain risk as a multi-year background factor, not a blocker.",
+  narrative: "Separating compute and architecture from silicon makes this field far easier to judge, and the judgement is favourable. What Bosch sells here is a blueprint and the controllers that follow from it, and architecture know-how is the scarcest input in an E/E transition — a competitor can buy silicon but cannot buy the ability to partition a vehicle and hold one coherent safety case across it. The window is specific and dated: platforms with post-2028 start of production are being partitioned during 2026 and 2027, and that decision carries a platform generation of sockets. Cyber Rules 125-T and 125-U help, because folding security into the compute decision plays to certification depth a chip vendor selling from outside the vehicle does not have. The two real risks are structural rather than fixable: SoC vendors bundling software eat the integration layer from below, and top-tier in-housing shrinks the market from above. Neither is a reason to hold back — both are reasons to move now, while the blueprint window is open and the mid-tier is genuinely unserved.",
+  bottomLine: "INVEST — bid architecture-first on every Indian platform with a post-2028 SOP within the next twelve months, and start converting India embedded engineers into E/E architects immediately, because the binding constraint at the peak of this window will be architects rather than demand.",
 };
 
 V8.software.competency = {
@@ -7456,7 +7528,7 @@ DATA.clouddata = {
     scoreRationale: "Genuine platform assets and a data corpus that cannot be bought retrospectively, set against a structural absence at the infrastructure layer and a buying persona Bosch has not yet earned credibility with. The opportunities are large and India-specific; the threats are well-resourced. Strong ground, contested.",
   },
   market: {
-    tam: 2400, sam: 850, cagr: 24, year: 2030,
+    tam: 2400, sam: 930, cagr: 24, year: 2030,
     derivation: [
       { step: "India connected parc 2030 generating platform and data-service value", value: "~110M connected vehicles", src: "Parc forecasts [7]" },
       { step: "× vehicle cloud, data platform, analytics and governance spend per connected vehicle", value: "avg ~$14/yr", src: "Platform ARPU benchmarks; estimate" },
@@ -7537,6 +7609,11 @@ DATA.clouddata = {
       { sub: "Data Platforms", play: "LEAD", why: "Mid-size OEMs have an explicit unmet need, and the proprietary India corpus makes the analytics layer defensible" },
       { sub: "SDV Data Architecture", play: "LEAD", why: "The schema is being redefined industry-wide right now; whoever sets it defines the platform" },
       { sub: "DPDP Compliance Layer", play: "LEAD", why: "Consent architecture is a property that cannot be cheaply retrofitted, which makes native design a genuine moat before May-2027" },
+        { sub: "Vehicle as Sensor", play: "LEAD",
+          what: "Turning the vehicle fleet into a distributed sensing network — road condition, environmental and infrastructure data derived from sensors already fitted for other purposes.",
+          why: "This moved here from the Electronic Control Architectures field because the sensing hardware is a Semiconductors asset but the revenue is a data product, and the old ECA verdict already routed its monetisation through this field. The economics are unusually good: the sensors are installed and paid for, so the marginal cost of the data product is close to zero, and Bosch can vouch for provenance because it designed the sensor and the gateway.",
+          winCondition: "Data rights and consent have to be settled in the OEM agreement before collection, not after. Retrofitting consent into a live fleet is close to impossible.",
+          ifWrong: "If OEMs claim exclusive rights to all vehicle-derived data, Bosch becomes a pipe rather than a product owner and this drops to PARTNER." },
       { sub: "Federated Data Exchange", play: "PARTNER", why: "Co-architect with the open-network ecosystem rather than building alone — the value is in the protocol seat, not in owning the exchange" },
     ],
     risks: ["Hyperscaler automotive verticals compressing the middleware layer", "OEM captives absorbing the platform role faster than mid-size sales replace it", "Strict DPDP enforcement making consented data monetisation impractical", "Schema standardisation flattening the platform layer before value moves up into analytics"],
@@ -7801,7 +7878,7 @@ V8.clouddata = {
     T: [{ impact: 5, probability: 5 }, { impact: 5, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 3 }, { impact: 3, probability: 3 }],
   },
   market: {
-    samUSD: 850000000, cagrPct: 24,
+    samUSD: 930000000, cagrPct: 24,
     scurveScore: 4, scurveWhy: "V6 tags this Early Majority — connected features are a default OEM expectation and the platform underneath them is being bought at volume, which is high-volume growth rather than speculative entry.",
     revenueQualityScore: 5, revenueQualityWhy: "Software licences at 45% plus data monetisation at 25% is 70% recurring and licence-based, with services deliberately capped at 30% — a recurring-dominant model by design.",
     profitabilityScore: 3, profitabilityWhy: "Platform licences and data feeds carry strong margins, but 30% of the mix is architecture co-development and integration labour that does not — the blended position is standard rather than premium.",
@@ -7839,6 +7916,559 @@ V8.clouddata = {
   boschControl: "Medium", boschControlWhy: "Bosch controls its own corpus absolutely, but rents compute from three providers that also compete with it and depends on frontier-model access it does not own — real flexibility through multi-sourcing rather than leverage.",
   techVelocity: "High", commReadiness: "High",
   techTrendWhy: "Vehicle cloud and data platforms are TRL9 and already in production at Bosch with H1 revenue today, so commercial readiness is high. Velocity is high because the SDV data architecture is being rebuilt industry-wide right now, GenAI is resetting what a unit of telemetry is worth, and R&D investment across hyperscalers, IT majors and captives is very high. The genuinely emerging elements — federated data architectures at TRL6–7 and cross-OEM schema standardisation — sit correctly in H2 and H3.",
+};
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEMICONDUCTORS — split out of the former Electronic Control Architectures.
+
+   Reviewed as a business in its own right. The buyer is a fab, an OSAT, a
+   government programme or an OEM silicon specifier rather than an E/E team;
+   the capital profile is fab-adjacent rather than Tier-1; and the win condition
+   — owning automotive qualification of Indian silicon — has no equivalent
+   anywhere else in the portfolio.
+
+   It also corrects a factual error the combined field carried. Bosch was
+   described as having "no wafer fab". Bosch runs 200mm at Reutlingen and 300mm
+   at Dresden for MEMS, ASICs and power semiconductors. What Bosch does not have
+   is a leading-edge logic foundry — a much narrower statement, and one that
+   changes the supply-chain and competitive reads materially.
+   ═══════════════════════════════════════════════════════════════════════════ */
+DATA.semis = {
+  ma: ["MEMS", "Power Semiconductors", "IC", "ASICs", "Quantum Sensing"],
+  bbm: ["Future Vehicle System for SdV", "SW System for SdV"],
+  pestel: {
+    Political: [
+      { cat: "Government Schemes & Incentives", p: "India Semiconductor Mission 2.0 carries a ₹1,27,500 Cr outlay with twelve units approved and over ₹1.64 lakh Cr committed — a domestic silicon ecosystem now exists as a planning assumption rather than an ambition", why: "The Cabinet approval of Jul-2026 moved ISM from a fab-subsidy scheme to a full-stack programme spanning design, fabrication, packaging and talent, and automotive electronics is named a priority vertical inside it [1]", sowhat: "The qualification partner role is the one part of this ecosystem nobody has claimed. Every fab reaching production needs someone to make its output automotive-grade, and that is a services position Bosch can take without spending fab capital", i: "high", subs: ["Automotive Qualification (ISM)"], c: [1] },
+      { cat: "Government Schemes & Incentives", p: "CG Semi's Renesas-aligned OSAT is already offering AEC-Q100 qualified automotive packaging in India, and Tata-PSMC targets first silicon at Dholera in late 2026 on nodes that cover automotive MCUs", why: "AEC-Q100 is the automotive qualification standard, so an India OSAT offering it means the automotive-grade step has started rather than being a future phase [1]", sowhat: "The window to be the qualification authority is open now and narrows as each fab picks a partner — engage the approved units before their first automotive customer does it for them", i: "high", subs: ["Automotive Qualification (ISM)", "Power Semiconductors (SiC/GaN)"], c: [1] },
+      { cat: "Trade Policies & Geopolitics", p: "Leading-edge logic remains concentrated in Taiwan and Korea, and export controls on advanced tooling shape who can make what, where", why: "Foundry concentration is a geopolitical exposure rather than a commercial one, and no incentive scheme changes it on a five-year view [3]", sowhat: "Design for node independence: keep automotive functions on mature nodes Indian fabs will reach, and treat leading-edge dependence as a deliberate, bounded choice rather than a default", i: "medium", subs: ["ASIC & Custom Silicon", "Chiplets (UCIe)"], c: [3] },
+    ],
+    Economic: [
+      { cat: "Economic Growth & Consumer Spending", p: "Semiconductor content per vehicle keeps rising through the cycle — safety mandates, electrification and connectivity each add silicon regardless of what GDP does", why: "India automotive semiconductor consumption is projected in the $4–5B range by 2030 on content growth alone, independent of unit volumes [7]", sowhat: "Demand here is structurally growing rather than cyclical, which is unusual and worth stating plainly when the business case is reviewed against a 6.6% FY27 growth forecast", i: "high", subs: ["Power Semiconductors (SiC/GaN)", "MEMS & Sensor Silicon"], c: [7] },
+      { cat: "Currency & Exchange Rate", p: "Every imported wafer is dollar-denominated, so rupee weakness flows straight into automotive electronics cost with no ability to hedge it at the component level", why: "Advanced-node silicon and memory carry no India alternative today, so the exposure is structural rather than a sourcing failure [10]", sowhat: "This is the strongest commercial argument for the India qualification play. Local silicon is not just a policy preference — it is the only real currency hedge available to an automotive BOM", i: "high", subs: ["Automotive Qualification (ISM)"], c: [10] },
+      { cat: "Economic Growth & Consumer Spending", p: "Fab economics are unforgiving: a leading-edge line costs billions and needs utilisation Bosch's automotive volumes alone could never provide", why: "Automotive is a small share of global silicon demand, so a fab built for automotive volumes is uneconomic by construction [7]", sowhat: "The strategy has to be asset-light in India — qualification, design and partnership rather than capacity. Bosch's own Dresden and Reutlingen capacity serves global MEMS and power demand, and does not need an Indian twin", i: "medium", subs: ["ASIC & Custom Silicon"], c: [7] },
+    ],
+    Social: [
+      { cat: "Workforce & Labor", p: "India holds one of the world's largest concentrations of silicon-design engineers, and almost all of them work inside vendor GCCs rather than for system houses", why: "Qualcomm, NVIDIA, Intel and NXP employ tens of thousands of Indian chip designers; the talent exists, it is simply already employed [1]", sowhat: "The constraint is organising the talent rather than finding it. DLI incentives make a targeted team build or acqui-hire economical in a way organic hiring is not", i: "high", subs: ["ASIC & Custom Silicon", "RISC-V & Sovereign Compute"], c: [1] },
+      { cat: "Workforce & Labor", p: "The ISM–NAMTECH talent programme is now running its first cohorts, aimed specifically at the semiconductor manufacturing-leadership pipeline", why: "A funded national skills pipeline for fab and packaging leadership did not exist two years ago; it changes the medium-term hiring picture for anyone building in India [1]", sowhat: "Engage the programme early — a qualification business needs process engineers more than it needs designers, and that is exactly what this pipeline produces", i: "medium", subs: ["Automotive Qualification (ISM)"], c: [1] },
+      { cat: "Consumer Behavior & Values", p: "The 2021–23 shortage left a lasting mark: supply resilience is now a board-level topic at Indian OEMs rather than a procurement one", why: "Lost volume during the shortage was visible in quarterly results, which is what moved the topic upward [3]", sowhat: "'India-qualified silicon' is a CXO-level narrative, not a component pitch. Sell it in that room", i: "medium", subs: ["Automotive Qualification (ISM)"], c: [3] },
+    ],
+    Technological: [
+      { cat: "Emerging Technologies", p: "Chiplet composition under UCIe offers a route to differentiated automotive compute without owning a leading-edge fab", why: "Composing a part from best-of-breed dies is precisely the position of a system house with ASIC competence and no foundry ambition [4]", sowhat: "This is the technically correct answer to Bosch's node gap, and it is cheap to prepare for. Keep designs chiplet-ready even while shipping monolithic parts", i: "high", subs: ["Chiplets (UCIe)", "ASIC & Custom Silicon"], c: [4] },
+      { cat: "Interoperability & Standards", p: "DIR-V and the Shakti and Vega cores push sovereign RISC-V toward automotive, with government procurement as the likely first pull", why: "Sovereignty-sensitive programmes may specify an Indian instruction set before commercial programmes do, and automotive toolchains are maturing behind that [4]", sowhat: "Buy the option rather than the position: one evaluation programme keeps Bosch credible if a procurement trigger appears, and costs almost nothing if it does not", i: "medium", subs: ["RISC-V & Sovereign Compute"], c: [4] },
+      { cat: "Emerging Technologies", p: "Wide-bandgap devices — SiC and GaN — are where EV power electronics efficiency is now decided, and India has an approved SiC fab under ISM", why: "Inverter and charger losses are dominated by switching device performance, and SiC is the incumbent answer with GaN advancing behind it [5]", sowhat: "Bosch already manufactures SiC at Reutlingen. The India question is qualification and second-source positioning, not whether Bosch can make the device", i: "high", subs: ["Power Semiconductors (SiC/GaN)"], c: [5] },
+    ],
+    Environmental: [
+      { cat: "Natural Resources", p: "Fabs are among the most water- and energy-intensive facilities in manufacturing, and several approved Indian sites sit in water-stressed regions", why: "Ultrapure water consumption and continuous power draw are structural to wafer processing rather than a matter of plant efficiency [5]", sowhat: "Water and renewable-power provisioning is a real qualification criterion, not a footnote. A fab that cannot guarantee supply cannot guarantee automotive delivery", i: "medium", subs: ["Automotive Qualification (ISM)"], c: [5] },
+      { cat: "Climate Policy & Emission Regulations", p: "Efficient power semiconductors are one of the few components whose environmental contribution is larger in use than its manufacturing cost", why: "A percentage point of inverter efficiency compounds across every kilometre the vehicle drives, which dwarfs the fab footprint of the device [5]", sowhat: "Quantify the in-use saving per device shipped — it is a genuine sustainability claim rather than a marketing one, and OEM scope-3 reporting can use it", i: "medium", subs: ["Power Semiconductors (SiC/GaN)"], c: [5] },
+      { cat: "Circular Economy & E-Waste", p: "Critical-minerals recycling has been funded at ₹1,500 Cr under the National Critical Minerals Mission, framing material recovery as supply security", why: "With China controlling over 90% of rare-earth processing, domestic recovery is now a sovereignty instrument rather than an environmental one [5]", sowhat: "Semiconductor and magnet material recovery connects this field to the Sustainability field's traceability play — one capability, two policy narratives", i: "low", subs: ["MEMS & Sensor Silicon"], c: [5] },
+    ],
+    Legal: [
+      { cat: "Automotive Industry Regulations", p: "AEC-Q100, AEC-Q101 and ISO 26262 at silicon level are the gates that decide whether a wafer can go into a vehicle at all", why: "Automotive qualification is a documented, auditable process with a multi-year data requirement — it is not a test that can be passed quickly [6]", sowhat: "This is the moat. Qualification depth cannot be bought or accelerated, and it is exactly what an Indian fab reaching production does not yet have", i: "high", subs: ["Automotive Qualification (ISM)"], c: [6] },
+      { cat: "Cybersecurity & Digital Regulations", p: "Cyber Rules 125-T/125-U push security requirements down to the device — secure boot, key storage and hardware trust anchors are now in scope for the silicon, not just the ECU", why: "A vehicle-level CSMS argument has to rest on a hardware root of trust, which makes the secure element a compliance component rather than a feature [6]", sowhat: "Security-qualified silicon is a second qualification axis alongside AEC-Q100, and very few Indian parts will clear both early. That widens the qualification opportunity", i: "high", subs: ["ASIC & Custom Silicon", "Automotive Qualification (ISM)"], c: [6] },
+      { cat: "IP Law", p: "Custom-silicon work exposes core design IP, and a co-design partnership without enforceable protection is a technology transfer in everything but name", why: "India's IP regime has strengthened materially, which is what makes design partnerships commercially safe now where they were not a decade ago [6]", sowhat: "Put layered IP protection into every ISM design partnership before the qualification business scales — a one-time legal setup that is far cheaper than the alternative", i: "medium", subs: ["ASIC & Custom Silicon", "Chiplets (UCIe)"], c: [6] },
+    ],
+  },
+  swot: {
+    S: [
+      { area: "Technology", p: "Bosch owns and runs its own fabs — 200mm at Reutlingen, 300mm at Dresden", why: "MEMS, ASICs and power semiconductors are manufactured in-house rather than bought, which is unusual for a Tier-1 and gives Bosch process knowledge no fab-less competitor has", sowhat: "Bosch can speak to an Indian fab as a peer that runs automotive processes rather than as a customer asking for them — that is the credibility the qualification role requires" },
+      { area: "Technology", p: "World-leading MEMS franchise with decades of automotive field data", why: "Bosch is among the largest MEMS manufacturers globally, and the reliability dataset behind that is what qualification arguments are actually built from", sowhat: "Sell the dataset as much as the device — nobody else can evidence automotive MEMS reliability at that depth" },
+      { area: "Process", p: "Automotive qualification is embedded practice, not a capability to be acquired", why: "AEC-Q100 and ISO 26262 at silicon level are processes Bosch executes continuously across its own product lines, so the qualification service is an extension of existing work", sowhat: "This is the least copyable asset in the field and the direct basis of the white-space play" },
+      { area: "Technology", p: "SiC and GaN power devices already in production for EV powertrain", why: "Wide-bandgap manufacturing is difficult and Bosch is past the learning curve, which most entrants are not", sowhat: "Position for second-source and qualification roles as India's SiC fab reaches output, rather than treating it as a competitor" },
+      { area: "People", p: "Strong ASIC design competence inside the global organisation", why: "Bosch designs custom automotive silicon today, so a chiplet or custom-part strategy builds on existing engineering rather than starting fresh", sowhat: "The India gap is scale and location, not capability — which is a hiring problem rather than a technology one" },
+    ],
+    W: [
+      { area: "Technology", p: "No leading-edge logic capability, and no economic route to acquiring one", why: "Sub-7nm compute silicon comes from a handful of global foundries, and automotive volumes could never justify building at that node", sowhat: "State the boundary explicitly and design around it — mature-node parts and chiplet composition, never a node race" },
+      { area: "People", p: "India silicon-design scale is sub-critical against the vendor GCCs", why: "The talent is in India but it works for Qualcomm, NVIDIA and Intel; Bosch's India design bench is small by comparison", sowhat: "A DLI-backed targeted team build or acqui-hire closes this faster than organic hiring, and the incentives make it affordable" },
+      { area: "Market", p: "Selling to fabs, OSATs and government programmes is a go-to-market Bosch has never run", why: "Bosch's commercial muscle is built for OEM component sales; a qualification service sold to a fab is a different buyer, contract shape and sales cycle", sowhat: "Build a small dedicated commercial team rather than routing this through automotive account management, which will not reach the buyer" },
+      { area: "Leadership", p: "No India semiconductor P&L, so nobody owns winning this", why: "Silicon revenue is currently spread across product lines with no single accountable owner for the India opportunity", sowhat: "Give the field an owner and a ring-fenced multi-year budget — fab timelines do not fit annual review cycles" },
+      { area: "Process", p: "Qualification-as-a-service has never been packaged or priced", why: "Bosch qualifies its own silicon as an internal cost; selling that capability externally requires a product definition, a price and a liability position that do not exist", sowhat: "Productise it deliberately, including where the liability sits when a qualified part later fails in the field" },
+    ],
+    O: [
+      { area: "Market", p: "Automotive qualification of Indian fab and OSAT output is genuinely unclaimed", why: "Twelve approved units are moving toward production and every one of them will need automotive-grade qualification, yet no player has taken the role", sowhat: "This is the field's defining opportunity: government-aligned, defensible, and it needs process depth rather than capital" },
+      { area: "Technology", p: "Chiplet composition lets Bosch build differentiated automotive compute without a leading-edge fab", why: "UCIe makes it possible to combine a bought compute die with Bosch-designed safety, security and analogue dies into one package", sowhat: "It converts the node gap from a structural weakness into a design constraint — a very different strategic position" },
+      { area: "Market", p: "SiC second-sourcing as India's wide-bandgap fab reaches output", why: "OEMs and Tier-1s want a qualified second source for power devices, and Bosch both makes them and knows how to qualify them", sowhat: "Offer the qualification and the second source together — the combination is not available from anyone else in India" },
+      { area: "Technology", p: "Security-qualified silicon is a second qualification axis nobody is serving", why: "Cyber Rules 125-T/U require a hardware root of trust, and clearing both AEC-Q100 and a security evaluation is harder than clearing either alone", sowhat: "Bundle security qualification with automotive qualification — it roughly doubles the value of the same engagement" },
+      { area: "Process", p: "DLI incentives make a targeted India design-team build economically rational", why: "Design-linked incentives cover a meaningful share of the cost of standing up an India design capability, which changes the build-versus-partner arithmetic", sowhat: "The window for incentive-supported team building is finite; act while the scheme is funded" },
+    ],
+    T: [
+      { area: "Market", p: "A global qualification house or an IDM could claim the ISM role first", why: "The role is unclaimed because it is new, not because it is hard to see — and several players have the process depth to take it", sowhat: "Speed is the defence. The first credible qualification partner at two or three fabs effectively sets the standard" },
+      { area: "Market", p: "Tata Electronics and CG Semi are building automotive-grade capability in-house", why: "A fab that qualifies its own output does not need a qualification partner, and both have the ambition and capital to try", sowhat: "Position as an accelerator rather than a gatekeeper — offer to shorten their path rather than to stand in it" },
+      { area: "Technology", p: "SoC vendors integrating more functions absorb the ASIC opportunity", why: "Every function that moves into a standard SoC is a custom part that no longer needs designing", sowhat: "Focus ASIC effort on safety, security and analogue functions that standard SoCs consistently do not absorb" },
+      { area: "Leadership", p: "ISM timelines could slip, deferring the qualification opportunity by years", why: "Fab construction and yield ramps slip routinely, and automotive-grade output comes after consumer-grade output rather than alongside it", sowhat: "Gate the investment on observable fab milestones rather than on scheme announcements" },
+      { area: "Technology", p: "Rare-earth and critical-minerals dependence sits upstream of everything here", why: "China controls over 90% of rare-earth processing, and no Indian fab changes that for the materials that go into the devices", sowhat: "Track it as a background exposure the field cannot solve, and support the recycling policy response through the Sustainability field" },
+    ],
+    tows: {
+      SO: "Use Bosch's own fab operations and embedded qualification practice (S) to claim the unclaimed automotive-qualification role at the ISM units now reaching production (O) — a services position that needs process depth rather than capital, which is exactly what Bosch has and entrants do not.",
+      ST: "Use MEMS and power-device manufacturing depth (S) to stay indispensable as fabs build in-house capability (T), positioning as the partner who shortens their automotive path rather than the gatekeeper who blocks it.",
+      WO: "Overcome sub-critical India design scale (W) by using DLI incentives to build a targeted design team around the chiplet and security-silicon opportunities (O) — the incentive changes the build-versus-partner arithmetic while it lasts.",
+      WT: "Mitigate no-leading-edge-logic and no India semiconductor P&L (W) against SoC absorption and possible ISM slippage (T) by gating investment on observable fab milestones and concentrating ASIC effort on the safety, security and analogue functions standard SoCs do not take.",
+    },
+    targetStrategy: {
+      growth: [
+        { lever: "Own fab operations plus embedded automotive qualification practice", lever2: "", action: "Sign automotive-qualification partnerships with two ISM units before their first automotive customer picks someone else" },
+        { lever: "MEMS and SiC manufacturing depth", action: "Offer qualification and qualified second-source supply together — a combination no other player in India can put on the table" },
+      ],
+      improvement: [
+        { gap: "No leading-edge logic and no route to it", action: "Design for chiplet composition so a bought compute die can carry Bosch-designed safety and security dies alongside it" },
+        { gap: "Sub-scale India design bench and no semiconductor P&L", action: "Build a DLI-backed design team and give the field a named owner with a ring-fenced multi-year budget" },
+      ],
+    },
+    strategy: "Be the authority that makes Indian silicon automotive-grade. Claim the qualification role at the ISM units now reaching production, sell qualification and qualified second-source supply together where Bosch already makes the device, design for chiplet composition rather than chasing nodes, and keep RISC-V as a cheap option rather than a commitment. No new fab capital in India — Bosch's existing Reutlingen and Dresden capacity serves global MEMS and power demand and does not need an Indian twin.",
+    scoreRationale: "The strengths here are unusually hard to copy: Bosch runs its own automotive fabs and executes qualification continuously, which is precisely what a new fab lacks. The weaknesses are real but bounded and all organisational — design scale, a new go-to-market and no P&L owner. The threats are genuine and mostly about speed, because the qualification role is unclaimed rather than defended.",
+  },
+  market: {
+    tam: 2600, sam: 720, cagr: 22, year: 2030,
+    derivation: [
+      { step: "India automotive semiconductor consumption 2030", value: "$4.4B device value", src: "Analyst consensus range $4–5B [7]" },
+      { step: "Less captive and vendor-fulfilled device value Bosch will never address", value: "−41%", src: "Merchant-share analysis; estimate" },
+      { step: "Plus qualification, test and design services created by the ISM build-out", value: "+$0.4B/yr by 2030", src: "Derived from approved-unit capacity × qualification intensity; estimate [1]" },
+      { step: "= TAM (Bosch-relevant automotive silicon and the services around it, 2030)", value: "$2.6B", src: "Derived — estimate" },
+      { step: "Serviceable filter: MEMS and power devices Bosch already makes, ASIC and chiplet design, and the qualification services role (excl. leading-edge logic, excl. memory)", value: "≈28% of TAM", src: "Estimate" },
+      { step: "= SAM (2030)", value: "$0.72B", src: "Derived — estimate" },
+    ],
+    buildup: {
+      tamNote: "TAM is India-relevant automotive silicon value plus the qualification and design services the ISM build-out creates. Leading-edge logic and memory are excluded because Bosch has no route to either — including them would flatter the number without changing what Bosch can sell.",
+      tam: [
+        { k: "Power semiconductors (SiC, GaN, IGBT)", v: 880, why: "The fastest-growing device class, pulled by EV traction inverters and DC charging" },
+        { k: "MEMS & sensor silicon", v: 620, why: "Inertial, pressure and environmental sensing across safety, comfort and ADAS content" },
+        { k: "Automotive MCUs & mature-node logic", v: 540, why: "The nodes Indian fabs will actually reach — 28nm and above" },
+        { k: "ASIC & custom silicon", v: 260, why: "Safety, security and analogue functions standard SoCs do not absorb" },
+        { k: "Qualification, test & reliability services", v: 300, why: "Created by the ISM build-out; the one line that did not exist in India two years ago" },
+      ],
+      samNote: "SAM is what Bosch can realistically win: devices it already manufactures, design work it already does, and a qualification role it is uniquely equipped for. Leading-edge logic and memory are deliberately zero.",
+      sam: [
+        { k: "Power semiconductors", v: 240, why: "Bosch manufactures SiC today — the India play is qualification and qualified second-source supply", sub: "Power Semiconductors (SiC/GaN)" },
+        { k: "MEMS & sensor silicon", v: 205, why: "A world-leading franchise with the reliability dataset that qualification arguments are built from", sub: "MEMS & Sensor Silicon" },
+        { k: "Automotive qualification services", v: 145, why: "The unclaimed role — needs process depth rather than capital, which is the whole reason it fits", sub: "Automotive Qualification (ISM)" },
+        { k: "ASIC & custom silicon", v: 95, why: "Safety, security and analogue functions, sold into Bosch's own platforms and to OEM specifiers", sub: "ASIC & Custom Silicon" },
+        { k: "Chiplet composition", v: 25, why: "Small today and deliberately so — this is design-for-optionality rather than a revenue line", sub: "Chiplets (UCIe)" },
+        { k: "RISC-V & sovereign compute", v: 10, why: "One evaluation programme's worth. Buying the option, not taking the position", sub: "RISC-V & Sovereign Compute" },
+      ],
+    },
+    crossCheck: "Sanity check on the split: the former combined ECA field carried a $2.3B SAM across silicon, modules, compute and sensing data. That total is now divided — $0.72B here, $1.35B in Vehicle Compute & E/E Architecture, $0.15B moved into Manufacturing with module assembly and $0.08B into Cloud & Data with vehicle-as-sensor. The four sum to $2.3B exactly, so nothing has been added to the portfolio; each field is simply now scored against the market it actually serves. Independent cross-check: analyst consensus puts India automotive semiconductor consumption at $4–5B by 2030, and our $2.6B TAM sits below that because it deliberately excludes leading-edge logic and memory [1][7].",
+    customers: [
+      { s: "ISM fabs and OSATs (Tata-PSMC, CG Semi, Micron, Kaynes)", buy: "Automotive process qualification, reliability engineering, AEC-Q100 readiness", note: "The white-space customer — and the one Bosch has never sold to before" },
+      { s: "OEM silicon specifiers and E/E architects", buy: "Qualified device supply, second-source assurance, custom safety and security parts", note: "Existing relationships, new conversation — they now specify silicon rather than accepting it" },
+      { s: "Tier-1s and power-electronics builders", buy: "SiC and GaN devices, MEMS sensors, ASICs", note: "The existing merchant business this field defends" },
+      { s: "Government programmes (DIR-V, sovereignty-sensitive fleets)", buy: "RISC-V evaluation, India-origin design credentials", note: "Optionality rather than revenue — engage cheaply, scale only on a procurement trigger" },
+    ],
+    attractiveness: {
+      maturity: "Growth",
+      histCagr: "~18–20% (2020–25, content-driven; estimate)",
+      fwdCagr: "22% (2025–30)",
+      drivers: ["ISM 2.0 building a domestic ecosystem that needs automotive qualification it does not have", "EV power electronics pulling SiC and GaN content up steeply", "Cyber Rules adding a second qualification axis at the device level"],
+      constraints: ["Leading-edge logic permanently out of reach and permanently imported", "Fab timelines slip routinely, and automotive-grade output comes after consumer", "SoC vendors absorbing functions that would otherwise be custom parts"],
+      access: {
+        channels: "Direct engagement with ISM-approved units; merchant device sales through existing Tier-1 and OEM relationships; government programme participation for the RISC-V option",
+        partners: "ISM fabs and OSATs, foundries for mature-node capacity, chiplet alliance members, DLI programme",
+        barriers: "AEC-Q100 and ISO 26262 qualification depth — a multi-year evidence requirement that protects incumbents rather than blocking them",
+        localization: "This field is the localisation play. Qualified India silicon is the only genuine currency hedge available to an automotive BOM",
+        cac: "Long and relationship-led with fabs; low into existing OEM and Tier-1 accounts for merchant devices",
+      },
+      valuePool: "Device margin sits with whoever owns the process, and for MEMS and power that is already Bosch. The genuinely new pool is qualification and reliability services — asset-light, recurring across every product generation a fab ships, and currently earned by nobody in India.",
+      whiteSpace: [
+        { p: "Automotive qualification of ISM fab and OSAT output", why: "Twelve approved units are heading toward production and every one needs automotive-grade qualification. No player has taken the role, and it needs process depth rather than capital", sub: "Automotive Qualification (ISM)" },
+        { p: "Combined automotive and security qualification", why: "Cyber Rules 125-T/U require a hardware root of trust, so parts now have to clear two qualification axes rather than one — and almost nothing in India clears both", sub: "Automotive Qualification (ISM)" },
+        { p: "Qualified SiC second-source supply", why: "OEMs want a second source for power devices; Bosch both manufactures them and knows how to qualify them, which nobody else in India can offer together", sub: "Power Semiconductors (SiC/GaN)" },
+      ],
+      profitability: "Merchant devices earn solid but conventional semiconductor margins. Qualification and reliability services earn software-like margins on an asset-light base, which is what makes the mix attractive rather than the volume.",
+    },
+    scoreRationale: "$0.72B SAM growing 22% — the fastest-growing addressable slice of the former ECA field, and the one with the clearest unclaimed position. Scale and velocity both score at the top of the rubric. Held back on revenue quality and profitability because the majority of the mix is still merchant device sales at conventional semiconductor economics rather than the services layer that carries the margin. Evidence base: consumption forecasts are analyst consensus; the merchant-share split and the services sizing are ours.",
+  },
+  porter: [
+    { force: "Rivalry", v: 5.0, why: "Global IDMs and specialist qualification houses could all contest the India role, but almost none of them are actively doing so yet — this is a race that has not started rather than one Bosch is behind in.", drivers: ["Global IDMs with equivalent process depth", "Specialist reliability houses", "Race not yet begun in India"], c: [8] },
+    { force: "Supplier power", v: 7.0, why: "Foundries hold genuine allocation and pricing power over anything Bosch does not make itself, and shortage memory keeps that leverage intact.", drivers: ["Foundry concentration for logic", "Allocation risk premium", "Bosch self-supply on MEMS and power offsets partially"], c: [3] },
+    { force: "Buyer power", v: 5.5, why: "Fabs need qualification more than qualification needs any single fab, which is unusually favourable — though merchant device buyers negotiate hard as they always have.", drivers: ["Fabs need the capability urgently", "Merchant device price pressure", "Few credible alternatives on qualification"], c: [2] },
+    { force: "Substitutes", v: 3.0, why: "Automotive qualification cannot be substituted, only self-performed, and self-performing it takes a fab several years it does not want to spend.", drivers: ["Qualification is mandatory", "Self-performance is slow and expensive"], c: [6] },
+    { force: "New entrants", v: 3.5, why: "Capital intensity for devices and multi-year evidence requirements for qualification are both severe barriers — this is one of the hardest fields in the portfolio to enter.", drivers: ["Fab capital intensity", "Multi-year qualification evidence requirement", "DLI-funded entrants exist but need years"], c: [1] },
+  ],
+  porterRationale: "The defining feature is how well protected this field is: substitutes are near-absent (3.0) and entry barriers are among the highest in the portfolio (3.5), because automotive qualification takes years of evidence that cannot be compressed. Foundry supplier power (7.0) is the one genuinely hostile force, and it applies only to the silicon Bosch does not make itself.",
+  competency: [
+    { name: "Automotive qualification (AEC-Q100, ISO 26262 at silicon)", bosch: 9, req: 9, whyReq: "The gate that decides whether a wafer can enter a vehicle; multi-year evidence, not a test (9)", whyBosch: "Executed continuously across Bosch's own product lines — embedded practice rather than an acquired capability (9)", gap: "none — match", gapWhy: "The lead asset and the whole basis of the white-space play" },
+    { name: "MEMS process & manufacturing", bosch: 9, req: 8, whyReq: "Sensing content across safety, comfort and ADAS demands proven high-volume MEMS processes (8)", whyBosch: "Among the world's largest MEMS manufacturers, with the field-reliability dataset behind it (9)", gap: "none — exceed", gapWhy: "Sell the reliability dataset, not just the device — nobody can match its depth" },
+    { name: "Power semiconductors (SiC/GaN)", bosch: 8, req: 8, whyReq: "EV efficiency is decided at the switching device, and wide-bandgap manufacturing is genuinely difficult (8)", whyBosch: "SiC in production at Reutlingen; past the learning curve most entrants are still on (8)", gap: "none — match", gapWhy: "Position as qualifier and qualified second source as India's SiC fab ramps" },
+    { name: "Leading-edge logic", bosch: 1, req: 7, whyReq: "Central compute performance is set at nodes below 7nm (7)", whyBosch: "No capability and no economic route to one — automotive volumes could never justify the capital (1)", gap: "skip", gapWhy: "A deliberate, permanent boundary. Buy the die, compose around it, never chase the node" },
+    { name: "India silicon-design scale", bosch: 4, req: 7, whyReq: "A credible ASIC and chiplet position needs a resident design team, not a visiting one (7)", whyBosch: "Strong global ASIC competence, sub-scale India bench against the vendor GCCs (4)", gap: "build / buy", gapWhy: "DLI incentives make a targeted team build or acqui-hire economical while the scheme is funded" },
+    { name: "Selling to fabs and government programmes", bosch: 3, req: 7, whyReq: "The buyer is a fab operator or a mission office, not an OEM purchasing team (7)", whyBosch: "Bosch has never run this go-to-market (3)", gap: "build / hire", gapWhy: "A small dedicated commercial team — routing it through automotive account management will not reach the buyer" },
+  ],
+  horizons: {
+    h1: [
+      { item: "Merchant MEMS and power-semiconductor supply into rising E/E content", why: "Devices Bosch already makes, sold into demand that grows on safety mandates and EV mix regardless of the cycle — this is the revenue that funds everything else" },
+      { item: "Qualification advisory to ISM units approaching production", why: "CG Semi is already offering AEC-Q100 packaging and Tata-PSMC targets first silicon late-2026; the advisory conversation is billable now, ahead of any volume" },
+    ],
+    h2: [
+      { item: "Automotive qualification partnerships with two or three ISM units", why: "Fabs reach consumer-grade output first and automotive-grade after; the partnership window is 2–4 years out and the role is unclaimed today", trigger: "An ISM fab achieving automotive-relevant process maturity" },
+      { item: "Qualified SiC second-source supply for Indian EV programmes", why: "India's SiC fab is approved and building; the second-source conversation follows its first qualified output", trigger: "An Indian OEM or Tier-1 requesting a qualified second source for traction-inverter devices" },
+      { item: "Combined automotive and security qualification as one service", why: "Cyber Rules create the second axis now, but packaging the two into one auditable engagement takes a product definition Bosch has not written", trigger: "An OEM requiring both AEC-Q100 and a hardware security evaluation in one supplier submission" },
+    ],
+    h3: [
+      { item: "Chiplet-composed automotive parts under UCIe", why: "Automotive UCIe parts and their toolchains are 5+ years from Indian volume; the decision that matters now is keeping designs able to accept one", trigger: "UCIe-based automotive design wins announced globally" },
+      { item: "RISC-V in a sovereignty-driven procurement", why: "DIR-V momentum is real but automotive toolchains are immature and no procurement has yet specified it", trigger: "A government fleet programme specifying an Indian instruction set" },
+      { item: "Quantum sensing reaching automotive cost", why: "Lab-to-vehicle transition for quantum MEMS and magnetometers exceeds five years, though the M&A hook is mapped", trigger: "Quantum sensor cost crossing automotive thresholds" },
+    ],
+    rationale: "H1 is real revenue today from devices Bosch already manufactures, plus billable advisory that costs nothing to start. H2 holds the field's defining opportunity with three observable triggers tied to fab milestones rather than to policy announcements. H3 is genuinely distant and correctly parked. The pipeline is honest because the near-term items require no new capability at all.",
+  },
+  verdict: {
+    entry: "Claim the qualification role. Engage two or three ISM units now with billable advisory, convert those into automotive-qualification partnerships as their processes mature, and sell qualification together with qualified second-source supply where Bosch already makes the device. Build a DLI-backed India design team while the incentive lasts. Design for chiplet composition rather than chasing nodes, and commit no fab capital in India — Reutlingen and Dresden already serve global MEMS and power demand.",
+    reasoning: [
+      "The qualification role is unclaimed, government-aligned and needs process depth rather than capital — which is an unusually good match to what Bosch actually has",
+      "Correcting the record matters: Bosch runs its own fabs for MEMS, ASICs and power semiconductors, so this is not a fab-less company trying to enter silicon",
+      "Entry barriers are among the highest in the portfolio and substitutes are near-absent, because qualification evidence takes years and cannot be compressed",
+      "The honest drag is Right-to-Win rather than market attractiveness: a thin India design bench and a go-to-market Bosch has never run",
+    ],
+    portfolio: [
+      { sub: "Automotive Qualification (ISM)", play: "LEAD",
+        what: "A packaged service that takes an Indian fab or OSAT process from consumer-grade to automotive-grade: AEC-Q100 readiness, reliability engineering, failure-mode analysis and the audit evidence pack that goes with it.",
+        why: "This is the reason the field deserves to exist separately. Twelve ISM units are moving toward production and every one of them will eventually need automotive qualification, which takes years of accumulated evidence rather than a test campaign. Bosch executes exactly this process continuously across its own product lines, so the service is an extension of existing work rather than a new capability. And nobody has claimed the role — not because it is hard to see, but because it is new.",
+        winCondition: "Two or three ISM units signed before their first automotive customer picks someone else. After that the standard is set by whoever got there first.",
+        ifWrong: "If the fabs build automotive qualification in-house, the play shifts from partner to accelerator — offering to shorten their path rather than to own it." },
+      { sub: "Power Semiconductors (SiC/GaN)", play: "LEAD",
+        what: "SiC and GaN devices manufactured at Reutlingen, sold as qualified second-source supply into Indian EV traction and charging programmes, with the qualification service attached.",
+        why: "Bosch is past the wide-bandgap manufacturing learning curve that most entrants are still climbing, and EV efficiency is decided at the switching device. What makes the India play distinctive is combining the device and the qualification: OEMs want a qualified second source for power semiconductors, and no other player in India can supply the part and certify the process in the same conversation.",
+        winCondition: "Qualified second-source status at one Indian EV traction programme, which then becomes the reference for the rest.",
+        ifWrong: "If India's SiC fab reaches automotive grade faster than expected and undercuts on price, Bosch's role narrows to qualification alone — still valuable, but smaller." },
+      { sub: "MEMS & Sensor Silicon", play: "LEAD",
+        what: "Inertial, pressure and environmental sensing silicon, sold with the field-reliability dataset that supports its qualification argument.",
+        why: "This is a franchise business rather than an entry, and it deserves defending on its own terms. Bosch is among the largest MEMS manufacturers in the world, and the decades of automotive field data behind that are what qualification arguments are actually built from. A competitor can copy a device specification; it cannot copy twenty years of failure data.",
+        winCondition: "Keep the reliability dataset as a commercial asset rather than an internal engineering record — it is the part that is genuinely uncopyable.",
+        ifWrong: "Commodity pressure on standard sensor types is the slow risk here, answered by moving up into fused and calibrated modules rather than by cutting price." },
+      { sub: "ASIC & Custom Silicon", play: "PARTNER",
+        what: "Custom safety, security and analogue parts — including hardware roots of trust — designed by Bosch and fabricated by partners on mature nodes.",
+        why: "The functions worth making custom are precisely the ones standard SoCs keep failing to absorb: functional-safety monitors, secure elements and precision analogue. Cyber Rules 125-T and 125-U have just made the hardware root of trust a compliance component, which strengthens this considerably. It is PARTNER rather than LEAD because the fabrication is bought and the India design bench is not yet at scale.",
+        winCondition: "A DLI-backed India design team of real size. Without resident designers this stays a global capability with an India label on it.",
+        ifWrong: "If SoC vendors integrate safety and security functions comprehensively, the custom-part opportunity narrows to analogue and the play becomes WATCH." },
+      { sub: "Chiplets (UCIe)", play: "WATCH",
+        what: "Design practice that keeps Bosch parts able to be composed from multiple dies later, rather than a product line today.",
+        why: "Chiplet composition is the technically correct answer to Bosch's node gap — buy the compute die, add Bosch-designed safety and security dies, package them together. But automotive UCIe parts and their toolchains are five or more years from Indian volume, so committing now would be paying early for an option that costs almost nothing to keep open through design discipline alone.",
+        winCondition: "Nothing to win yet. Keep designs partitionable so a chiplet part can be adopted without reopening the safety case.",
+        ifWrong: "A global automotive UCIe design win would move this to PARTNER quickly — that is the trigger to watch." },
+      { sub: "RISC-V & Sovereign Compute", play: "WATCH",
+        what: "One funded evaluation programme against the Shakti and Vega cores, and nothing more.",
+        why: "DIR-V has real government momentum and a sovereignty-sensitive procurement could plausibly specify an Indian instruction set. But automotive toolchains, safety certification and the ecosystem around RISC-V are all immature, and no procurement has yet asked for it. The right size of commitment is one evaluation programme that keeps Bosch credible if a trigger appears and costs very little if it does not.",
+        winCondition: "Credibility rather than revenue. Being able to answer the question when a government programme asks it.",
+        ifWrong: "A sovereignty-driven procurement specifying RISC-V would move this to PARTNER — but scale only on the actual trigger, never on the announcement." },
+    ],
+    risks: [
+      "A global IDM or specialist reliability house claiming the ISM qualification role first — the role is unclaimed rather than defended, so speed is the only protection",
+      "ISM fab timelines slipping, which they routinely do, deferring the qualification opportunity by years",
+      "Tata Electronics and CG Semi building automotive-grade capability in-house and needing no partner at all",
+      "SoC vendors absorbing safety and security functions that would otherwise justify custom parts",
+    ],
+  },
+  activity: [
+    { d: "Sep 09, 2026", t: "Twelve ISM units approved with over ₹1.64 lakh Cr committed — one silicon fab, one SiC fab, an integrated GaN micro-LED display fab and nine packaging units, with automotive named a priority vertical", s: "India Semiconductor Mission" },
+    { d: "Sep 02, 2026", t: "CG Semi's Renesas-aligned OSAT offers AEC-Q100 qualified automotive packaging in India, giving EV powertrain and ADAS builders a domestic option for the first time", s: "CG Power / Zetwerk analysis" },
+    { d: "Aug 28, 2026", t: "Tata-PSMC targets first silicon at Dholera in late 2026 on 28nm and below — nodes that cover automotive MCUs, industrial controllers and display drivers", s: "Tata Electronics" },
+    { d: "Aug 20, 2026", t: "Cyber Rules 125-T/125-U from Oct-2026 push a hardware root of trust into scope, adding a second qualification axis alongside AEC-Q100 that almost no Indian part clears yet", s: "MoRTH" },
+    { d: "Aug 12, 2026", t: "ISM–NAMTECH manufacturing-leadership cohorts run, building the process-engineering pipeline a qualification business needs more than it needs designers", s: "NAMTECH" },
+    { d: "Aug 04, 2026", t: "₹1,500 Cr allocated for critical-minerals recycling under the National Critical Minerals Mission as China's processing dominance passes 90%", s: "NCMM / IEA" },
+    { d: "Jul 15, 2026", t: "Union Cabinet approves the ₹1,27,500 Cr India Semiconductor Mission 2.0 framework spanning design, fabrication, packaging and talent", s: "PIB" },
+  ],
+  stakeholders: [
+    { name: "MeitY / India Semiconductor Mission", type: "government", influence: 10, interest: 8, stance: "ally", reasoning: "ISM approvals, DLI incentives and the priority-vertical designation for automotive are what create this market. A policy ally whose agenda and Bosch's proposed role point the same way." },
+    { name: "ISM fabs & OSATs (Tata-PSMC, CG Semi, Micron, Kaynes)", type: "supplier", influence: 8, interest: 8, stance: "ally", reasoning: "The white-space customer. They need automotive qualification urgently and cannot self-perform it quickly — but several intend to try, which makes them simultaneously the customer and the eventual competitor." },
+    { name: "Global foundries (TSMC-class) and SoC vendors", type: "supplier", influence: 8, interest: 5, stance: "blocker", reasoning: "Hold allocation and pricing power over everything Bosch does not make itself, and are absorbing functions that would otherwise be custom parts. Not addressable — a condition to design around." },
+    { name: "OEM silicon specifiers & E/E architects", type: "oem", influence: 6, interest: 7, stance: "neutral", reasoning: "Increasingly specify silicon rather than accepting whatever the Tier-1 chose. Bosch has the relationship; the conversation is new." },
+    { name: "Indian chip-design GCCs and DLI-funded startups", type: "supplier", influence: 6, interest: 5, stance: "neutral", reasoning: "The talent pool for an India design build, and a possible acqui-hire route. Bosch can approach them but controls nothing about how the pool moves." },
+  ],
+  competitors: [
+    { name: "Infineon Technologies (India)", type: "global", x_price_position: 7, y_tech_depth: 9, moat: "Automotive power and MCU leadership with its own fabs and deep AEC-Q100 process depth", reasoning: "The most direct peer — an IDM with the same self-supply position and the same ability to claim a qualification role. If anyone takes the ISM position before Bosch, it is most likely them." },
+    { name: "Tata Electronics", type: "indian-incumbent", x_price_position: 5, y_tech_depth: 7, moat: "Dholera fab, national backing and the ambition to be India's integrated semiconductor champion", reasoning: "Customer and future competitor at once. Bosch's realistic posture is accelerator rather than gatekeeper — offering to shorten their automotive path rather than to stand in it." },
+    { name: "CG Semi (CG Power–Renesas)", type: "indian-incumbent", x_price_position: 4, y_tech_depth: 6, moat: "Operational AEC-Q100 automotive packaging in India today, with Renesas process transfer behind it", reasoning: "Already offering the automotive-grade packaging step, which makes them the most advanced Indian player on the axis Bosch cares about — a partner if engaged early, a competitor if not." },
+    { name: "Bosch (target position)", type: "global", x_price_position: 7, y_tech_depth: 9, moat: "Own fabs at Reutlingen and Dresden + world-leading MEMS + SiC in production + qualification as embedded practice", reasoning: "The only player that manufactures automotive silicon, qualifies it continuously, and has no ambition to compete with Indian fabs on capacity — which is precisely what makes it a credible qualification partner rather than a rival." },
+  ],
+  competitorWhiteSpace: "Automotive qualification of Indian silicon, sold as a service. Infineon has the process depth but not the incentive to help Indian fabs; Tata and CG Semi have the fabs but not the automotive evidence base; the global reliability houses have neither the automotive specificity nor the device manufacturing behind them. Bosch is the only player that makes automotive silicon, qualifies it as routine practice, and does not want to compete with Indian fabs on capacity — which is exactly the combination that makes a qualification partner trustworthy.",
+  suppliers: [
+    { input: "Leading-edge logic wafers (sub-7nm)", supply_risk: 9, profit_impact: 6, quadrant: "bottleneck", reasoning: "Concentrated in a handful of global foundries with no India route this decade. Bosch has no leverage — which is why the strategy composes around it rather than depending on it." },
+    { input: "Mature-node wafer capacity (28nm and above)", supply_risk: 5, profit_impact: 8, quadrant: "strategic", reasoning: "The nodes that actually carry automotive MCUs and analogue. Multiple sources today and an Indian option arriving — this is where localisation genuinely changes the picture." },
+    { input: "Bosch in-house fab capacity (Reutlingen, Dresden)", supply_risk: 2, profit_impact: 9, quadrant: "strategic", reasoning: "MEMS, ASIC and power devices made internally. The highest-impact input in the field and the one Bosch fully controls — an unusual position for a Tier-1 and the basis of the qualification credibility." },
+    { input: "Test & reliability equipment", supply_risk: 4, profit_impact: 7, quadrant: "leverage", reasoning: "Specialised but competitively supplied. The scarce input for a qualification business is process engineers rather than testers." },
+    { input: "Substrates, packaging materials and rare-earth inputs", supply_risk: 7, profit_impact: 5, quadrant: "bottleneck", reasoning: "Advanced substrates are Asia-concentrated and rare-earth processing is over 90% Chinese — an upstream exposure this field cannot solve on its own." },
+  ],
+  sources: [
+    "India Semiconductor Mission 2.0 — Cabinet approval and approved-unit list (Jul-2026)",
+    "Automotive semiconductor content-per-vehicle curves",
+    "Chip-shortage impact retrospectives and foundry concentration analyses",
+    "UCIe chiplet standard and DIR-V / Shakti-Vega programme briefings",
+    "SiC and GaN efficiency studies; fab water and energy intensity data",
+    "AEC-Q100 / ISO 26262 silicon-level qualification requirements; MoRTH Rules 125-T/U",
+    "India automotive semiconductor consumption forecasts",
+    "Semiconductor competitive and capacity trackers",
+    "Bosch Reutlingen and Dresden fab disclosures",
+    "RBI MPC Sept-2026 (currency and rate context)",
+    "National Critical Minerals Mission allocations",
+  ],
+};
+
+DATA.semis.verdict.aiAnalyst = {
+  whereWeWin: [
+    "Bosch runs its own automotive fabs — 200mm Reutlingen, 300mm Dresden — which makes it a peer to an Indian fab rather than a customer asking one for favours, and that is what the qualification role actually requires",
+    "Automotive qualification is embedded practice at Bosch rather than a capability to acquire, and it takes years of accumulated evidence that cannot be compressed by spending more",
+    "The ISM qualification role is genuinely unclaimed: twelve approved units, automotive named a priority vertical, and no player has taken the position",
+    "Entry barriers here are among the highest in the portfolio and substitutes are near-absent, which is a rare combination and it favours whoever moves first",
+  ],
+  exposure: [
+    "Leading-edge logic is permanently out of reach, so any strategy that depends on competing at the node is dead on arrival",
+    "Infineon has the same self-supply position and the same process depth, and is the most likely player to claim the ISM role if Bosch does not",
+    "Tata Electronics and CG Semi both intend to build automotive-grade capability in-house, which would turn the customer into a competitor",
+    "Selling to a fab operator or a mission office is a go-to-market Bosch has never run, and routing it through automotive account management will not reach the buyer",
+  ],
+  narrative: "Separating silicon from vehicle compute does two useful things at once. It gives a genuinely different business its own scorecard, and it corrects a factual error the combined field carried — Bosch was described as having no wafer fab, when in fact it runs 200mm at Reutlingen and 300mm at Dresden for MEMS, ASICs and power semiconductors. What Bosch lacks is a leading-edge logic foundry, which is a much narrower statement and changes the read considerably. Seen properly, this is not a fab-less company trying to enter silicon; it is a manufacturer with world-leading MEMS, SiC in production and automotive qualification as routine practice, looking at an Indian ecosystem that is about to need exactly that. The opportunity is specific: twelve ISM units are heading toward production, automotive is a named priority vertical, and the role of making Indian silicon automotive-grade is unclaimed. It needs process depth rather than capital, which is why it fits. The honest drag is Right-to-Win rather than market attractiveness — the India design bench is sub-scale and the buyer is one Bosch has never sold to. Neither is a technology problem, and both have known lead times. The risk that actually matters is speed, because an unclaimed role stays unclaimed only until somebody claims it.",
+  bottomLine: "INVEST — open billable qualification advisory with two or three ISM units in the next two quarters and convert those into partnerships as their processes mature. Give the field a named P&L owner, and build the DLI-backed design team while the incentive is still funded.",
+};
+
+V6.semis = {
+  market: {
+    scurve: "Early Adoption",
+    bizModel: "Merchant device sales (MEMS, SiC, ASICs) from Bosch's own fabs + qualification and reliability services sold to fabs and OSATs + design licences. No India fab capital.",
+    revenue: [
+      { k: "Hardware", v: "~62%", note: "MEMS, power devices and ASICs made at Reutlingen and Dresden — the franchise base" },
+      { k: "Software", v: "~6%", note: "Design IP, models and qualification toolchain licences" },
+      { k: "Services", v: "~28%, the growth line", note: "Qualification, reliability engineering and audit support — asset-light and recurring across every product generation a fab ships" },
+      { k: "Data monetization", v: "~4%", note: "Field-reliability datasets sold as qualification evidence, which is a genuinely uncopyable asset" },
+    ],
+  },
+  porterDetail: {
+    "New entrants": [{ k: "Capital intensity", v: "Extreme for devices; the barrier for qualification services is time rather than money" }, { k: "Regulatory hurdles", v: "AEC-Q100 and ISO 26262 evidence takes years and cannot be bought" }, { k: "Access to talent", v: "Process engineers are the scarce input, and the ISM-NAMTECH pipeline is only starting to produce them" }],
+    "Buyer power": [{ k: "Buyer concentration", v: "Twelve approved ISM units — few buyers, but each needs the service badly" }, { k: "Switching cost", v: "Very high once a qualification programme is under way; the evidence is process-specific" }, { k: "Threat of backward integration", v: "Real — Tata and CG Semi both intend to build in-house capability" }],
+    "Supplier power": [{ k: "Supplier concentration", v: "Severe for leading-edge logic, moderate for mature nodes, absent where Bosch self-supplies" }, { k: "Importance of Bosch to supplier", v: "Low at leading edge; Bosch is a small automotive customer to a large foundry" }],
+    "Substitutes": [{ k: "Availability", v: "None — qualification can only be self-performed, not substituted" }, { k: "Price-performance", v: "Self-performing costs a fab several years it would rather not spend" }],
+    "Rivalry": [{ k: "Number & balance", v: "Global IDMs and reliability houses could contest the role; almost none are actively doing so in India yet" }, { k: "Basis of competition", v: "Process depth and evidence base rather than price — a favourable axis for Bosch" }, { k: "Industry growth", v: "22% CAGR keeps rivalry expansionary rather than zero-sum" }],
+  },
+  competencyAssessment: [
+    { cat: "R&D Infra", need: "Reliability labs, test capability and process characterisation for automotive qualification", current: 9, target: 9, priority: "Low" },
+    { cat: "IP", need: "MEMS and power process IP, ASIC design IP, qualification methodology", current: 9, target: 9, priority: "Low" },
+    { cat: "Manufacturing", need: "Automotive wafer processing — owned at Reutlingen and Dresden, absent in India by choice", current: 8, target: 8, priority: "Low" },
+    { cat: "Supply Chain", need: "Mature-node capacity access plus substrate and packaging supply", current: 6, target: 8, priority: "Medium" },
+    { cat: "G2M", need: "Selling qualification services to fab operators and mission offices", current: 3, target: 8, priority: "High" },
+    { cat: "Talent", need: "India-resident silicon designers and process engineers", current: 4, target: 7, priority: "High" },
+    { cat: "Organization", need: "A named India semiconductor P&L with a multi-year horizon", current: 3, target: 8, priority: "High" },
+    { cat: "Leadership", need: "Commitment to an asset-light India strategy — no fab capital", current: 7, target: 8, priority: "Medium" },
+    { cat: "Collaboration", need: "ISM units, DLI programme, chiplet alliances, foundry relationships", current: 5, target: 9, priority: "High" },
+  ],
+  competencyRemark: "The technical position is close to ideal and needs almost nothing: Bosch already manufactures automotive silicon and already qualifies it. Everything missing is organisational — a commercial team that can sell to a fab, an India-resident design bench, and a P&L owner accountable for a multi-year opportunity. All three have known lead times, and all three need to start before the ISM units pick their qualification partners rather than after.",
+  competitorDynamics: { count: "Global IDMs (Infineon, NXP, ST, Renesas), Indian entrants (Tata Electronics, CG Semi, Kaynes), global foundries, plus specialist reliability houses", concentration: "The device market is concentrated and stable; the India qualification role is completely unoccupied", winWhere: "Automotive qualification of Indian silicon, and qualified second-source supply where Bosch already makes the device", positioning: "The manufacturer that qualifies. Bosch makes automotive silicon, qualifies it as routine practice, and has no interest in competing with Indian fabs on capacity — which is exactly what makes it trustworthy as a partner" },
+  competitorAssessment: { strengths: "Infineon: equivalent IDM position and automotive process depth. Tata Electronics: national backing and capital at a scale Bosch would never commit. CG Semi: already operating AEC-Q100 packaging in India today.", weaknesses: "Infineon has little incentive to accelerate Indian competitors. Tata and CG have fabs but not the decades of automotive field data qualification arguments rest on. Reliability houses have neither device manufacturing nor automotive specificity.", opportunities: "The unclaimed ISM qualification role; combined automotive-and-security qualification created by Cyber Rules; qualified SiC second-sourcing.", threats: "Infineon claiming the qualification role first; Indian fabs building the capability in-house and needing no partner at all." },
+  supplierAnalysis: {
+    tech: "EDA tooling from the Synopsys–Cadence duopoly; qualification and reliability toolchains largely in-house.",
+    components: "Leading-edge logic from global foundries with no India route. Mature-node capacity multi-sourced and improving. MEMS, ASIC and power devices self-supplied from Reutlingen and Dresden.",
+    manufacturers: "Bosch is its own manufacturer for the device lines that matter here — an unusual position for a Tier-1 and the reason the qualification claim is credible.",
+    localization: "This field is the localisation answer for the rest of the portfolio. Qualified India silicon is the only genuine hedge against dollar-denominated wafer cost that an automotive BOM has.",
+    recommendation: "Self-supply what Bosch already makes, buy mature-node capacity competitively, compose around leading-edge rather than depending on it, and treat process engineers as the strategic input — because a qualification business runs on people rather than wafers.",
+  },
+  techGrowth: {
+    proven: "MEMS and power-device manufacturing are proven at scale and shipping today. Automotive qualification is proven practice. What is new in India is the ecosystem to apply it to, not the technology itself.",
+    maturity: [{ k: "TRL", v: "9 for MEMS and power devices; 9 for qualification methodology; 5–6 for automotive chiplets; 4–5 for automotive RISC-V" }, { k: "Commercial maturity", v: "Early adoption in India — the ecosystem is forming now, which is the window" }, { k: "Standardization", v: "AEC-Q100 and ISO 26262 settled; UCIe forming; DIR-V nascent" }, { k: "Scalability", v: "Device manufacturing scales at Bosch's existing sites; the services layer scales with people" }],
+    adoption: "Device adoption is structural and follows content growth. Qualification-service adoption follows fab milestones rather than customer willingness — the demand is certain and the timing is not.",
+    innovation: [{ k: "R&D investment", v: "Very high globally; India spend rising fast under ISM and DLI" }, { k: "Patent activity", v: "Dense in power devices and MEMS; India filings rising from a low base" }, { k: "Startup ecosystem", v: "Growing Indian fabless and chiplet startups under DLI" }, { k: "Academic research", v: "IIT-Madras Shakti and the Vega cores make sovereign RISC-V a live research programme rather than a slogan" }],
+    evolution: "Now: merchant devices plus qualification advisory. Next: qualification partnerships at ISM units, qualified SiC second-sourcing, combined automotive-and-security qualification. 5+ years: chiplet-composed automotive parts and possibly RISC-V in sovereignty-driven procurement.",
+    ecosystem: "Device supply chains mature globally. India's ecosystem is forming fast under ISM with a funded talent pipeline behind it, and the automotive qualification layer is the piece nobody has built.",
+    risks: ["ISM fab timelines slipping, which they routinely do", "Infineon or another IDM claiming the qualification role first", "Indian fabs building automotive qualification in-house", "Rare-earth and substrate dependence sitting upstream of everything and outside this field's control"],
+  },
+  research: { note: "India's semiconductor research — Shakti and Vega RISC-V, plus a growing chiplet and packaging body of work — runs well ahead of anything deployed in vehicles, and it sits largely outside conventional Tier-1 channels.", gap: "Automotive qualification is the missing bridge between ISM research output and vehicle programmes. The research exists and the fabs are being built; nobody is making the output automotive-grade. That gap is the business." },
+  activityMeta: [
+    { sf: "+", bosch: "+", impact: "An ecosystem at this scale with automotive named a priority vertical turns the qualification role from a theory into an addressable market." },
+    { sf: "+", bosch: "+", impact: "AEC-Q100 packaging operating in India means the automotive-grade step has already begun — the window is open now rather than approaching." },
+    { sf: "+", bosch: "+", impact: "Nodes at 28nm and below cover the automotive MCUs and analogue that Bosch's qualification service would actually be applied to." },
+    { sf: "+", bosch: "+", impact: "A second qualification axis roughly doubles the value of the same engagement, and almost nothing in India clears both today." },
+    { sf: "+", bosch: "+", impact: "A qualification business runs on process engineers rather than designers, and this is the pipeline that produces them." },
+    { sf: "+", bosch: "0", impact: "Recycling policy addresses an upstream exposure this field cannot solve; helpful for the ecosystem, neutral for Bosch's position." },
+    { sf: "+", bosch: "+", impact: "Cabinet-level commitment gives a multi-year qualification partnership a policy foundation that survives a budget cycle." },
+  ],
+  activityTrend: [{ p: "2011–15", n: 1 }, { p: "2016–20", n: 5 }, { p: "2021–25", n: 21 }, { p: "2026 YTD", n: 14 }],
+};
+
+
+V7.semis = {
+  pestelFA: {
+    P: {
+      for: [
+        { p: "ISM 2.0 approved with a ₹1,27,500 Cr outlay, twelve units and over ₹1.64 lakh Cr committed", why: "The Jul-2026 Cabinet approval turned a fab-subsidy scheme into a full-stack programme covering design, fabrication, packaging and talent, with automotive named a priority vertical.", sowhat: "Every one of those units will eventually need automotive qualification, and nobody has taken the role. That is the field's whole thesis in one sentence." },
+        { p: "CG Semi already offers AEC-Q100 qualified automotive packaging in India", why: "AEC-Q100 is the automotive qualification standard, so an operating India OSAT offering it means the automotive-grade step has started rather than being a future phase.", sowhat: "The window is open now, not approaching. Engage the approved units before their first automotive customer chooses a qualification partner for them." },
+        { p: "Tata-PSMC targets first silicon at Dholera in late 2026 on 28nm and below", why: "Those are exactly the nodes that carry automotive MCUs, industrial controllers and analogue — the parts a qualification service would actually be applied to.", sowhat: "Time the partnership conversation to the yield ramp rather than to the ribbon-cutting; automotive grade always follows consumer grade." },
+      ],
+      against: [
+        { p: "Fab timelines slip routinely, and automotive-grade output comes after consumer-grade", why: "Construction delays and yield ramps are normal rather than exceptional, and automotive qualification sits at the end of that queue.", sowhat: "Gate investment on observable fab milestones rather than on scheme announcements — the announcements are reliable, the dates are not." },
+        { p: "Leading-edge logic stays concentrated in Taiwan and Korea whatever India builds", why: "Sub-7nm capacity is a geopolitical concentration no incentive scheme changes on a five-year view.", sowhat: "Design for node independence and treat leading-edge dependence as a deliberate bounded choice rather than a default." },
+        { p: "Export controls on advanced tooling shape what can be built where", why: "Equipment access is politically mediated, which adds a variable no commercial plan controls.", sowhat: "Keep the India strategy on mature nodes and services, where tooling politics has far less purchase." },
+      ],
+    },
+    E: {
+      for: [
+        { p: "Semiconductor content per vehicle rises through the cycle, independent of unit volumes", why: "Safety mandates, electrification and connectivity each add silicon whatever GDP does — India automotive semiconductor consumption is projected at $4–5B by 2030 on content alone.", sowhat: "State plainly that demand here is structural rather than cyclical. It is a rare property and it matters when the case is reviewed against a 6.6% growth forecast." },
+        { p: "Qualified India silicon is the only genuine currency hedge an automotive BOM has", why: "Every imported wafer is dollar-denominated and cannot be hedged at the component level, so localisation is a financial argument rather than a policy preference.", sowhat: "This is the commercial case for the qualification play, and it is a CFO argument rather than an engineering one." },
+        { p: "Wide-bandgap device demand is compounding faster than the rest of the field", why: "SiC and GaN content is pulled by EV traction inverters and DC charging, both of which are growing off a small base.", sowhat: "Bosch already manufactures SiC — the India question is qualification and second-source positioning, not capability." },
+      ],
+      against: [
+        { p: "Fab economics are unforgiving and automotive volumes could never justify one", why: "A leading-edge line costs billions and needs utilisation automotive demand alone cannot provide.", sowhat: "The India strategy has to be asset-light by construction. Reutlingen and Dresden already serve global MEMS and power demand and do not need an Indian twin." },
+        { p: "Rupee weakness inflates every imported wafer with no component-level hedge", why: "The exposure is structural rather than a sourcing failure, and it worsens with any depreciation.", sowhat: "It strengthens the localisation case but it also raises near-term device cost — both things are true and the business case should say so." },
+        { p: "Merchant device margins are conventional semiconductor economics, not software economics", why: "Devices compete on process and scale, and the majority of this field's revenue mix is still devices.", sowhat: "The margin case rests on the services layer growing. Track the services share as the health metric, not total revenue." },
+      ],
+    },
+    S: {
+      for: [
+        { p: "India holds one of the world's largest concentrations of silicon-design engineers", why: "Qualcomm, NVIDIA, Intel and NXP employ tens of thousands of Indian chip designers — the talent exists, it is simply already employed.", sowhat: "The constraint is organising the talent rather than finding it, which is a different and more tractable problem." },
+        { p: "The ISM–NAMTECH pipeline is now producing manufacturing-leadership cohorts", why: "A funded national skills programme for fab and packaging leadership did not exist two years ago.", sowhat: "A qualification business needs process engineers more than designers, and this pipeline produces exactly that. Engage it early." },
+        { p: "Shortage memory made supply resilience a board topic rather than a procurement one", why: "Lost volume during 2021–23 showed up in quarterly results, which is what moved the conversation upward.", sowhat: "'India-qualified silicon' is a CXO narrative. Sell it in that room rather than to a component buyer." },
+      ],
+      against: [
+        { p: "The design talent works for the vendor GCCs, not for system houses", why: "Bosch's India design bench is small against organisations that have been hiring there for two decades.", sowhat: "DLI incentives make a targeted team build or acqui-hire economical in a way organic hiring is not — but only while the scheme is funded." },
+        { p: "Process-engineering depth for automotive qualification is scarce everywhere, not just at Bosch", why: "Reliability engineering is a slow-built discipline and the global pool is small.", sowhat: "Convert from within where possible. Bosch's own fab organisations are the most likely internal source." },
+        { p: "Semiconductor careers compete with software for the same graduates", why: "Silicon offers slower feedback loops than software, which affects who chooses it.", sowhat: "A minor factor, but it argues for partnering with the NAMTECH pipeline rather than competing in the open market." },
+      ],
+    },
+    T: {
+      for: [
+        { p: "Chiplet composition under UCIe answers the node gap without a fab", why: "Composing a part from best-of-breed dies is exactly the position of a system house with ASIC competence and no foundry ambition.", sowhat: "It converts a structural weakness into a design constraint. Keep designs chiplet-ready even while shipping monolithic parts — it costs almost nothing." },
+        { p: "DIR-V with the Shakti and Vega cores makes sovereign RISC-V a live programme", why: "Government procurement is the plausible first pull, and it may specify an Indian instruction set before commercial programmes do.", sowhat: "Buy the option, not the position. One evaluation programme keeps Bosch credible and costs very little if no trigger appears." },
+        { p: "Wide-bandgap manufacturing is genuinely difficult and Bosch is past the curve", why: "SiC yield and reliability are hard-won, and Bosch has been in production long enough to have learned it.", sowhat: "Position as qualifier and qualified second source as India's SiC fab ramps, rather than treating it as a competitor." },
+      ],
+      against: [
+        { p: "Leading-edge logic is permanently out of reach and permanently imported", why: "Sub-7nm compute silicon comes from a handful of global foundries, and automotive volumes will never justify building there.", sowhat: "State the boundary explicitly. Any strategy that depends on competing at the node is dead on arrival." },
+        { p: "SoC vendors keep absorbing functions that would otherwise be custom parts", why: "Every function integrated into a standard SoC is an ASIC that no longer needs designing.", sowhat: "Concentrate ASIC effort on safety, security and precision analogue — the functions standard SoCs consistently fail to absorb." },
+        { p: "Automotive chiplet toolchains and RISC-V safety certification are both immature", why: "The standards exist but the automotive-grade ecosystem around them does not yet.", sowhat: "Correctly parked in H3. Prepare through design discipline rather than investment." },
+      ],
+    },
+    En: {
+      for: [
+        { p: "Efficient power devices save more in use than they cost to make", why: "A percentage point of inverter efficiency compounds across every kilometre driven, which dwarfs the fab footprint of the device.", sowhat: "Quantify the in-use saving per device shipped — it is a genuine sustainability claim and OEM scope-3 reporting can use it." },
+        { p: "Critical-minerals recycling is now funded at ₹1,500 Cr as a supply-security measure", why: "With China controlling over 90% of rare-earth processing, recovery has been reframed from environmental to strategic.", sowhat: "Connects this field to the Sustainability field's traceability layer — one capability serving two policy narratives." },
+        { p: "Renewable-powered fabs are becoming a qualification criterion in their own right", why: "Continuous power draw is structural to wafer processing, so supply reliability and carbon intensity are the same question.", sowhat: "Include energy provisioning in the qualification assessment. A fab that cannot guarantee power cannot guarantee automotive delivery." },
+      ],
+      against: [
+        { p: "Fabs are among the most water-intensive facilities in manufacturing, and several approved Indian sites sit in water-stressed regions", why: "Ultrapure water consumption is structural to wafer processing rather than a matter of plant efficiency.", sowhat: "Treat water security as a real qualification criterion. It is a delivery risk before it is an environmental one." },
+        { p: "Rare-earth and substrate dependence sits upstream of everything and outside this field's control", why: "No Indian fab changes where the materials that go into the devices are processed.", sowhat: "Track it as a background exposure the field cannot solve, and support the policy response elsewhere in the portfolio." },
+        { p: "Semiconductor manufacturing carbon is high per wafer", why: "Energy intensity per unit output is inherent to the process.", sowhat: "Report it honestly alongside the in-use saving; the lifecycle balance is favourable for power devices but should be evidenced rather than asserted." },
+      ],
+    },
+    L: {
+      for: [
+        { p: "AEC-Q100, AEC-Q101 and ISO 26262 at silicon level are the gates that decide whether a wafer can enter a vehicle", why: "Automotive qualification is a documented, auditable process with a multi-year data requirement — not a test that can be passed quickly.", sowhat: "This is the moat. Qualification depth cannot be bought or accelerated, and it is precisely what a new fab lacks." },
+        { p: "Cyber Rules 125-T/125-U push a hardware root of trust into scope from Oct-2026", why: "A vehicle-level CSMS argument has to rest on hardware trust, which makes the secure element a compliance component rather than a feature.", sowhat: "A second qualification axis alongside AEC-Q100, and almost nothing in India clears both. It roughly doubles the value of the same engagement." },
+        { p: "India's IP regime is now strong enough to make design partnerships commercially safe", why: "Custom-silicon work exposes core design IP, and partners commit only where courts will enforce protection.", sowhat: "Put layered IP protection into every ISM design partnership before the business scales — a one-time legal setup, far cheaper than the alternative." },
+      ],
+      against: [
+        { p: "Liability for a qualified part that later fails in the field is legally unwritten", why: "If Bosch certifies a fab's process and a device fails in a vehicle, allocation between Bosch, the fab, the Tier-1 and the OEM has no Indian precedent.", sowhat: "Cap liability explicitly in every qualification agreement and insure specifically for it. This is the single contractual item that must be right before the first deal." },
+        { p: "Qualification standards themselves evolve, and evidence built to one revision may need rework", why: "AEC and ISO revisions change test requirements periodically.", sowhat: "Build the evidence pipeline to be re-runnable rather than one-shot, so a standard revision is a re-test rather than a restart." },
+        { p: "Export-control review applies to some design tooling and IP transfer into India", why: "Advanced EDA and certain IP blocks sit near dual-use boundaries.", sowhat: "Make export-control review a standing item in the India design build rather than a one-off legal check." },
+      ],
+    },
+  },
+  swot5: {
+    S: [
+      { area: "Technology", p: "Bosch runs its own fabs — 200mm Reutlingen, 300mm Dresden", why: "MEMS, ASICs and power semiconductors are manufactured in-house rather than bought, which is unusual for a Tier-1 and gives process knowledge no fab-less competitor has.", sowhat: "Bosch can speak to an Indian fab as a peer that runs automotive processes rather than a customer asking for them. That is the credibility the qualification role requires." },
+      { area: "Technology", p: "World-leading MEMS franchise with decades of automotive field data", why: "Bosch is among the largest MEMS manufacturers globally, and the reliability dataset behind that is what qualification arguments are actually built from.", sowhat: "Sell the dataset as much as the device. A competitor can copy a specification; it cannot copy twenty years of failure data." },
+      { area: "Process", p: "Automotive qualification is embedded practice, not a capability to acquire", why: "AEC-Q100 and ISO 26262 at silicon level are executed continuously across Bosch's own product lines, so the service is an extension of existing work.", sowhat: "The least copyable asset in the field and the direct basis of the white-space play." },
+      { area: "Technology", p: "SiC and GaN power devices already in volume production", why: "Wide-bandgap manufacturing is difficult and Bosch is past the learning curve most entrants are still climbing.", sowhat: "Position for qualification and qualified second-source roles as India's SiC fab ramps, rather than treating it as a rival." },
+      { area: "People", p: "Strong ASIC design competence inside the global organisation", why: "Bosch designs custom automotive silicon today, so a chiplet or custom-part strategy builds on existing engineering.", sowhat: "The India gap is scale and location rather than capability — a hiring problem, not a technology one." },
+    ],
+    W: [
+      { area: "Technology", p: "No leading-edge logic, and no economic route to acquiring it", why: "Sub-7nm silicon comes from a handful of global foundries and automotive volumes could never justify building at that node.", sowhat: "A deliberate, permanent boundary. Buy the die, compose around it, never chase the node — and say so plainly rather than leaving it as an implied gap." },
+      { area: "Market", p: "Selling to fabs, OSATs and mission offices is a go-to-market Bosch has never run", why: "Bosch's commercial muscle is built for OEM component sales; a qualification service sold to a fab operator is a different buyer, contract shape and cycle.", sowhat: "Build a small dedicated commercial team. Routing this through automotive account management will not reach the buyer." },
+      { area: "Leadership", p: "No India semiconductor P&L, so nobody owns winning this", why: "Silicon revenue is spread across product lines with no single accountable owner for the India opportunity.", sowhat: "Give the field an owner and a ring-fenced multi-year budget. Fab timelines do not fit annual review cycles." },
+      { area: "People", p: "India silicon-design scale is sub-critical against the vendor GCCs", why: "The talent is in India but it works for Qualcomm, NVIDIA and Intel; Bosch's India design bench is small by comparison.", sowhat: "A DLI-backed targeted build or acqui-hire closes this faster than organic hiring, and the incentive makes it affordable while it lasts." },
+      { area: "Process", p: "Qualification-as-a-service has never been packaged, priced or liability-scoped", why: "Bosch qualifies its own silicon as an internal cost; selling it externally needs a product definition and a liability position that do not exist.", sowhat: "Productise it deliberately, and settle the liability question before the first agreement rather than after it." },
+    ],
+    O: [
+      { area: "Market", p: "Automotive qualification of Indian fab and OSAT output is genuinely unclaimed", why: "Twelve approved units are moving toward production and every one will need automotive-grade qualification, yet no player has taken the role.", sowhat: "The field's defining opportunity: government-aligned, defensible, and it needs process depth rather than capital." },
+      { area: "Technology", p: "Combined automotive and security qualification is a second axis nobody serves", why: "Cyber Rules require a hardware root of trust, and clearing both AEC-Q100 and a security evaluation is harder than clearing either alone.", sowhat: "Bundle the two into one auditable engagement — it roughly doubles the value of the same work." },
+      { area: "Market", p: "Qualified SiC second-sourcing as India's wide-bandgap fab reaches output", why: "OEMs and Tier-1s want a qualified second source for power devices, and Bosch both makes them and knows how to qualify them.", sowhat: "Offer the device and the qualification together. That combination is not available from anyone else in India." },
+      { area: "Technology", p: "Chiplet composition lets Bosch build differentiated compute without a leading-edge fab", why: "UCIe makes it possible to combine a bought compute die with Bosch-designed safety, security and analogue dies in one package.", sowhat: "Prepare through design discipline now; it converts the node gap from a weakness into a constraint." },
+      { area: "Process", p: "DLI incentives make a targeted India design-team build economically rational", why: "Design-linked incentives cover a meaningful share of standing up India design capability, which changes the build-versus-partner arithmetic.", sowhat: "The incentive window is finite. Act while the scheme is funded." },
+    ],
+    T: [
+      { area: "Market", p: "Infineon or another IDM could claim the ISM qualification role first", why: "The role is unclaimed because it is new, not because it is hard to see, and several players have equivalent process depth.", sowhat: "Speed is the only real defence. The first credible partner at two or three fabs effectively sets the standard." },
+      { area: "Market", p: "Tata Electronics and CG Semi both intend to build automotive-grade capability in-house", why: "A fab that qualifies its own output needs no qualification partner, and both have the ambition and the capital to try.", sowhat: "Position as accelerator rather than gatekeeper — offer to shorten their path rather than to stand in it." },
+      { area: "Technology", p: "SoC vendors integrating more functions absorb the ASIC opportunity", why: "Every function that moves into a standard SoC is a custom part that no longer needs designing.", sowhat: "Concentrate ASIC effort on safety, security and analogue functions standard SoCs consistently do not take." },
+      { area: "Leadership", p: "ISM fab timelines could slip and defer the opportunity by years", why: "Construction and yield ramps slip routinely, and automotive-grade output always follows consumer-grade.", sowhat: "Gate investment on observable fab milestones rather than on scheme announcements." },
+      { area: "Technology", p: "Rare-earth and substrate dependence sits upstream and outside this field's control", why: "China processes over 90% of rare earths, and no Indian fab changes where the input materials come from.", sowhat: "Track as background exposure; support the recycling policy response through the Sustainability field rather than trying to solve it here." },
+    ],
+  },
+  competitorProfiles: [
+    { name: "Infineon Technologies (India)", type: "global", listing: "XETRA: IFX", revenue: "~€15B global (FY2025)", headcount: "~58,000", profitability: "Segment result margin ~20%", cashCow: "Automotive MCUs and power discretes for global OEMs and Tier-1s", emerging: "SiC and GaN for EV traction and charging, India automotive design centre expansion, AURIX safety MCUs", rdBets: "SiC trench technology, GaN for onboard chargers, zone-controller MCU families", keyPartnerships: "Global automotive OEMs and Tier-1s; India design centres in Bengaluru and Pune", vision: "Make electrification and digitalisation possible through power systems and IoT semiconductors.", differentiation: "An IDM with the same self-supply position and the same automotive process depth as Bosch, and a far larger merchant automotive semiconductor business", sentiment: "OEMs rate the automotive process depth highly; the concern is allocation priority during tight supply, where automotive competes with industrial.", indiaStrategy: "Expanding India design capability and automotive design-in support; no India fab announced, which means the qualification question applies to them too.", x_price_position: 7, y_tech_depth: 9, moat: "Automotive power and MCU leadership with owned fabs and deep AEC-Q100 process depth", radar: { tech: 9, price: 5, indiaPresence: 7, service: 7, innovation: 8, ecosystem: 8 } },
+    { name: "Tata Electronics", type: "indian-incumbent", listing: "Private (Tata Sons)", revenue: "Pre-scale in semiconductors; group scale behind it", headcount: "~10,000 and growing fast", profitability: "Investment phase", cashCow: "Electronics assembly and precision manufacturing for global brands", emerging: "Dholera fab with PSMC, Assam packaging unit, automotive-grade node targeting", rdBets: "28nm and above process transfer, automotive MCU and analogue capability, packaging technology", keyPartnerships: "PSMC (Taiwan, fab technology), Analog Devices, government under ISM", vision: "Build India's integrated semiconductor champion, from wafer to package.", differentiation: "National backing, group capital and the only India fab targeting automotive-relevant nodes at scale", sentiment: "Enormous credibility from the Tata name; automotive customers are waiting to see qualified output before committing volume.", indiaStrategy: "First silicon at Dholera targeted late 2026 on 28nm and below; automotive is an explicit target segment, and automotive qualification is the gap.", x_price_position: 5, y_tech_depth: 7, moat: "Dholera fab plus national backing — the only India player with both capital and political weight at fab scale", radar: { tech: 7, price: 7, indiaPresence: 10, service: 5, innovation: 6, ecosystem: 8 } },
+    { name: "CG Semi (CG Power–Renesas)", type: "indian-incumbent", listing: "NSE: CGPOWER (parent)", revenue: "Parent ~₹9,000 Cr; semiconductor unit pre-scale", headcount: "~1,500 in the semiconductor unit", profitability: "Investment phase, parent profitable", cashCow: "Industrial motors and power systems at the parent level", emerging: "AEC-Q100 automotive packaging and test, OSAT capacity ramp under ISM", rdBets: "Automotive-grade packaging processes, test capability for power and MCU parts", keyPartnerships: "Renesas (process and technology transfer), Stars Microelectronics, ISM", vision: "Make India a credible automotive packaging and test destination.", differentiation: "Already operating AEC-Q100 automotive packaging in India, which makes them the most advanced Indian player on exactly the axis that matters here", sentiment: "Automotive buyers are encouraged by the AEC-Q100 capability; the open question is volume consistency and reliability data depth.", indiaStrategy: "Scaling automotive packaging and test capacity under ISM with Renesas process support; the nearest thing India has to an automotive qualification capability today.", x_price_position: 4, y_tech_depth: 6, moat: "Operating AEC-Q100 automotive packaging in India today, with Renesas process transfer behind it", radar: { tech: 6, price: 8, indiaPresence: 9, service: 6, innovation: 5, ecosystem: 7 } },
+    { name: "Bosch (target position)", type: "global", listing: "Private (Robert Bosch Stiftung)", revenue: "Group scale; India semiconductor revenue pre-scale", headcount: "Own fab organisations at Reutlingen and Dresden", profitability: "Device margins conventional; services margin targeted well above", cashCow: "MEMS and power devices made in-house for Bosch systems and merchant sale", emerging: "Automotive qualification services for ISM units, qualified SiC second-sourcing, security-qualified custom silicon", rdBets: "Chiplet-ready design practice, combined automotive-and-security qualification, RISC-V evaluation as an option", keyPartnerships: "ISM units and OSATs, DLI programme, foundries for mature-node capacity, chiplet alliances", vision: "Be the authority that makes Indian silicon automotive-grade — without building an Indian fab.", differentiation: "The only player that manufactures automotive silicon, qualifies it as routine practice, and has no ambition to compete with Indian fabs on capacity — which is exactly what makes a qualification partner trustworthy", sentiment: "Fab operators value the peer credibility of a company that runs its own automotive processes; the open question is whether Bosch will resource a commercial team that can actually sell to them.", indiaStrategy: "Asset-light: qualification advisory converting to partnerships, qualified second-source supply where Bosch already makes the device, a DLI-backed design team, and no fab capital.", x_price_position: 7, y_tech_depth: 9, moat: "Own automotive fabs + world-leading MEMS + SiC in production + qualification as embedded practice", radar: { tech: 9, price: 6, indiaPresence: 8, service: 8, innovation: 7, ecosystem: 7 } },
+  ],
+};
+V7.semis.sources = [
+  { url: "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2026/feb/doc202627782101.pdf" },
+  { url: U.marklines },
+  { url: U.counterpoint },
+  { url: U.autosar },
+  { url: "https://www.yolegroup.com" },
+  { url: U.ais189 },
+  { url: "https://www.semi.org" },
+  { url: U.mordor },
+  { url: "https://www.bosch-semiconductors.com" },
+  { url: U.rbi_mpc },
+  { url: U.niti },
+];
+
+V8.semis = {
+  pestel: {
+    P: { for: [{ impact: 5, certainty: 5 }, { impact: 5, certainty: 5 }, { impact: 3, certainty: 5 }],
+         against: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 3 }, { impact: 1, certainty: 5 }] },
+    E: { for: [{ impact: 5, certainty: 5 }, { impact: 5, certainty: 5 }, { impact: 3, certainty: 3 }],
+         against: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 5 }, { impact: 3, certainty: 5 }] },
+    S: { for: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 5 }, { impact: 3, certainty: 5 }],
+         against: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 3 }, { impact: 1, certainty: 3 }] },
+    T: { for: [{ impact: 5, certainty: 5 }, { impact: 3, certainty: 3 }, { impact: 5, certainty: 5 }],
+         against: [{ impact: 5, certainty: 5 }, { impact: 3, certainty: 5 }, { impact: 3, certainty: 3 }] },
+    En: { for: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 5 }, { impact: 1, certainty: 3 }],
+          against: [{ impact: 3, certainty: 5 }, { impact: 1, certainty: 5 }, { impact: 1, certainty: 3 }] },
+    L: { for: [{ impact: 5, certainty: 5 }, { impact: 5, certainty: 5 }, { impact: 3, certainty: 5 }],
+         against: [{ impact: 3, certainty: 5 }, { impact: 3, certainty: 3 }, { impact: 3, certainty: 5 }] },
+  },
+  swot: {
+    /* "No leading-edge logic" is scored a Significant Bottleneck rather than a Fatal
+       Flaw on purpose. The field's scope deliberately excludes leading-edge, so the
+       gap bounds what Bosch sells rather than threatening whether it can sell. */
+    S: [{ impact: 5, probability: 5 }, { impact: 5, probability: 5 }, { impact: 5, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 3 }],
+    W: [{ impact: 3, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 3 }, { impact: 1, probability: 3 }],
+    O: [{ impact: 5, probability: 5 }, { impact: 5, probability: 3 }, { impact: 3, probability: 3 }, { impact: 3, probability: 3 }, { impact: 3, probability: 5 }],
+    T: [{ impact: 5, probability: 3 }, { impact: 3, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 5 }, { impact: 3, probability: 3 }],
+  },
+  market: {
+    samUSD: 720000000, cagrPct: 22,
+    scurveScore: 5, scurveWhy: "V6 tags this Early Adoption. Standards are settled (AEC-Q100, ISO 26262) but the India ecosystem they will be applied to is forming right now, which is exactly the window in which a qualification authority can set the reference practice before it fixes.",
+    revenueQualityScore: 3, revenueQualityWhy: "Services at 28% and rising are recurring across every product generation a fab ships, and the field-reliability dataset adds another 4%. But 62% is still merchant device sale — a genuine hybrid rather than a recurring-dominant book.",
+    profitabilityScore: 3, profitabilityWhy: "Qualification and reliability services earn software-like margins on an asset-light base, but they are under a third of the mix. The majority is merchant devices at conventional semiconductor economics, so the blended position is standard rather than premium — and claiming otherwise would flatter the field.",
+  },
+  iai: {
+    "New entrants": [1, 1, 1, 3, 3, 1, 3],
+    "Buyer power": [3, 3, 1, 1, 5, 3],
+    "Supplier power": [5, 5, 3, 3, 5],
+    "Substitutes": [1, 1, 1, 3],
+    "Rivalry": [3, 1, 1, 1, 5, 3],
+  },
+  competency: {
+    profile: "hybrid",
+    areas: {
+      rdInfra: { required: 4, current: 4 }, ip: { required: 4, current: 4 }, manufacturing: { required: 4, current: 4 },
+      supplyChain: { required: 3, current: 2 }, g2m: { required: 3, current: 1 }, talent: { required: 4, current: 2 }, organization: { required: 3, current: 1 },
+    },
+    narrative: "The technical position is close to ideal and needs nothing: Bosch already manufactures automotive silicon at Champion level and already qualifies it continuously. Every gap is organisational. Go-To-Market scores lowest because selling a qualification service to a fab operator is a buyer Bosch has never approached, Talent because the India design bench is sub-scale against the vendor GCCs, and Organization because no India semiconductor P&L exists so nobody owns winning this. All three have known lead times and all three have to start before the ISM units pick their qualification partners — not after.",
+  },
+  stakeholders: [
+    { name: "MeitY / India Semiconductor Mission", category: "Government & Regulatory", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "Bosch can engage ISM through industry consultation and by taking the qualification role, but has no control over approvals, incentive design or fab timelines." },
+    { name: "ISM fabs & OSATs (Tata-PSMC, CG Semi, Micron, Kaynes)", category: "Supply Chain & Ecosystem Partners", power: 5, stance: 1, boschInfluence: 3, boschInfluenceWhy: "These are partnerships Bosch can pitch and shape commercially, with several credible counterparties — real influence, but they are simultaneously building the capability themselves, so not control." },
+    { name: "Global foundries (TSMC-class) and SoC vendors", category: "Supply Chain & Ecosystem Partners", power: 5, stance: -1, boschInfluence: 1, boschInfluenceWhy: "They hold allocation and pricing power over everything Bosch does not make itself, and are absorbing functions that would otherwise be custom parts. Bosch is one automotive customer among many with essentially no leverage." },
+    { name: "OEM silicon specifiers & E/E architects", category: "Customers & End-Users", power: 3, stance: 0, boschInfluence: 5, boschInfluenceWhy: "Bosch already holds deep engineering relationships with these teams through its component business — a direct commercial channel, even though silicon specification is a newer conversation within it." },
+    { name: "Indian chip-design GCCs and DLI-funded startups", category: "Supply Chain & Ecosystem Partners", power: 3, stance: 0, boschInfluence: 3, boschInfluenceWhy: "The talent pool for an India design build and a possible acqui-hire route. Bosch can approach them and DLI makes it affordable, but controls nothing about how the pool moves." },
+  ],
+  competitors: [
+    { name: "Infineon Technologies (India)", marketPosition: "High", futureMomentum: "Medium", why: "The clear leader in automotive power and MCUs with its own fabs and equivalent AEC-Q100 depth, but its India investment is design-support expansion rather than a category-defining move — a leader growing at market pace." },
+    { name: "Tata Electronics", marketPosition: "Medium", futureMomentum: "High", why: "Not yet a market position in silicon, but national backing, group capital and the only India fab targeting automotive-relevant nodes make its momentum unambiguously aggressive." },
+    { name: "CG Semi (CG Power–Renesas)", marketPosition: "Medium", futureMomentum: "High", why: "A credible contender rather than a leader, but already operating AEC-Q100 automotive packaging in India and scaling under ISM — the most advanced Indian player on the axis that matters here." },
+  ],
+  boschStrength: "High", boschStrengthWhy: "Bosch runs its own automotive fabs at Reutlingen and Dresden, holds a world-leading MEMS franchise with the field-reliability dataset behind it, has SiC in volume production, and executes AEC-Q100 and ISO 26262 qualification as routine practice. On the three competency dimensions that decide this field, Bosch scores at Champion level — that is a moat, not merely a fit.",
+  marketGapSignificance: "High", marketGapWhy: "Automotive qualification of Indian silicon is genuinely unclaimed. Twelve ISM units are moving toward production, automotive is a named priority vertical, and no player has taken the role — inside a $0.72B SAM growing at 22%. Combined automotive-and-security qualification and qualified SiC second-sourcing are two further unoccupied positions inside the same relationship.",
+  supplyChainMaturity: "Medium", supplyChainWhy: "A genuinely mixed picture, which is why it is Medium rather than either extreme. Bosch self-supplies MEMS, ASIC and power devices from its own fabs, mature-node capacity is multi-sourced and an Indian option is arriving, but leading-edge logic has no India route this decade and advanced substrates remain Asia-concentrated.",
+  boschControl: "High", boschControlWhy: "Unusually high for a Tier-1, and the reason is simple: Bosch owns the fabs for the device lines that matter in this field. MEMS, ASICs and power semiconductors are made in-house rather than bought, which means Bosch controls process, capacity and qualification for the majority of its own device value. Leading-edge logic is the exception, and it is deliberately excluded from scope.",
+  techVelocity: "High", commReadiness: "High",
+  techTrendWhy: "MEMS and power-device manufacturing are TRL9 and shipping today, and the qualification methodology is mature practice — so commercial readiness is high and H1 revenue needs no new capability at all. Velocity is high because wide-bandgap devices, chiplet composition and the entire Indian ecosystem are all moving fast, with very high global R&D investment and dense patent activity in power and MEMS behind them. The genuinely early items — automotive chiplets at TRL5–6 and automotive RISC-V at TRL4–5 — sit correctly in H3 rather than being counted as near-term.",
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -8676,6 +9306,30 @@ SUB.clouddata = {
     triggers: ["DPDP subordinate rules finalising", "An OEM requiring platform-level DPDP evidence in an RFQ"],
     players: [{ name: "Enterprise consent-management vendors", note: "Generic tooling without vehicle-data context" }],
   },
+  "Vehicle as Sensor": {
+    play: "LEAD",
+    thesis: "The sensors are already installed and already paid for. Turning the fleet into a distributed sensing network — road condition, environmental, infrastructure state — costs almost nothing at the margin, and Bosch can vouch for where every signal came from because it designed the sensor and the gateway.",
+    sizing: [
+      { k: "Reallocated from", v: "The former Electronic Control Architectures field, whose own verdict routed monetisation here", src: "Field split, Sept-2026" },
+      { k: "SAM contribution", v: "$80M of this field's $930M", src: "Field build-up" },
+      { k: "Sensing base", v: "Bosch MEMS and radar content across the installed vehicle parc", src: "Bosch" },
+    ],
+    whyNow: [
+      { p: "GenAI made unstructured sensor streams useful without bespoke pipelines", why: "Interrogating raw telemetry used to require building a purpose-made analytics chain for every question; general models collapsed that cost, which changes what the same data is worth." },
+      { p: "Radar spectrum was de-licensed in June 2026", why: "The 77–81 GHz exemption clears the regulatory path for sensing-heavy content, so sensing density can be planned without a contingency." },
+    ],
+    boschFit: "Unusually good, and it is the provenance rather than the sensing that makes it so. A cloud-only vendor receives data and has to trust it; Bosch made the sensor, the gateway and the platform, so it can certify the chain end to end — which is exactly what a data buyer underwriting a decision needs.",
+    whiteSpace: [
+      { p: "Road-condition and environmental data products derived from installed sensors", why: "The marginal cost is close to zero because the hardware is already deployed for another purpose entirely." },
+      { p: "Provenance-certified sensor data for infrastructure and insurance buyers", why: "Buyers who underwrite decisions on this data need to know where it came from, and only the maker of the sensor can guarantee it." },
+    ],
+    barriers: [
+      { p: "Data rights have to be settled before collection, not after", why: "Retrofitting consent and rights into a live fleet is close to impossible, so the OEM agreement is the gate." },
+      { p: "The sensing sits in one field and the platform in another", why: "Without joint accountability across Semiconductors and Cloud & Data, this falls between the two and nobody ships it." },
+    ],
+    triggers: ["An infrastructure or insurance buyer contracting vehicle-derived environmental data", "An OEM agreement granting Bosch derived-data rights at signature"],
+    players: [{ name: "Map and geospatial providers", note: "Buyers of the data rather than competitors for the sensing" }],
+  },
   "Federated Data Exchange": {
     play: "PARTNER",
     thesis: "India is the only market where state-built open protocols invite a private vehicle-data layer to compose on public rails. The value is in holding the architect's seat, not in owning the exchange.",
@@ -8702,144 +9356,274 @@ SUB.clouddata = {
 
 /* Sub-field drill-downs, batch 3 — Electronic Control Architectures, Software. */
 SUB.eca = {
-  "Edge Compute": {
+  "Zonal Controllers": {
     play: "LEAD",
-    thesis: "The move from seventy distributed ECUs to a handful of zonal controllers is the once-a-decade event that resets incumbency on every socket in the vehicle. Bosch holds the architecture knowledge that decides who wins them.",
+    thesis: "The move from seventy distributed ECUs to a handful of zonal units is the once-a-decade event that decides every socket in the vehicle again from scratch. History counts for very little in an architecture transition, which is exactly why a technically strong supplier can displace an incumbent.",
     sizing: [
-      { k: "Bosch zonal competency", v: "9 against a required 9 — the lead asset of the decade", src: "Field competency table" },
-      { k: "Harness saving", v: "~40% less copper wiring, 10–15 kg per vehicle", src: "Architecture analysis" },
-      { k: "Field SAM", v: "$2.3B by 2030 at 16% CAGR", src: "Field market derivation" },
+      { k: "TAM slice", v: "$1.15B of the field's $4.6B — roughly 4–6 zonal units per vehicle", src: "Content benchmarks; estimate" },
+      { k: "SAM slice", v: "$420M — the single largest addressable line in the field", src: "Field build-up" },
+      { k: "Harness saving", v: "~40% less copper, 10–15 kg per vehicle", src: "Architecture analysis" },
+      { k: "Bosch competency", v: "9 against a required 9 on zonal architecture", src: "Field competency table" },
     ],
     whyNow: [
-      { p: "Tata AVINYA and Mahindra INGLO are specifying architecture right now", why: "Zonal blueprints for these platforms are being fixed in 2026–27, and the supplier who wins the blueprint wins the sockets beneath it for a platform generation." },
-      { p: "The harness saving is a CFO argument, not an engineering one", why: "Copper reduction alone often funds the incremental controller cost, which is what makes the case survive a cost review." },
+      { p: "Platforms with post-2028 start of production are being partitioned right now", why: "The blueprint is fixed during design, not at the RFQ, and that decision carries a full platform generation of controller sockets behind it." },
+      { p: "Cyber Rules 125-T/125-U make the security architecture part of the same decision", why: "From Oct-2026 the zonal controller and its update path sit inside the vehicle-level CSMS audit, so an OEM specifying compute is also specifying security." },
+      { p: "The harness saving is a finance argument, not an engineering one", why: "Ten to fifteen kilograms of copper removed per vehicle is a number a cost review can verify, which is what carries an architecture case that comfort arguments would lose." },
     ],
-    boschFit: "The strongest single position in this field. Bosch ships vehicle computers globally, and architecture know-how is the scarce input in a transition — more so than silicon, which everyone can buy.",
+    boschFit: "The strongest single fit in the field. Bosch ships vehicle computers globally, so it arrives with a production reference rather than a proposal, and the ISO 26262 depth needed to argue safety across a consolidated topology is decades old rather than recently acquired.",
     whiteSpace: [
-      { p: "Zonal controllers for India-built EV platforms", why: "Sourcing is opening now and incumbency resets in an architecture transition, so a technically strong entrant can displace a legacy supplier." },
+      { p: "Zonal controllers for India-built EV platforms", why: "Sourcing opens now and incumbency resets in an architecture transition — technology decides rather than relationship history." },
+      { p: "Migration-as-a-service from distributed ECUs to zonal", why: "OEMs fear transition risk more than transition cost, and nobody is selling the de-risking explicitly." },
     ],
     barriers: [
-      { p: "OEM captives are building architecture teams", why: "Tata and Mahindra want to own their E/E destiny, which risks demoting Tier-1s to build-to-print." },
-      { p: "Advanced SoC access is outside Bosch's control", why: "Central compute performance is decided at silicon level by suppliers with allocation power Bosch cannot match." },
+      { p: "The buyer is an OEM architecture team, not procurement", why: "Bosch's India relationships are deeper with component buyers than with the people who decide partitioning, and that gap has to be closed deliberately." },
+      { p: "Tata and Mahindra are building captive architecture capability", why: "If top-tier in-housing completes, this becomes a mid-tier play and the addressable pool roughly halves." },
     ],
-    triggers: ["First India-built volume platform sourcing a zonal architecture", "An OEM inviting co-development on the E/E blueprint rather than issuing a build-to-print RFQ"],
-    players: [{ name: "Continental", note: "Closest global peer on architecture and domain controllers" }, { name: "Qualcomm, NVIDIA", note: "Absorbing ECU value into central compute silicon — the structural threat" }],
+    triggers: ["First India-built volume platform sourcing a zonal architecture externally", "An OEM inviting co-development on the blueprint rather than issuing a build-to-print RFQ"],
+    players: [
+      { name: "Continental (VDX)", note: "Closest global peer on domain and zonal controllers" },
+      { name: "OEM captives (Tata, Mahindra)", note: "The in-housing threat — and the reason the mid-tier matters" },
+    ],
   },
-  "Distributed Compute": {
+  "Central Compute (HPC)": {
     play: "LEAD",
-    thesis: "The existing ECU base is a cash-generative franchise that funds the zonal transition. It has to be defended and migrated at the same time, because commodity ECU value compresses as consolidation proceeds.",
+    thesis: "One high-performance computer running ADAS, body and increasingly cockpit workloads together. The silicon to do it exists today; what does not exist at most suppliers is the ability to certify safety separation between a braking function and an infotainment app sharing that hardware.",
     sizing: [
-      { k: "Bosch ECU competency", v: "9 against a required 8 — exceeds", src: "Field competency table" },
-      { k: "Hardware share of field revenue", v: "~75% today", src: "Field revenue split" },
+      { k: "TAM slice", v: "$980M — one unit per platform, concentrated in the ADAS and EV mix", src: "Content benchmarks; estimate" },
+      { k: "SAM slice", v: "$300M", src: "Field build-up" },
+      { k: "Bosch position", v: "Global vehicle-computer programmes already shipping", src: "Bosch" },
     ],
     whyNow: [
-      { p: "Safety mandates keep growing ECU count in the near term", why: "Even as consolidation begins, mandated features add electronics per vehicle, so the base grows before it shrinks." },
-      { p: "Migration has to be led rather than suffered", why: "If Bosch does not carry its own ECU customers into zonal architectures, someone else will do it for them." },
+      { p: "One-box consolidation cuts ECU count, wiring and assembly cost simultaneously", why: "Three separate savings from one architectural decision is unusual, and it is what makes the business case robust to a cost review." },
+      { p: "Cockpit SoCs now carry NPU headroom for driver monitoring and assistants", why: "The compute that used to require a second box is available inside the cockpit part, which is what makes fusion practical rather than theoretical." },
     ],
-    boschFit: "Franchise-grade. Among the world's largest ECU makers with Indian plants already operating — this is the base everything else in the field is built from.",
+    boschFit: "Very strong on the part that is hard. Compute performance can be bought; certified freedom-from-interference between mixed-criticality workloads cannot, and it is precisely what Bosch's functional-safety pedigree provides.",
     whiteSpace: [
-      { p: "Migration paths that carry existing ECU functions onto zonal controllers", why: "OEMs fear the transition risk more than the cost, and a supplier who de-risks it wins the architecture." },
+      { p: "Certified mixed-criticality separation on shared automotive hardware", why: "Chip vendors supply the performance; nobody supplies the safety argument that lets it ship in a braking-adjacent function." },
     ],
     barriers: [
-      { p: "Commodity ECU margins are compressing", why: "Standard controllers face annual price-downs while the value shifts upward to architecture and software." },
-      { p: "Consolidation shrinks the socket count", why: "Fewer, larger controllers means fewer parts, so revenue per vehicle has to rise faster than part count falls." },
+      { p: "SoC roadmap and allocation are outside Bosch's control", why: "Quoting a platform without allocation visibility means promising a delivery Bosch cannot guarantee — hence the roadmap-access agreement." },
+      { p: "SoC vendors are bundling certified software stacks", why: "Every layer the chip vendor certifies is a layer Bosch no longer gets paid to integrate." },
     ],
-    triggers: ["Legacy ECU revenue declining faster than zonal wins replace it — the metric to watch"],
-    players: [{ name: "Denso, Aptiv, Visteon", note: "The Tier-1 set converging on the same transition" }],
+    triggers: ["Two Indian platforms sourcing one-box cockpit-ADAS compute", "A formal roadmap-access agreement signed with Qualcomm or NVIDIA"],
+    players: [
+      { name: "Qualcomm, NVIDIA", note: "Suppliers and increasingly up-stack competitors at once" },
+      { name: "ZF (ProAI)", note: "Moving up from chassis into central compute" },
+    ],
   },
-  "EMS & Modules": {
+  "Domain ECUs": {
     play: "LEAD",
-    thesis: "Module assembly is a different business from silicon, with a different constraint. Here the limit is capacity utilisation on IATF-certified lines Bosch already owns, not access to wafers it does not.",
+    thesis: "The cash-generative base that funds the transition, and it has to be defended and migrated at the same time. Safety mandates keep adding controllers in the near term, so the base grows before it shrinks — which buys time, not safety.",
     sizing: [
-      { k: "Certification", v: "IATF 16949 lines already operating in India", src: "Bosch" },
-      { k: "Coordination", v: "Overlaps the Manufacturing field's MaaS play — one capacity, two go-to-markets", src: "Field verdict" },
+      { k: "TAM slice", v: "$1.42B — still the largest single slice in 2030 because consolidation is incomplete", src: "Content benchmarks; estimate" },
+      { k: "SAM slice", v: "$390M", src: "Field build-up" },
+      { k: "Bosch competency", v: "9 against a required 8 — among the world's largest ECU makers", src: "Field competency table" },
     ],
     whyNow: [
-      { p: "The powertrain transition is freeing certified capacity", why: "ICE component lines are coming free in facilities that already hold automotive certification, which is the scarce asset in EMS." },
-      { p: "China+1 buyers want certified capacity faster than they can build it", why: "Global Tier-1s relocating from China need qualified lines now, and qualification is a multi-year process." },
+      { p: "Mandates are still adding controllers even as architecture consolidates", why: "Safety features and EV content grow ECU count in the near term, which means this base is not yet in decline." },
+      { p: "Whoever migrates the base owns the blueprint", why: "If Bosch does not carry its own ECU customers into zonal, a competitor will offer to — and that competitor then decides the architecture." },
     ],
-    boschFit: "Good, with a coordination caveat. The certified capacity is genuinely scarce; the risk is selling the same lines twice through two different fields, which the verdict explicitly flags.",
+    boschFit: "Franchise-grade and already local. India plants are IATF-qualified and running, so this needs defending rather than building.",
     whiteSpace: [
-      { p: "Automotive-grade module assembly for China+1 customers", why: "Certified capacity is the scarce input rather than price, and Bosch has it while commodity EMS players do not." },
+      { p: "Migration paths that carry existing ECU functions onto zonal hardware", why: "The fear is transition risk rather than cost, and a supplier who de-risks it wins the architecture decision with it." },
     ],
     barriers: [
-      { p: "EMS champions are moving up into automotive certification", why: "Dixon, Kaynes and Syrma are acquiring the qualifications that currently protect this niche, on a three-to-five year horizon." },
-      { p: "Bosch has no manufacturing-services commercial motion", why: "Selling capacity is a different sale from selling components, and the go-to-market does not exist yet." },
+      { p: "Commodity controller margins compress under annual price-downs", why: "Standard ECUs face relentless cost reduction while value shifts up into architecture." },
+      { p: "Consolidation shrinks the socket count by design", why: "Revenue per vehicle has to rise faster than part count falls, or the field shrinks while appearing to transform." },
     ],
-    triggers: ["A multi-year anchor contract from a global Tier-1 or OEM", "An EMS champion announcing IATF-certified automotive lines at scale"],
-    players: [{ name: "Dixon, Kaynes, Syrma", note: "Commodity EMS champions moving up-market" }, { name: "Jabil, Flex", note: "Global automotive EMS with existing IATF certification — the closest overlap" }],
+    triggers: ["Legacy ECU revenue declining faster than zonal wins replace it — the crossover metric for the whole field"],
+    players: [{ name: "Denso, Aptiv, Visteon", note: "The Tier-1 set facing the identical transition" }],
   },
-  "Vehicle as Sensor": {
+  "Power Net & Distribution": {
     play: "LEAD",
-    thesis: "Bosch's MEMS franchise plus the connected platforms in the adjacent fields turn the vehicle itself into a distributed sensing network. The hardware is already installed; the product is what is done with the signal.",
+    thesis: "The electrical half of the zonal architecture — smart junction boxes, solid-state fusing and zonal power management. Small revenue, but it is where the harness saving is actually realised, which makes it the proof point for the whole architecture argument.",
     sizing: [
-      { k: "Bosch MEMS competency", v: "9 against a required 7 — exceeds", src: "Field competency table" },
-      { k: "Cross-field dependency", v: "Data monetisation runs through the Cloud & Data field", src: "Field verdict" },
+      { k: "TAM slice", v: "$310M", src: "Content benchmarks; estimate" },
+      { k: "SAM slice", v: "$90M — the second-smallest line and deliberately so", src: "Field build-up" },
+      { k: "Bosch competency", v: "7 against a required 7 — adjacent to existing body electronics", src: "Field competency table" },
     ],
     whyNow: [
-      { p: "Radar spectrum was de-licensed in June 2026", why: "The 77–81 GHz exemption clears the regulatory path for sensing-heavy architectures without contingency planning." },
-      { p: "GenAI makes raw sensor streams useful without bespoke pipelines", why: "The cost of turning a signal into a product has fallen sharply, which changes the economics of sensing at scale." },
+      { p: "CAFE-III makes standby electrical drain a compliance line from Apr-2027", why: "Fleet fuel-consumption targets give an OEM a regulated reason to care about parasitic load, which it previously did not have." },
+      { p: "Harness mass and standby drain are the same architectural decision", why: "Nobody in India is selling the two together, even though a zonal power net addresses both at once." },
     ],
-    boschFit: "Excellent on the sensing half. Bosch owns the MEMS and radar franchises; the monetisation layer belongs to the Cloud & Data field and should be sold jointly rather than duplicated.",
+    boschFit: "Good and adjacent. Body-electronics and semiconductor-switch competence transfer directly, and the Semiconductors field carries the device-level exposure.",
     whiteSpace: [
-      { p: "Road-condition and environmental data products from the vehicle fleet", why: "The sensors are already deployed for other purposes, so the marginal cost of the data product is close to zero." },
+      { p: "Zonal power net with solid-state distribution sold as a CAFE measure", why: "Framing it as compliance value rather than engineering preference changes who in the OEM signs the decision." },
     ],
     barriers: [
-      { p: "Data rights and consent sit outside this field", why: "Monetising vehicle-derived data runs into DPDP and OEM ownership questions handled in the Cloud & Data field." },
-      { p: "No single owner across fields", why: "The sensing is here, the platform is there, and without joint accountability the product falls between them." },
+      { p: "Solid-state fusing still costs more than conventional fuses", why: "Until cost parity, this stays a premium-segment feature rather than a volume one." },
+      { p: "Sold standalone it looks like a fuse box", why: "Detached from the zonal offer it loses on price, because the buyer cannot see the system saving." },
     ],
-    triggers: ["An infrastructure or insurance buyer contracting vehicle-derived environmental data"],
-    players: [{ name: "Map and geospatial providers", note: "Buyers of the data rather than competitors for the sensing" }],
+    triggers: ["A platform specifying smart junction boxes in place of conventional fusing", "Solid-state switching reaching cost parity"],
+    players: [{ name: "Harness and distribution incumbents", note: "Own the physical harness; compete on cost rather than architecture" }],
   },
-  "Semiconductors": {
+  "Architecture Toolchain": {
+    play: "LEAD",
+    thesis: "The smallest revenue line in the field and by a distance the most influential. Whoever writes the blueprint has effectively chosen the supplier for everything beneath it, which makes this positional rather than commercial.",
+    sizing: [
+      { k: "TAM slice", v: "$180M — co-development NRE, integration and the tooling sold with it", src: "Field build-up" },
+      { k: "SAM slice", v: "$45M — the smallest line, deliberately", src: "Field build-up" },
+      { k: "Bosch competency", v: "8 against a required 9 on partitioning and the safety case", src: "Field competency table" },
+    ],
+    whyNow: [
+      { p: "Mid-tier OEMs face the same transition with a fraction of the headcount", why: "Below the top two or three, no Indian OEM can staff a hundred-engineer architecture group, and they would rather buy the answer than staff it." },
+      { p: "The blueprint window is 2026–27, not later", why: "Platforms partitioning now are deciding sourcing for a platform generation; after that the next opportunity is a cycle away." },
+    ],
+    boschFit: "Strong globally, thinner in India. The partitioning and safety-case discipline exists at depth; what has to be built is a resident architect bench, converted from the existing embedded organisation.",
+    whiteSpace: [
+      { p: "Architecture co-development productised for mid-tier OEMs", why: "The majors are in-housing and the mid-tier is genuinely unserved — a specific, currently unoccupied position." },
+    ],
+    barriers: [
+      { p: "A co-developed blueprint is easy to hand to a second supplier", why: "Without IP clauses the positional value evaporates the moment the OEM shares the design." },
+      { p: "Bosch has to sell the blueprint even without the hardware award", why: "That requires accepting small revenue for large influence, which is an uncomfortable trade to defend internally." },
+    ],
+    triggers: ["An OEM contracting architecture co-development as a standalone engagement", "The first India E/E architect conversion cohort completing"],
+    players: [{ name: "KPIT, Tata Elxsi", note: "Services-led architecture consulting; strong on delivery, thinner on production accountability" }],
+  },
+  "In-Vehicle Networking": {
     play: "PARTNER",
-    thesis: "Bosch qualifies and integrates other people's wafers rather than making them. The unclaimed and genuinely strategic role is automotive qualification of Indian fab output — nobody owns it, and ISM needs it.",
+    thesis: "Automotive Ethernet switching, gateways and service-oriented communication. Standards-defined and therefore commoditising, which leaves very little room for a supplier to differentiate — it comes with the architecture win rather than being sold separately.",
     sizing: [
-      { k: "ISM 2.0", v: "₹1,27,500 Cr outlay, 12 units approved, ₹1.64 lakh Cr committed", src: "India Semiconductor Mission" },
-      { k: "Bosch silicon-access competency", v: "5 against a required 8 — partnered by design", src: "Field competency table" },
+      { k: "TAM slice", v: "$560M", src: "Content benchmarks; estimate" },
+      { k: "SAM slice", v: "$105M — thin margin by construction", src: "Field build-up" },
     ],
-    whyNow: [
-      { p: "Fabs reach production before they reach automotive grade", why: "Consumer qualification comes first and automotive follows, which is exactly the window in which a qualification partner is needed." },
-      { p: "The role is unclaimed and government-aligned", why: "No incumbent has taken the automotive-qualification position, and taking it creates a defensible, policy-supported moat." },
-    ],
-    boschFit: "Deliberately bounded. No fab ambition, ever. The fit is in qualification, ASIC and chiplet partnerships — capability Bosch has without capital Bosch should not spend.",
-    whiteSpace: [
-      { p: "Automotive qualification of ISM fab and OSAT output", why: "New Indian fabs need a partner to make their silicon automotive-grade, and nobody has claimed the role." },
-    ],
-    barriers: [
-      { p: "No leverage over foundry allocation", why: "On the most critical input Bosch is one of many customers, which is why the strategy partners rather than competes." },
-      { p: "ISM timelines could slip", why: "Automotive-grade output from Indian fabs is years away, and the qualification opportunity moves with it." },
-    ],
-    triggers: ["An ISM fab reaching automotive-relevant process maturity", "A DLI-backed design-team build or acqui-hire completing"],
-    players: [{ name: "TSMC-class foundries", note: "The dependency; not addressable" }, { name: "Tata-PSMC, CG Power-Renesas", note: "ISM participants — the qualification customers" }],
-  },
-  "AI Compute": {
-    play: "PARTNER",
-    thesis: "NPU and accelerator silicon belongs to vendors with fab access and model ecosystems. Bosch's position is integration, safety certification and India validation on top of someone else's compute.",
-    sizing: [{ k: "Position", v: "Integration layer above vendor silicon", src: "Field verdict" }],
-    whyNow: [
-      { p: "AI workloads are moving into the vehicle", why: "Driver monitoring, perception and assistants all need on-device inference, which makes accelerator integration a live architecture question." },
-    ],
-    boschFit: "Integration-strong, silicon-absent. Compete on functional safety and India-condition validation rather than on raw compute, which is a race Bosch cannot win.",
-    whiteSpace: [
-      { p: "Safety-certified integration of AI accelerators into vehicle architectures", why: "Chip vendors supply performance; nobody supplies the ASIL argument that lets it ship in a safety-relevant function." },
-    ],
-    barriers: [
-      { p: "NVIDIA and Qualcomm offer full stacks", why: "Bundling silicon with software compresses exactly the integration value Bosch targets." },
-    ],
-    triggers: ["An OEM sourcing AI compute separately from the software stack, which would open the integration role"],
-    players: [{ name: "NVIDIA, Qualcomm", note: "Silicon plus stack — the value-absorption threat" }],
-  },
-  "Comm. Tech": {
-    play: "WATCH",
-    thesis: "In-vehicle networking is tracked within architecture scope rather than pursued as its own business. Ethernet and bus technology decisions follow the zonal blueprint rather than driving it.",
-    sizing: [{ k: "Position", v: "Component of the architecture win, not a standalone offer", src: "Field verdict" }],
-    whyNow: [{ p: "It follows rather than leads", why: "Networking choices are consequences of the architecture decision, so winning the blueprint captures this automatically." }],
-    boschFit: "Adequate and derivative. There is no separate investment case; the capability comes with the architecture work.",
+    whyNow: [{ p: "It follows the architecture rather than leading it", why: "Networking topology is a consequence of the partitioning decision, so winning the blueprint captures this automatically." }],
+    boschFit: "Adequate and derivative. An established gateway franchise, but the specification is written by a standards body rather than by Bosch.",
     whiteSpace: [],
-    barriers: [{ p: "Standards-driven and commoditising", why: "Automotive Ethernet is standardised, which leaves little room for supplier differentiation." }],
-    triggers: ["A networking technology shift significant enough to reopen sourcing independently of architecture"],
-    players: [{ name: "Networking silicon vendors", note: "Supply the PHYs and switches; not a Bosch contest" }],
+    barriers: [{ p: "Standards-defined and commoditising", why: "Where the spec is public, differentiation has to come from cost, which is the wrong axis for Bosch." }],
+    triggers: ["A networking technology shift large enough to reopen sourcing independently of the architecture"],
+    players: [{ name: "Networking silicon vendors", note: "Supply the switches and PHYs; not a Bosch contest" }],
+  },
+};
+
+SUB.semis = {
+  "Automotive Qualification (ISM)": {
+    play: "LEAD",
+    thesis: "Take an Indian fab or OSAT process from consumer-grade to automotive-grade: AEC-Q100 readiness, reliability engineering, failure-mode analysis and the audit evidence pack. Twelve ISM units are heading toward production, every one will need this, and nobody has claimed the role.",
+    sizing: [
+      { k: "SAM slice", v: "$145M — the field's defining line", src: "Field build-up" },
+      { k: "ISM scale", v: "12 approved units, over ₹1.64 lakh Cr committed, automotive a named priority vertical", src: "India Semiconductor Mission" },
+      { k: "Bosch competency", v: "9 against a required 9 — qualification is embedded practice", src: "Field competency table" },
+    ],
+    whyNow: [
+      { p: "The automotive-grade step has already started", why: "CG Semi is operating AEC-Q100 automotive packaging in India today, so this is a window that is open rather than approaching." },
+      { p: "Tata-PSMC targets first silicon at Dholera in late 2026", why: "On 28nm and below — exactly the nodes that carry automotive MCUs and analogue, which is what a qualification service is applied to." },
+      { p: "Cyber Rules add a second qualification axis from Oct-2026", why: "A hardware root of trust is now a compliance component, and almost nothing in India clears both AEC-Q100 and a security evaluation." },
+    ],
+    boschFit: "As close to ideal as this portfolio gets. Bosch runs its own automotive fabs and executes AEC-Q100 and ISO 26262 qualification continuously, so the service is an extension of existing work rather than a new capability — and it needs process depth rather than capital.",
+    whiteSpace: [
+      { p: "Automotive qualification of ISM fab and OSAT output", why: "Unclaimed because it is new rather than because it is hard to see. The first credible partner at two or three fabs sets the reference practice." },
+      { p: "Combined automotive and security qualification as one engagement", why: "Clearing both axes is harder than clearing either, and packaging them roughly doubles the value of the same work." },
+    ],
+    barriers: [
+      { p: "Selling to a fab operator is a go-to-market Bosch has never run", why: "Routing this through automotive account management will not reach the buyer — it needs a small dedicated commercial team." },
+      { p: "Liability for a qualified part that later fails is legally unwritten in India", why: "Allocation between Bosch, the fab, the Tier-1 and the OEM has no precedent, and this has to be settled before the first agreement." },
+      { p: "Infineon has the same process depth and could claim the role first", why: "The role is unclaimed rather than defended, so speed is the only real protection." },
+    ],
+    triggers: ["An ISM fab reaching automotive-relevant process maturity", "A first billable qualification advisory engagement converting to a partnership"],
+    players: [
+      { name: "Infineon", note: "Equivalent IDM process depth — the most likely rival for the role" },
+      { name: "CG Semi, Tata Electronics", note: "Customers today, potential in-house competitors tomorrow" },
+    ],
+  },
+  "Power Semiconductors (SiC/GaN)": {
+    play: "LEAD",
+    thesis: "SiC and GaN devices made at Reutlingen, sold as qualified second-source supply into Indian EV traction and charging programmes with the qualification service attached. The device and the certification in one conversation is a combination nobody else in India can offer.",
+    sizing: [
+      { k: "TAM slice", v: "$880M — the fastest-growing device class in the field", src: "Field build-up" },
+      { k: "SAM slice", v: "$240M — the largest addressable line", src: "Field build-up" },
+      { k: "Bosch competency", v: "8 against a required 8 — SiC in volume production", src: "Field competency table" },
+    ],
+    whyNow: [
+      { p: "EV efficiency is decided at the switching device", why: "Inverter and charger losses are dominated by device performance, which is why SiC content is compounding faster than the rest of the field." },
+      { p: "India has an approved SiC fab under ISM", why: "Domestic wide-bandgap capacity arriving creates both a qualification customer and a second-source conversation at the same time." },
+    ],
+    boschFit: "Strong and past the hard part. Wide-bandgap manufacturing is genuinely difficult and Bosch is beyond the learning curve most entrants are still climbing.",
+    whiteSpace: [
+      { p: "Qualified SiC second-source supply for Indian EV programmes", why: "OEMs want a second source; only Bosch can supply the device and certify the process in the same engagement." },
+    ],
+    barriers: [
+      { p: "A domestic SiC fab reaching automotive grade could undercut on price", why: "Bosch's role would then narrow to qualification alone — still valuable, but a smaller business." },
+      { p: "Substrate supply is Asia-concentrated", why: "SiC substrates remain a bottleneck input outside Bosch's control." },
+    ],
+    triggers: ["An Indian OEM or Tier-1 requesting a qualified second source for traction-inverter devices", "India's SiC fab producing first automotive-grade output"],
+    players: [{ name: "Infineon, STMicroelectronics, onsemi", note: "The global SiC set — competitors on device, not on India qualification" }],
+  },
+  "MEMS & Sensor Silicon": {
+    play: "LEAD",
+    thesis: "A franchise business that deserves defending on its own terms. Bosch is among the largest MEMS manufacturers in the world, and the decades of automotive field data behind that are what qualification arguments are actually built from.",
+    sizing: [
+      { k: "TAM slice", v: "$620M", src: "Field build-up" },
+      { k: "SAM slice", v: "$205M", src: "Field build-up" },
+      { k: "Bosch competency", v: "9 against a required 8 — exceeds", src: "Field competency table" },
+    ],
+    whyNow: [
+      { p: "Sensing content rises with every safety and ADAS mandate", why: "BNCAP 2.0 and the DDAW mandate both add sensing, and none of that content is optional." },
+      { p: "The reliability dataset becomes more valuable as India qualifies", why: "A new fab has no failure history; Bosch has twenty years of it, and that is what an automotive qualification argument rests on." },
+    ],
+    boschFit: "Franchise-grade. This is defence rather than entry, and the asset is genuinely uncopyable — a competitor can match a device specification but not two decades of field data.",
+    whiteSpace: [
+      { p: "The field-reliability dataset sold as qualification evidence", why: "Currently an internal engineering record; as a commercial asset it is the least copyable thing in the field." },
+    ],
+    barriers: [
+      { p: "Standard sensor types face commodity pressure", why: "Basic inertial and pressure parts compete on price, which argues for moving up into fused and calibrated modules." },
+    ],
+    triggers: ["An OEM or fab contracting access to reliability data as qualification evidence"],
+    players: [{ name: "STMicroelectronics, TDK InvenSense", note: "The MEMS competitive set on device; none with Bosch's automotive field-data depth" }],
+  },
+  "ASIC & Custom Silicon": {
+    play: "PARTNER",
+    thesis: "Custom safety, security and precision-analogue parts — including hardware roots of trust — designed by Bosch and fabricated by partners on mature nodes. The functions worth making custom are exactly the ones standard SoCs keep failing to absorb.",
+    sizing: [
+      { k: "TAM slice", v: "$260M", src: "Field build-up" },
+      { k: "SAM slice", v: "$95M", src: "Field build-up" },
+      { k: "India design bench", v: "4 against a required 7 — the field's clearest hiring gap", src: "Field competency table" },
+    ],
+    whyNow: [
+      { p: "Cyber Rules make the hardware root of trust a compliance component", why: "From Oct-2026 a vehicle-level CSMS argument has to rest on hardware trust, which turns a security feature into a required part." },
+      { p: "DLI incentives make an India design team affordable while the scheme is funded", why: "Design-linked incentives cover a meaningful share of standing up the capability, and the window is finite." },
+    ],
+    boschFit: "Capability strong, location weak. Bosch designs custom automotive silicon today; what is missing is a resident India bench rather than the ability to do the work.",
+    whiteSpace: [
+      { p: "Security-qualified custom parts clearing both AEC-Q100 and a security evaluation", why: "Two qualification axes at once, and almost nothing in India clears both." },
+    ],
+    barriers: [
+      { p: "SoC vendors keep absorbing functions that would justify custom parts", why: "Every integrated function is an ASIC that no longer needs designing, which is why the focus stays on safety, security and analogue." },
+      { p: "Fabrication is bought rather than owned at these nodes", why: "Mature-node capacity is multi-sourced but still external, which caps how differentiated the part can be." },
+    ],
+    triggers: ["A DLI-backed India design team reaching working scale", "An OEM specifying a Bosch-designed hardware root of trust"],
+    players: [{ name: "SoC vendors", note: "Absorb custom functions over time — the reason scope stays narrow" }],
+  },
+  "Chiplets (UCIe)": {
+    play: "WATCH",
+    thesis: "Design practice rather than a product line. Chiplet composition is the technically correct answer to Bosch's node gap — buy the compute die, add Bosch-designed safety and security dies, package them together — but automotive UCIe parts are five or more years from Indian volume.",
+    sizing: [
+      { k: "SAM slice", v: "$25M — small and deliberately so", src: "Field build-up" },
+      { k: "Maturity", v: "TRL 5–6; standards forming, automotive toolchains immature", src: "Field tech assessment" },
+    ],
+    whyNow: [{ p: "It costs almost nothing to keep the option open", why: "Design discipline — keeping parts partitionable — preserves the option without committing capital to it." }],
+    boschFit: "Technically apt, commercially premature. It converts the node gap from a structural weakness into a design constraint, which is a much better position to be in even before any revenue.",
+    whiteSpace: [],
+    barriers: [{ p: "Automotive chiplet toolchains and safety certification are immature", why: "The standard exists but the automotive-grade ecosystem around it does not yet." }],
+    triggers: ["UCIe-based automotive design wins announced globally"],
+    players: [{ name: "UCIe consortium members", note: "Where the standard is being written; participation is cheap" }],
+  },
+  "RISC-V & Sovereign Compute": {
+    play: "WATCH",
+    thesis: "One funded evaluation programme against the Shakti and Vega cores, and nothing more. DIR-V has real government momentum, but no procurement has yet specified an Indian instruction set and automotive toolchains are immature.",
+    sizing: [
+      { k: "SAM slice", v: "$10M — one evaluation programme's worth", src: "Field build-up" },
+      { k: "Maturity", v: "TRL 4–5 for automotive-grade RISC-V", src: "Field tech assessment" },
+    ],
+    whyNow: [{ p: "Buying the option is cheap; taking the position is not", why: "An evaluation programme keeps Bosch credible if a sovereignty-driven procurement appears, and costs very little if none does." }],
+    boschFit: "Thin today and correctly so. The value is credibility — being able to answer the question when a government programme asks it.",
+    whiteSpace: [],
+    barriers: [
+      { p: "No procurement has asked for it yet", why: "Government interest is real but has not converted into a specification, and scaling on an announcement rather than a trigger is how optionality becomes waste." },
+      { p: "Safety certification for RISC-V automotive cores is immature", why: "The ecosystem around certification lags the instruction set itself." },
+    ],
+    triggers: ["A government fleet programme specifying an Indian instruction set"],
+    players: [{ name: "DIR-V, IIT-Madras (Shakti), C-DAC (Vega)", note: "Programme owners; the relationship is participation rather than competition" }],
   },
 };
 
@@ -9015,6 +9799,32 @@ SUB.manufacturing = {
     ],
     triggers: ["I5.0 appearing as a line item in Indian factory capex plans", "A PLI grantee contracting digitalisation explicitly for productivity reporting"],
     players: [{ name: "Siemens Digital Industries", note: "The most complete platform with 40 years of India presence" }, { name: "Fanuc", note: "Reliability leadership in robots; narrower software scope" }],
+  },
+  "Automotive Module Assembly": {
+    play: "LEAD",
+    thesis: "ECU and electronics module build on Bosch's own IATF 16949-certified India lines, sold as capacity rather than consumed internally. The scarce asset in Indian contract manufacturing is not capacity — it is certified capacity, and the powertrain transition is freeing exactly that.",
+    sizing: [
+      { k: "Reallocated from", v: "The former Electronic Control Architectures field, whose own verdict warned the two plays must not be sold twice", src: "Field split, Sept-2026" },
+      { k: "SAM contribution", v: "$150M of this field's $1.95B", src: "Field build-up" },
+      { k: "Certification", v: "IATF 16949 lines already operating in India", src: "Bosch" },
+    ],
+    whyNow: [
+      { p: "Electrification is freeing certified lines inside already-qualified plants", why: "ICE component lines are coming free in facilities that already hold automotive certification, and certification is the part that takes years rather than the building." },
+      { p: "China+1 buyers need qualified capacity faster than they can build it", why: "Relocating Tier-1s are constrained by qualification time rather than by price, which is an unusual and favourable buying condition." },
+    ],
+    boschFit: "Assets yes, commercial motion no. The plants and the certification exist; selling manufacturing as a service is a business Bosch has never run, and that gap is the whole execution risk.",
+    whiteSpace: [
+      { p: "Automotive-grade module assembly for China+1 customers", why: "Certified capacity is scarce and these buyers are qualification-time constrained rather than price constrained." },
+    ],
+    barriers: [
+      { p: "No dedicated commercial unit exists to sell it", why: "Plant organisations cannot carry this sale, and routing it through component account management will not reach the buyer." },
+      { p: "EMS champions are acquiring automotive certification", why: "Dixon, Kaynes and Syrma are working toward the qualifications that currently protect this niche, on a three-to-five year horizon." },
+    ],
+    triggers: ["A multi-year anchor contract from a China+1 Tier-1 or OEM", "An EMS champion announcing IATF-certified automotive lines at scale"],
+    players: [
+      { name: "Jabil, Flex", note: "Global automotive EMS with existing IATF certification — the closest genuine overlap" },
+      { name: "Dixon, Kaynes, Syrma", note: "Commodity champions moving up-market toward this niche" },
+    ],
   },
   "EMS": {
     play: "PARTNER",
