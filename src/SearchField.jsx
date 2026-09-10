@@ -70,7 +70,7 @@ const FIELDS = [
 /* ═══ India Macro Context — shared PESTEL baseline, verified as of Aug 2026 ═══
    Answers the framework's India-wide questions once for ALL search fields.   */
 const MACRO = {
-  asOf: "8 September 2026",
+  asOf: "10 September 2026",
   Political: [
     { k: "Policy certainty", v: "Stable central government; reform continuity (GST 2.0 Sept-2025, India–UK FTA 2025, PLI programmes)", src: "PIB / policy trackers" },
     { k: "PM E-DRIVE", v: "₹10,900 Cr scheme EXTENDED to Mar-2028 — but e-2W/e-3W demand incentives ended Mar-2026; remaining outlay targets charging infra (₹2,000 Cr), 14,028 e-buses, e-trucks (scrappage-linked), e-ambulances. Industry now seeking to defer battery/component localisation norms to Apr-2027 citing China rare-earth magnet export curbs", src: "MHI notification, Aug-2025 / industry reps, Aug-2026" },
@@ -549,6 +549,26 @@ const DATA = {
       { step: "Serviceable filter: merchant market only (excl. OEM in-house & cell value), Bosch-addressable product lines", value: "≈29% of TAM", src: "In-housing share analysis; estimate [16]" },
       { step: "= SAM (2030)", value: "$2.4B", src: "Derived — estimate" },
     ],
+    buildup: {
+      tamNote: "India EV component and charging spend in 2030, excluding cell value itself. Cell manufacture is a deliberate exclusion — Bosch is a system integrator one layer up and should not try to compete on chemistry.",
+      tam: [
+        { k: "Battery packs & BMS", v: 3100, why: "Pack integration, battery management electronics and thermal control across 2W, 3W, PV and CV" },
+        { k: "Power electronics (inverters, DC-DC, OBC)", v: 2200, why: "Traction inverters, converters and on-board chargers — SiC-led and efficiency-driven" },
+        { k: "Public & fleet charging hardware", v: 1400, why: "AC and DC charging equipment, funded through Mar-2028 under PM E-DRIVE" },
+        { k: "Charging & energy management software", v: 850, why: "Orchestration, load management, V2G logic and depot software" },
+        { k: "Thermal management", v: 450, why: "Battery and cabin thermal systems, decisive in India's operating conditions" },
+        { k: "Battery data & lifecycle services", v: 200, why: "State-of-health data, certification and analytics — the fastest-growing line" },
+      ],
+      samNote: "The merchant market only. OEM in-house BMS work and cell value are removed, because the top 2W makers are building BMS internally and cells are a managed dependency rather than a Bosch business.",
+      sam: [
+        { k: "BMS & pack integration", v: 980, why: "Direct reuse of PS-ESB assets plus AIS-156 safety certification, which is a real barrier to low-cost entrants", sub: "Battery & BMS" },
+        { k: "Power electronics", v: 620, why: "A global leadership position with India manufacturing already in place", sub: "Battery & BMS" },
+        { k: "Charging management software", v: 420, why: "PM E-DRIVE's ₹2,000 Cr charging outlay gives this a policy-guaranteed demand floor to Mar-2028", sub: "V2G & Charging" },
+        { k: "Battery-health & certification services", v: 250, why: "The 10,000-workshop network is a channel no BMS startup or Chinese entrant can replicate", sub: "Battery & BMS" },
+        { k: "V2G & depot orchestration", v: 100, why: "Fleets are the natural aggregation point, but tariff rules are not production-grade yet", sub: "V2G & Charging" },
+        { k: "New energy tech (watch)", v: 30, why: "Sodium-ion readiness and adjacent chemistry — venture-watch scale, deliberately", sub: "New Energy Tech" },
+      ],
+    },
     crossCheck: "Sanity check: two analyst reports place India EV components (ex-cell) at $7–9B by 2030 — our $8.2B TAM sits inside that corridor [13][16]. CAGR 28% (2025–30) is consistent with EV unit CAGR ~32% damped by per-unit price erosion.",
     customers: [
       { s: "Indian OEMs (2W/3W/PV)", buy: "Merchant BMS, power electronics, thermal mgmt", note: "Top-tier 2W OEMs partially in-housing — target tier-2 OEMs & new platforms" },
@@ -769,6 +789,23 @@ const DATA = {
         { step: "Serviceable filter: control/SW layer + adaptive-system electronics, Bosch-addressable (excl. luminaires/optics)", value: "≈25% of TAM", src: "Bosch-addressable scope; estimate" },
         { step: "= SAM (2030)", value: "~$0.62B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "The whole India automotive lighting market, split by where the value physically sits. Roughly two-thirds is lamp and optics hardware Bosch has deliberately chosen not to enter, which is why the SAM is a quarter of the TAM rather than most of it.",
+        tam: [
+          { k: "Exterior lamp assemblies & optics", v: 1180, why: "Housings, lenses, reflectors and LED modules — the commoditised bulk of the market, and incumbent territory" },
+          { k: "Interior & ambient lighting", v: 420, why: "Cabin, ambient and functional interior lighting, largely trim-integrated" },
+          { k: "Lighting control ECUs & LED drivers", v: 520, why: "The electronics layer: drivers, matrix controllers, thermal management" },
+          { k: "Adaptive & matrix control software", v: 250, why: "Beam shaping, auto high-beam and ADB algorithms — the fastest-growing line" },
+          { k: "Personalisation & OTA feature content", v: 130, why: "Themes, welcome animations and feature-on-demand, currently tiny but rising" },
+        ],
+        samNote: "Bosch enters at the control and software layer only. Lamp assemblies and optics are excluded by strategy, not by oversight — Bosch has no optics franchise and building one would mean competing with entrenched specialists on their own ground.",
+        sam: [
+          { k: "Lighting control ECUs & drivers", v: 300, why: "Automotive-grade controllers meet the requirement today; existing India electronics lines qualify", sub: "Controllers" },
+          { k: "Adaptive beam control software", v: 190, why: "Rides the ADAS camera Bosch already fits, so the marginal sensor cost is zero", sub: "Application SW" },
+          { k: "Matrix system content via a lamp partner", v: 95, why: "Bosch control inside a partner's optics — the only route into the lamp itself", sub: "Exterior Lighting" },
+          { k: "Ambient lighting control", v: 35, why: "Small and commoditised; carried only where a cockpit bundle demands it", sub: "Interior Lighting" },
+        ],
+      },
       crossCheck: "Cross-check: Mordor pegs the market at ~$2.31B by 2030 (5.87% CAGR) and Renub/R&M at $2.78B by 2034 (6.02%); 6Wresearch's 6.2% on a $1.64B 2025 base lands ~$2.2–2.5B by 2030 — a $2.5B TAM sits at the credible upper-middle of independent estimates [7].",
       customers: [
         { s: "PV & 2W OEMs", buy: "Lighting control ECUs, adaptive-beam SW, personalisation features", note: "Buy at platform sourcing — time entry to new EV platforms" },
@@ -940,6 +977,24 @@ const DATA = {
         { step: "= TAM (displays, compute, SW, integration, 2030)", value: "$5.6B", src: "Derived — estimate" },
         { step: "Serviceable filter: compute + SW + integration (excl. display panels), merchant share", value: "≈38% of TAM = $2.1B", src: "Excludes panel value & in-house HMI; estimate" },
       ],
+      buildup: {
+        tamNote: "India cockpit spend by layer. Display panels are the largest single slice and the one with the least Bosch value-add, which is why the SAM excludes almost all of it.",
+        tam: [
+          { k: "Display panels & modules", v: 1900, why: "Twin-screen adoption reaching ₹10L cars; Asia-concentrated supply and largely pass-through" },
+          { k: "Cockpit compute (SoC + HPC board)", v: 1450, why: "The domain controller and its silicon — where the architecture value concentrates" },
+          { k: "Cockpit software platform (OS, HMI, middleware)", v: 1200, why: "AAOS integration, HMI framework and the app layer above it" },
+          { k: "AI & voice assistant content", v: 480, why: "Vernacular voice, driver-state awareness and on-device inference" },
+          { k: "System integration services", v: 420, why: "Bringing SoC, OS, apps and voice together — the explicit mid-tier OEM ask" },
+          { k: "Instrument clusters (2W and entry PV)", v: 150, why: "TFT clusters for premium two-wheelers and entry cars" },
+        ],
+        samNote: "Bosch takes the compute, software, AI and integration layers. Panels are bought from partners rather than integrated backwards into, because panel margin is benchmarked against consumer tablets and there is no way to win there.",
+        sam: [
+          { k: "Cockpit software platform", v: 780, why: "AAOS stack, HMI framework and middleware — the largest value pool and the strongest competency match", sub: "SW" },
+          { k: "Cockpit HPC & domain compute", v: 610, why: "Bosch ships these globally; India is adaptation rather than new development", sub: "Hardware" },
+          { k: "System integration for mid-tier OEMs", v: 420, why: "They cannot fund the integration headcount and have said so — an unmet ask rather than a market to create", sub: "System Integrator" },
+          { k: "Vernacular AI & voice content", v: 290, why: "Built on Bhashini's free 22-language API — an India-only differentiator no global rival can replicate as cheaply", sub: "SW" },
+        ],
+      },
       crossCheck: "Sanity check: global cockpit electronics ~$55B with India ~9–10% of vehicle production but lower content/vehicle → 7–8% value share ≈ $5B-class TAM — consistent [7][8].",
       customers: [
         { s: "Indian & global PV OEMs", buy: "Cockpit HPC, pre-integrated SW stack, AI assistant", note: "Mid-size OEMs are the integrator opportunity; top OEMs buy platforms" },
@@ -1111,6 +1166,25 @@ const DATA = {
         { step: "Serviceable filter: sensing, electronics, actuators, SW (excl. complete seats/trim)", value: "≈26% of TAM", src: "Bosch-addressable scope; estimate" },
         { step: "= SAM (2030)", value: "$1.1B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "Complete seating is over half the interior market and is locked with entrenched JV incumbents. Bosch's addressable slice is the sensing, actuation and air-quality electronics — smaller, but growing at roughly twice the field average.",
+        tam: [
+          { k: "Complete seating systems", v: 2050, why: "Structures, foam, trim and crash competence — Adient, Lear and TS Tech territory, excluded by strategy" },
+          { k: "Occupant & driver monitoring", v: 620, why: "Cameras, 60GHz cabin radar and the occupant-state software above them" },
+          { k: "Comfort actuators & mechatronics", v: 610, why: "Seat adjusters, ventilation, flap actuators and pumps" },
+          { k: "Cabin air quality & filtration", v: 440, why: "PM2.5 and VOC sensing, purification and the HVAC control logic" },
+          { k: "Vehicle access & biometric entry", v: 320, why: "Keyless and biometric access electronics" },
+          { k: "Interior trim electronics", v: 160, why: "Ambient, scenting and trim-integrated content" },
+        ],
+        samNote: "Sensing, actuation and air quality only. Complete seats and consumer scenting are deliberate exclusions: Bosch has no franchise in either and no route to building one that would pay.",
+        sam: [
+          { k: "Occupant & driver monitoring", v: 430, why: "Two regulatory clocks point at this — the Oct-2027 DDAW mandate and BNCAP 2.0's scored Safe Driving pillar", sub: "Occupant Monitoring" },
+          { k: "Comfort actuators to seat Tier-1s", v: 300, why: "Existing electric-machine lines; sold into the seat makers' system awards rather than against them", sub: "Seating" },
+          { k: "Cabin air quality systems", v: 250, why: "An India-first feature anchored on Bosch MEMS environmental sensing", sub: "Air Purity" },
+          { k: "Access & biometric sensing", v: 90, why: "On-device biometric processing as the DPDP-compliant answer, supplied to access incumbents", sub: "Vehicle Access" },
+          { k: "Powered access actuation", v: 30, why: "Premium-niche today; carried at watch level", sub: "Automated Access" },
+        ],
+      },
       crossCheck: "Sanity check: DMS+occupant sensing alone projected at $350–450M India by 2030 under regulation scenarios — consistent with our high-growth slice [1][7].",
       customers: [
         { s: "PV OEMs", buy: "DMS/occupant sensing, air-quality systems, access electronics", note: "Regulation timing drives sourcing windows" },
@@ -1285,6 +1359,21 @@ const DATA = {
         { step: "= TAM (active/semi-active systems + control, 2030)", value: "$0.9B", src: "Derived — estimate" },
         { step: "Serviceable filter: control SW, ECUs, cross-domain functions (excl. dampers/valves)", value: "≈24% of TAM = $0.22B", src: "Estimate" },
       ],
+      buildup: {
+        tamNote: "The smallest field in the portfolio, and most of it is damper hardware Bosch has no intention of building. What is left is a software and control slice — genuinely thin, and the sizing should not pretend otherwise.",
+        tam: [
+          { k: "Damper & valve hardware", v: 560, why: "Hydraulic and mechatronic corners — ZF, Tenneco, BWI and the KYB-Gabriel JV" },
+          { k: "Suspension control ECUs", v: 170, why: "Dedicated control units, increasingly absorbed into chassis domain controllers" },
+          { k: "Ride-control software & calibration", v: 110, why: "Damping algorithms, preview control and per-platform tuning" },
+          { k: "Cross-domain comfort functions", v: 60, why: "Roll mitigation and motion-sickness reduction using ADAS sensor data" },
+        ],
+        samNote: "Software and control only, by explicit decision. Bosch does not build dampers and should not start; the addressable slice is the ride-control intelligence licensed inside SdV platform deals.",
+        sam: [
+          { k: "Ride-control algorithms & calibration", v: 105, why: "A VMM extension at near-zero marginal cost, sold as licence and royalty", sub: "Control Algorithms" },
+          { k: "Cross-domain comfort functions", v: 60, why: "Preview comfort on ADAS sensors already fitted — a software unlock no damper maker can ship alone", sub: "Cross-Domain Function" },
+          { k: "Chassis domain ECU scope", v: 55, why: "Only where a platform win puts the damping function on a Bosch controller", sub: "Control Units" },
+        ],
+      },
       crossCheck: "Sanity check: global active-suspension ~$6B with India <2% value share given premium-segment size — a sub-$1B TAM is consistent [7].",
       customers: [
         { s: "Premium PV OEMs (incl. Indian luxury assembly)", buy: "Ride-control SW, preview functions, domain integration", note: "Feature differentiation buyers" },
@@ -1452,7 +1541,25 @@ const DATA = {
         { step: "= TAM (connectivity layer only, 2030)", value: "$2.6B", src: "Derived — estimate" },
         { step: "Serviceable filter: TCU/module hardware, OTA orchestration, V2X vehicle-side stacks and service enablement (excl. telecom carriage, excl. cyber compliance and cloud platforms now scored as separate fields)", value: "≈35% of TAM = $0.9B", src: "Estimate" },
       ],
-      crossCheck: "Sanity check: the previously combined field carried a $2.6B SAM across connectivity, cyber, cloud and data. That total is now divided between three fields ($0.9B connectivity + $0.85B cybersecurity + $0.85B cloud & data) rather than counted three times — the portfolio total is unchanged, but each field is now scored against the market it actually serves [7][8].",
+      buildup: {
+        tamNote: "Connectivity spend on the India parc, after cyber compliance and the cloud platform moved to their own fields. Telecom carriage is the biggest line and the one Bosch adds least to, so it is tendered rather than owned.",
+        tam: [
+          { k: "Telecom carriage & eSIM", v: 940, why: "Data and connectivity service on 110M+ connected vehicles — commodity, dual-sourced" },
+          { k: "TCU & connectivity hardware", v: 720, why: "Telematics control units and modules, the layer Bosch designs" },
+          { k: "OTA delivery & update orchestration", v: 430, why: "Multi-ECU update management across the connected parc" },
+          { k: "V2X vehicle-side stacks", v: 310, why: "C-V2X on-board units, cleared for deployment since the Jun-2026 spectrum exemption" },
+          { k: "Connected-service enablement", v: 200, why: "The platform layer OEM subscription services run on" },
+        ],
+        samNote: "Hardware Bosch designs plus the software attached to it. Carriage is deliberately excluded — telcos have a structural cost advantage no supplier can match, so it is a purchased input rather than a business.",
+        sam: [
+          { k: "TCU & embedded connectivity hardware", v: 360, why: "The 2M+ vehicle AIS-140 base is the largest install footprint in the portfolio, and it is Bosch's own hardware", sub: "Embedded Telematics" },
+          { k: "Multi-ECU OTA orchestration", v: 265, why: "Already running in production on that base; extending it to passenger platforms is a software step", sub: "OTA Pipeline" },
+          { k: "V2X vehicle-side stacks", v: 180, why: "5.9 GHz is de-licensed and AIS-230 drafts for Oct-2028 — the OBU socket is being specified now", sub: "V2X Vehicle Side" },
+          { k: "Connected-service enablement", v: 75, why: "Priced to the OEM rather than the consumer, because Indian subscription churn is severe", sub: "Connected Services" },
+          { k: "eSIM integration & management", v: 20, why: "Integration work only; the carriage itself is tendered across Jio and Airtel", sub: "eSIM & Carriage" },
+        ],
+      },
+      crossCheck: "Sanity check: the previously combined field carried a $2.6B SAM across connectivity, cyber, cloud and data. That total was divided between three fields ($0.9B connectivity + $0.85B cybersecurity + $0.85B cloud & data) rather than counted three times, and Cloud & Data has since risen to $0.93B by absorbing vehicle-as-sensor from the ECA split — the portfolio total is unchanged, but each field is now scored against the market it actually serves [7][8].",
       customers: [
         { s: "OEMs (PV/2W/CV)", buy: "Connectivity stacks, secure OTA, CSMS compliance, data platforms", note: "Regulation timing drives procurement waves" },
         { s: "Fleets & mobility operators", buy: "Telematics, data analytics, uptime services", note: "Bridges to Energy & Infrastructure fields" },
@@ -1859,6 +1966,26 @@ const DATA = {
         { step: "= TAM (2030)", value: "$5.2B", src: "Derived — estimate" },
         { step: "Serviceable filter: middleware, tooling, AI/ML, simulation, twin + integration (excl. pure T&M body-shopping)", value: "≈54% of TAM = $2.8B", src: "Estimate" },
       ],
+      buildup: {
+        tamNote: "India-relevant automotive software spend. The addressable share here is 54% — the highest ratio in the portfolio — because almost the whole field is work Bosch can do, with pure body-shopping the main exclusion.",
+        tam: [
+          { k: "Middleware & vehicle OS", v: 1480, why: "AUTOSAR Adaptive, vehicle OS and the basic-software layer — the consolidation battleground" },
+          { k: "Integration & validation services", v: 1350, why: "The delivery work, much of it India-executed for global programmes" },
+          { k: "SDV toolchain & certified tooling", v: 900, why: "ETAS-class certified toolchains, mandatory as regulation deepens" },
+          { k: "AI/ML in the vehicle and the toolchain", v: 720, why: "On-board inference plus GenAI-assisted engineering — the fastest-moving line" },
+          { k: "Simulation & virtual validation", v: 480, why: "Left-shifted validation, cutting prototype fleets measurably" },
+          { k: "Function libraries & digital twin", v: 270, why: "Reusable production functions and vehicle-physics twins" },
+        ],
+        samNote: "Everything except pure time-and-materials body-shopping. That exclusion matters: T&M is where the margin is thin and where India's IT majors compete on rate cards Bosch should not try to match.",
+        sam: [
+          { k: "Middleware & vehicle OS licences", v: 890, why: "A franchise position in the consolidation battleground, with Eclipse SDV leadership behind it", sub: "Middleware/OS" },
+          { k: "Certified SDV toolchain (ETAS)", v: 640, why: "AIS-189 makes certified toolchains mandatory, so the moat widens with every regulation cycle", sub: "Middleware/OS" },
+          { k: "AI/ML and GenAI engineering products", v: 520, why: "The automotive domain corpus is the moat; the models themselves are commoditising", sub: "AI/ML" },
+          { k: "Simulation & virtual validation", v: 380, why: "Bundled with tooling, and the prototype saving is quantifiable for the OEM", sub: "Simulations" },
+          { k: "Interoperable function libraries", v: 230, why: "Production functions on the middleware base — each one raises the switching cost below it", sub: "Interoperable Functions" },
+          { k: "Digital twin (partner-delivered)", v: 140, why: "Bosch supplies the vehicle physics; the platform infrastructure comes from PLM partners", sub: "Digital Twin" },
+        ],
+      },
       crossCheck: "Sanity check: global automotive SW market ~$50B+ by 2030 with India delivering a double-digit share of engineering — a $5B India-relevant TAM is conservative-to-consistent [7][8].",
       customers: [
         { s: "Indian OEMs (PV/2W/CV)", buy: "SDV platforms, middleware, co-development", note: "Lighthouse deal targets" },
@@ -2036,6 +2163,22 @@ const DATA = {
         { step: "Serviceable filter: high-mix automotive-grade MaaS + digitalisation solutions Bosch-addressable", value: "≈15% of TAM", src: "Estimate" },
         { step: "= SAM (2030), incl. ~$0.5B digitalisation-solutions slice", value: "$1.8B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "The headline number is the whole India electronics contract-manufacturing market, and most of it is commodity EMS running at 3–5% margins — structurally below Bosch's hurdle rate. That is why the SAM is only 16% of it, and the discipline to stay out of the rest is the strategy.",
+        tam: [
+          { k: "Commodity electronics EMS", v: 7400, why: "The bulk of the market, and where Dixon, Kaynes and Syrma compete on cost Bosch cannot match" },
+          { k: "Automotive-grade & high-reliability build", v: 2600, why: "Safety-part manufacture gated by IATF-class certification — the defensible niche" },
+          { k: "Factory digitalisation solutions", v: 1200, why: "Industry 4.0 and 5.0 software, sold as a product rather than an internal practice" },
+          { k: "High-mix precision assembly", v: 800, why: "Low-volume, many-SKU work that commodity lines are not tuned for" },
+        ],
+        samNote: "Certified capacity and digitalisation only. Commodity EMS is an explicit no-go: Bosch's overhead structure cannot serve a 3–5% margin business, and pretending otherwise would dilute the group.",
+        sam: [
+          { k: "Automotive-grade contract build (MaaS)", v: 780, why: "Certified capacity freed by the powertrain transition, sold to China+1 buyers who are qualification-time constrained rather than price constrained", sub: "Contract Mfg (MaaS)" },
+          { k: "Factory digitalisation solutions", v: 560, why: "Bosch's own plants are the reference, and this is the field's margin engine", sub: "Industry 5.0" },
+          { k: "Automotive module assembly", v: 400, why: "Reallocated from the former ECA field, where it was being scored twice — ECU and module build on Bosch's own IATF lines", sub: "Automotive Module Assembly" },
+          { k: "Selective commodity EMS via partners", v: 210, why: "Partner or customer role only; never a head-on bid", sub: "EMS" },
+        ],
+      },
       crossCheck: "Sanity check: listed Indian EMS players' combined revenue trajectories alone imply a $10B+ 2030 market; automotive-grade share assumptions align with their segment disclosures [2][7].",
       customers: [
         { s: "Global Tier-1s & OEMs (China+1)", buy: "Automotive-grade contract manufacturing", note: "Certification + trust buyers, not price buyers" },
@@ -2213,6 +2356,23 @@ const DATA = {
         { step: "Serviceable filter: vehicle-side enablement (HW security, SW, data feeds) excl. regulated revenue pools", value: "≈19% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$0.6B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "Vehicle-linked financial flow enablement value. The large regulated pools — payments, lending, insurance underwriting — belong to licensed institutions and are excluded, because Bosch's whole strategy here is to enable rather than to bank.",
+        tam: [
+          { k: "Regulated payment & lending pools", v: 1450, why: "Transaction and interest economics that require an RBI licence — structurally not Bosch's" },
+          { k: "Insurance underwriting pools", v: 720, why: "Premium and risk economics requiring IRDAI authorisation" },
+          { k: "In-vehicle payment & identity infrastructure", v: 480, why: "Secure elements, vehicle identity and the payment integration layer" },
+          { k: "Verified vehicle-data feeds", v: 310, why: "Telemetry and battery-health data as underwriting and scoring inputs" },
+          { k: "Vehicle monetisation platforms", v: 140, why: "In-car commerce, advertising and compute leasing — genuinely distant" },
+        ],
+        samNote: "The enablement layer only, and that boundary is a hard rule rather than a preference. Regulated activity always sits with a licensed partner; Bosch supplies the vehicle-side trust and the data.",
+        sam: [
+          { k: "In-vehicle payment infrastructure", v: 240, why: "Secure elements plus cockpit integration — the first credible automotive-grade UPI implementation wins the socket", sub: "In-Vehicle Payment" },
+          { k: "Verified data feeds to insurers & lenders", v: 190, why: "Licence-free, recurring, and battery-health data is something no insurer can generate for itself", sub: "Insurance" },
+          { k: "Vehicle identity infrastructure", v: 130, why: "VAHAN-anchored identity with a hardware trust root, co-built with the government ecosystem", sub: "Vehicle Aadhar" },
+          { k: "Monetisation platform readiness", v: 40, why: "Watch-level only; in-car commerce has shown no measurable India traction yet", sub: "Vehicle Monetization" },
+        ],
+      },
       crossCheck: "Sanity check: FASTag alone processes multi-billion-dollar annual flows; basis-points-equivalent enablement value across payment+insurance+identity supports a $3B-class enablement TAM [2][7].",
       customers: [
         { s: "OEMs", buy: "In-vehicle payment & identity stacks", note: "Bundled into cockpit/SdV platform deals" },
@@ -2380,6 +2540,25 @@ const DATA = {
         { step: "Serviceable filter: technology layers Bosch-addressable (excl. civil works, telecom carriage)", value: "≈28% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$1.3B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "India ITS, tolling and mobility-infrastructure spend. Civil works and telecom carriage are excluded — they are the largest lines and the ones a technology supplier adds nothing to.",
+        tam: [
+          { k: "Civil works & roadside construction", v: 1600, why: "Gantries, foundations, cabling and installation — EPC territory, not Bosch's" },
+          { k: "Tolling systems (MLFF transition)", v: 1150, why: "GNSS on-board units, the tolling backend and enforcement analytics, all being re-sourced at once" },
+          { k: "Urban traffic management & ITS", v: 780, why: "Signals, detection, enforcement and traffic optimisation software" },
+          { k: "V2X roadside & corridor infrastructure", v: 520, why: "C-V2X roadside units and corridor systems, cleared since the Jun-2026 spectrum exemption" },
+          { k: "Mobility & charging data services", v: 380, why: "Charger availability, routing and map data — the commercial, non-B2G line" },
+          { k: "Intermodal orchestration platforms", v: 170, why: "Institutionally gated; agencies do not yet share data" },
+        ],
+        samNote: "Technology layers only, and always inside a consortium. Bosch has no Indian public-procurement track record, so a solo bid is explicitly ruled out rather than merely discouraged.",
+        sam: [
+          { k: "MLFF tolling technology", v: 520, why: "A system replacement resets incumbency — technology decides rather than relationship history", sub: "Tolling & Parking" },
+          { k: "V2X vehicle-and-roadside systems", v: 310, why: "Bosch is the only player holding both sides of the air gap, which no competitor can match", sub: "V2X" },
+          { k: "Charging & routing data services", v: 240, why: "The fast-cycle commercial line that balances a portfolio otherwise paced by government tendering", sub: "Map Services" },
+          { k: "Urban traffic management technology", v: 190, why: "Delivered through Indian prime consortia, which carry the procurement relationship Bosch lacks", sub: "Urban Traffic Mgmt" },
+          { k: "Intermodal platform participation", v: 40, why: "Watch-level; blocked by inter-agency data sharing rather than by technology", sub: "Intermodal" },
+        ],
+      },
       crossCheck: "Sanity check: FASTag ecosystem economics and NHAI toll collections imply tolling-tech spend alone in the hundreds of millions annually — consistent with the MLFF slice [1][7].",
       customers: [
         { s: "NHAI / state authorities", buy: "MLFF tolling tech, enforcement, traffic mgmt", note: "Via consortia — never direct-alone" },
@@ -2551,6 +2730,24 @@ const DATA = {
         { step: "Serviceable filter: data/diagnostics/collection Bosch-addressable (excl. recycling process value)", value: "≈21% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$0.5B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "India's circular-economy market for vehicles and batteries. Recycling chemistry and plant capital are the biggest lines and are deliberately excluded — Bosch has no hydrometallurgy capability and should not acquire one.",
+        tam: [
+          { k: "Recycling process & material recovery", v: 1180, why: "Hydrometallurgy, black-mass processing and plant capital — Attero, Lohum and Ace Green territory" },
+          { k: "Second-life repurposing & integration", v: 520, why: "Repurposing retired packs into stationary storage, against a 49.2 GWh cumulative India opportunity" },
+          { k: "Diagnostics, grading & certification", v: 380, why: "State-of-health testing, grading and health certification — currently unregulated and unbuilt" },
+          { k: "Traceability & EPR compliance platforms", v: 220, why: "Audit-grade evidence that producers must supply under EPR obligations" },
+          { k: "Residual value & circularity scoring", v: 100, why: "Valuation data for lenders, insurers and resale platforms" },
+        ],
+        samNote: "The data and certification layer only. Recyclers take the capital risk on the physical side; Bosch takes the trust layer above it, which is where software-like margins sit.",
+        sam: [
+          { k: "Battery diagnostics & SoH grading", v: 175, why: "BMS data plus the workshop network is the only credible way to certify state-of-health at scale in India", sub: "Battery Second Life" },
+          { k: "EPR traceability-as-a-service", v: 130, why: "CPCB requires 90% material recovery from FY2026-27, so the obligation binds this financial year", sub: "Battery Recycling" },
+          { k: "Residual-value & circularity scoring", v: 110, why: "One measurement unlocks two markets — EV lending and used-vehicle insurance", sub: "Residual Value" },
+          { k: "Right-to-repair diagnostics & tooling", v: 65, why: "Regulation creates the demand and the workshop network is the channel that already exists", sub: "Right to Repair" },
+          { k: "Carbon & circularity platforms (watch)", v: 20, why: "India's CCTS transport methodology is not finalised, so there is nothing stable to build against", sub: "Carbon Credits" },
+        ],
+      },
       crossCheck: "Sanity check: end-of-life EV battery volumes ramp sharply post-2027 as first EV cohorts retire; a $2B-class 2030 circular market with 30% CAGR is consistent with that retirement curve [2][7].",
       customers: [
         { s: "OEMs & battery makers (EPR-obligated)", buy: "Traceability, compliance, collection services", note: "Regulation guarantees the demand" },
@@ -2719,6 +2916,22 @@ const DATA = {
         { step: "Serviceable filter: non-flight-critical subsystems Bosch could qualify", value: "≈13% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$0.08B", src: "Derived — highly speculative estimate" },
       ],
+      buildup: {
+        tamNote: "The smallest and least certain sizing in the portfolio, and the confidence is deliberately low. Airframe and flight-critical systems are excluded because they require aerospace certification Bosch does not have and would take years to build.",
+        tam: [
+          { k: "Airframe, structures & assembly", v: 250, why: "Prime-integrator territory requiring full type certification" },
+          { k: "Flight-critical avionics & control", v: 170, why: "DO-178C and DO-254 certified systems — Honeywell, Garmin and Collins territory" },
+          { k: "Electric propulsion & power electronics", v: 105, why: "Motors, inverters and power distribution — where automotive competence genuinely transfers" },
+          { k: "Battery & energy systems", v: 50, why: "Aviation-grade packs, currently gated by energy density rather than by capability" },
+          { k: "Non-flight-critical subsystems", v: 25, why: "Sensing, power management and compute where automotive cost-quality beats aerospace over-specification" },
+        ],
+        samNote: "Non-flight-critical subsystems only, and even that is option-preservation rather than a plan. Anything touching flight-criticality needs aerospace certification, which is a categorical gap rather than an incremental one.",
+        sam: [
+          { k: "Propulsion & power electronics subsystems", v: 45, why: "Automotive competence transfers genuinely, subject to aerospace qualification Bosch has not started", sub: "Urban Air Mobility" },
+          { k: "Sensing & power management subsystems", v: 20, why: "India-hardened thermal and ingress engineering is a real differentiator if qualification ever begins", sub: "Urban Air Mobility" },
+          { k: "Cargo & medical UAM subsystem supply", v: 15, why: "Passenger-free use cases face the shorter regulatory path, so they arrive first", sub: "Rural Applications" },
+        ],
+      },
       crossCheck: "Sanity check: even bullish global eVTOL forecasts concentrate revenue post-2030; India's share before then is marginal — an $0.6B 2030 India TAM is optimistic, and confidence is deliberately low.",
       customers: [
         { s: "eVTOL primes (global)", buy: "Electric propulsion, sensing, power electronics", note: "Component-supplier relationship only" },
@@ -2879,6 +3092,24 @@ const DATA = {
         { step: "Serviceable filter: sensors/actuators/compute/safety + convergence Bosch-addressable (excl. full platforms, humanoid speculation)", value: "≈21% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$1.2B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "India robotics spend across industrial, mobile and emerging humanoid segments. Full robot platforms are excluded — Bosch is a component supplier here by choice, not a platform integrator.",
+        tam: [
+          { k: "Industrial robot platforms & arms", v: 2100, why: "ABB, KUKA and Fanuc territory; Bosch supplies into these rather than against them" },
+          { k: "AMR platforms & fleet software", v: 1650, why: "Autonomous mobile robots for warehouse and factory logistics — the fastest-growing segment" },
+          { k: "Sensing, actuation & safety compute", v: 1180, why: "The component layer: LiDAR, cameras, motion control and safety-certified compute" },
+          { k: "Campus & low-speed autonomy", v: 520, why: "Geofenced shuttles and low-speed autonomous vehicles" },
+          { k: "Humanoid platforms", v: 350, why: "Global capital is well ahead of demonstrated unit economics" },
+        ],
+        samNote: "Components and the converged autonomy stack. Platforms are excluded deliberately: Bosch has no robot-platform franchise and building one would mean competing with specialists on their ground.",
+        sam: [
+          { k: "Safety-certified sensing & perception", v: 480, why: "Automotive-volume radar and cameras cut AMR sensor cost 40–60% against purpose-built robotics parts", sub: "AMR" },
+          { k: "Actuation & motion control", v: 310, why: "Existing electric-machine lines, supplied to AMR makers and industrial integrators", sub: "AMR" },
+          { k: "Real-time safety compute", v: 230, why: "The convergence asset — one certified platform serving both robotics and software-defined vehicles", sub: "Robotics × SDV" },
+          { k: "Campus shuttle autonomy stack", v: 140, why: "A low-speed testbed that matures the SdV stack while earning modest revenue", sub: "Campus Shuttles" },
+          { k: "Humanoid subsystem readiness (watch)", v: 40, why: "Optionality only; unit economics are unproven and safety frameworks do not exist", sub: "Humanoids" },
+        ],
+      },
       crossCheck: "Sanity check: India industrial-robot installations and warehouse-automation spend already run in the hundreds of millions annually; a $5–6B 2030 all-robotics TAM with 25% CAGR is consistent [2][7].",
       customers: [
         { s: "AMR & warehouse-automation makers", buy: "Sensors, compute, motion control, safety SW", note: "Real near-term component demand" },
@@ -3049,6 +3280,22 @@ const DATA = {
         { step: "Serviceable filter: Bosch-addressable e-call/sensing/inclusive-design (excl. clinical/medical-device)", value: "≈21% of TAM", src: "Estimate" },
         { step: "= SAM (2030)", value: "$0.3B", src: "Derived — estimate" },
       ],
+      buildup: {
+        tamNote: "India mobility-health spend. Clinical and medical-device value is excluded because it requires a CDSCO pathway Bosch has no experience of and no reason to enter alone.",
+        tam: [
+          { k: "Clinical & medical-device content", v: 560, why: "Anything making a diagnostic claim falls under CDSCO regulation — medtech territory" },
+          { k: "Emergency call & crash notification", v: 420, why: "eCall hardware and service, now score-bearing under BNCAP 2.0's Post-Crash pillar" },
+          { k: "Wellness & in-cabin monitoring", v: 250, why: "Non-clinical fatigue, vitals and comfort monitoring on cabin sensing" },
+          { k: "Assisted & accessible mobility", v: 120, why: "Inclusive design and assistive access features" },
+          { k: "Emergency response integration", v: 50, why: "112 and ERSS integration, now funded through PM RAHAT" },
+        ],
+        samNote: "The mandated wedge plus wellness-grade features on sensors already fitted. Clinical claims are a hard boundary — the moment a claim becomes diagnostic, the product needs a regulator Bosch has never dealt with.",
+        sam: [
+          { k: "eCall & crash notification stacks", v: 175, why: "BNCAP 2.0 makes Post-Crash a scored pillar from Oct-2027, and PM RAHAT funds the response that gives it value", sub: "E-Call" },
+          { k: "Wellness monitoring on shared sensing", v: 85, why: "A software extension of DMS cameras and cabin radar already fitted for the Interior field", sub: "Assisted Motion" },
+          { k: "Inclusive-design content & advisory", v: 40, why: "Accessibility criteria are entering public and fleet tenders ahead of any consumer willingness to pay", sub: "DEI Mobility Design" },
+        ],
+      },
       crossCheck: "Sanity check: e-call hardware/service attach across new-vehicle volumes alone, if mandated, supports a few-hundred-million-dollar slice — consistent with the SAM [1][7].",
       customers: [
         { s: "OEMs", buy: "E-call stacks, wellness sensing, inclusive-design", note: "Mandate-driven for e-call" },
@@ -7081,6 +7328,24 @@ DATA.cyber = {
       { step: "= TAM (automotive cybersecurity, India, 2030)", value: "$2.2B", src: "Derived — estimate" },
       { step: "Serviceable filter: certification programmes, secure OTA and key management, managed SOC and remediation (excl. captive in-house work and generic enterprise IT security)", value: "≈39% of TAM = $0.85B", src: "Estimate" },
     ],
+    buildup: {
+      tamNote: "Automotive cybersecurity spend created almost entirely by Rules 125-T and 125-U. Unusually for this portfolio the demand is legal rather than commercial, so the sizing follows the phase-in schedule rather than a market forecast.",
+      tam: [
+        { k: "CSMS certification programmes", v: 660, why: "Every OEM programme entering scope from Oct-2026 needs a certified management system in order to homologate at all" },
+        { k: "Managed monitoring & incident response", v: 590, why: "CERT-In's six-hour reporting duty makes this a continuous operation rather than an annual audit" },
+        { k: "Secure OTA & key management", v: 420, why: "Hardware trust anchors, key hierarchies and the secure update path" },
+        { k: "SUMS / software update governance", v: 320, why: "Update management as an auditable process, phasing through Oct-2029" },
+        { k: "Penetration testing & homologation support", v: 210, why: "Adversarial testing evidence and the ARAI/ICAT audit itself" },
+      ],
+      samNote: "Certification, secure OTA, monitoring and remediation. Generic enterprise IT security and captive in-house work are excluded, because neither is a market Bosch should chase.",
+      sam: [
+        { k: "CSMS certification programmes", v: 280, why: "Bosch has passed the European equivalent repeatedly, and a delivered audit reference is the only credential a programme director cares about", sub: "CSMS (AIS-189)" },
+        { k: "Managed vehicle SOC subscription", v: 230, why: "An unclaimed category — CERT-In's six-hour clock has already written the requirements document", sub: "Managed Vehicle SOC" },
+        { k: "Secure OTA & key management", v: 195, why: "Trust anchors sit inside Bosch's own silicon, which no IT-side rival can reach", sub: "Secure OTA & Keys" },
+        { k: "SUMS update governance", v: 100, why: "The same capability as the OTA pipeline, sold under a regulatory heading", sub: "SUMS (AIS-190)" },
+        { k: "Audit & penetration-test support", v: 45, why: "Red-team work is partnered; Bosch keeps the certifiable process and the remediation", sub: "Pen-Test & Homologation" },
+      ],
+    },
     crossCheck: "Sanity check: global automotive cybersecurity is credibly put at $8–12B by 2030, and India's share of production plus its unusually early and comprehensive mandate supports a $2B-class domestic TAM. The $0.85B SAM is the portion of the previously combined connectivity field attributable to compliance and managed security, not an addition to it [1][7][8].",
     customers: [
       { s: "OEMs (PV/2W/CV) entering CSMS scope", buy: "Certification programmes, secure OTA, key management, audit support", note: "Dated demand — the Oct-2026 and Apr-2027 gates set the procurement calendar" },
@@ -7552,7 +7817,27 @@ DATA.clouddata = {
       { step: "= TAM (cloud, data platform and architecture for mobility, 2030)", value: "$2.4B", src: "Derived — estimate" },
       { step: "Serviceable filter: domain logic, platform licences, analytics and GenAI products, architecture programmes (excl. raw cloud infrastructure, excl. cyber compliance now scored separately)", value: "≈35% of TAM = $0.85B", src: "Estimate" },
     ],
-    crossCheck: "Sanity check: the previously combined connectivity field carried $2.6B across four layers. That total is now split three ways ($0.9B connectivity + $0.85B cybersecurity + $0.85B cloud & data), so the portfolio total is unchanged and each field is scored against the market it actually serves. Excluding raw infrastructure is deliberate — Bosch does not and should not compete on compute pricing [7][8].",
+    buildup: {
+      tamNote: "Cloud and data spend for mobility, deliberately excluding raw compute. Bosch rents infrastructure from the hyperscalers and should never bid against them on price, so counting it here would inflate the number without changing what Bosch can sell.",
+      tam: [
+        { k: "Vehicle cloud platform", v: 720, why: "Ingestion, storage and lifecycle management for the connected parc, India-resident" },
+        { k: "Data platforms & analytics", v: 640, why: "Schema, governance and the analytics layer OEMs are rebuilding for software-defined vehicles" },
+        { k: "SDV data architecture programmes", v: 430, why: "The schema and governance design work, happening industry-wide right now" },
+        { k: "Verified data licensing", v: 330, why: "Feeds to insurers, lenders and ESG reporting — three separate buyers for one pipeline" },
+        { k: "Vehicle-as-sensor data products", v: 180, why: "Reallocated from the former ECA field; the sensors are already fitted, so marginal cost is near zero" },
+        { k: "Consent & compliance tooling", v: 100, why: "DPDP consent management as a platform capability rather than a bolt-on" },
+      ],
+      samNote: "Domain logic and provenance, never infrastructure. What Bosch can uniquely sell is a guarantee of where a signal came from, because it built the sensor and the gateway — a claim no cloud-only vendor can make.",
+      sam: [
+        { k: "Vehicle cloud platform", v: 270, why: "Production-proven globally and India-resident capacity is now procurable — localise rather than build", sub: "Vehicle Cloud" },
+        { k: "Data platforms & GenAI analytics", v: 265, why: "Mid-tier OEMs have an explicit unmet need, and the 2M-vehicle India corpus cannot be reproduced retrospectively", sub: "Data Platforms" },
+        { k: "SDV data architecture", v: 170, why: "The schema is being redefined now, and whoever sets it defines the platform beneath it", sub: "SDV Data Architecture" },
+        { k: "DPDP compliance layer", v: 95, why: "Consent architecture cannot be cheaply retrofitted, which makes native design a moat until May-2027", sub: "DPDP Compliance Layer" },
+        { k: "Vehicle-as-sensor data products", v: 80, why: "Sensors already installed and paid for, and Bosch can certify provenance end to end", sub: "Vehicle as Sensor" },
+        { k: "Federated exchange participation", v: 50, why: "The architect's seat on India's open-network mobility rails — positional rather than commercial", sub: "Federated Data Exchange" },
+      ],
+    },
+    crossCheck: "Sanity check: the previously combined connectivity field carried $2.6B across four layers. That total is now split three ways ($0.9B connectivity + $0.85B cybersecurity + $0.85B cloud & data, since raised to $0.93B when vehicle-as-sensor moved across from the ECA split), so the portfolio total is unchanged and each field is scored against the market it actually serves. Excluding raw infrastructure is deliberate — Bosch does not and should not compete on compute pricing [7][8].",
     customers: [
       { s: "Mid-size Indian OEMs", buy: "Pre-integrated vehicle data platform, SDV data architecture, analytics", note: "Cannot fund building one — the clearest unmet demand in the field" },
       { s: "Large OEMs with captive platforms", buy: "Data components, ingestion layers, GenAI analytics modules", note: "Sell into the captive rather than contesting ownership of it" },
@@ -11217,7 +11502,7 @@ export default function App() {
           <div className="text-xs text-slate-500 mt-0.5">Bosch Mobility · India Market · BBM Strategy Agent</div>
         </div>
         <div className="ml-auto flex items-center gap-2 text-xs text-slate-500">
-          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Comprehensive Analytics for all search fields - Version 1.0
+          <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Comprehensive Analytics for all search fields - Version 1.1 · 18 search fields
         </div>
       </header>
 
