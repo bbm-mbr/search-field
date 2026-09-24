@@ -1,0 +1,198 @@
+{
+  "search_fields": [
+    {
+      "id": "lighting-system",
+      "name": "Lighting System",
+      "sub_fields": [
+        {"id": "interior-lighting", "name": "Interior Lighting", "scope": "Ambient Lighting"},
+        {"id": "exterior-lighting", "name": "Exterior Lighting", "scope": "Matrix LED, Projector Headlamps, Fod Lighting, Indicators"},
+        {"id": "controllers", "name": "Controllers", "scope": "Lighting controllers"},
+        {"id": "application-sw", "name": "Application SW", "scope": "Personalization, Drive Assistance, Auto dimming"}
+      ],
+      "bsf_ma_partnership": ["New"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "infotainment-cockpit",
+      "name": "Infotainment & Cockpit",
+      "sub_fields": [
+        {"id": "hardware", "name": "Hardware", "scope": "Compute box (HPCs), Display Unit (Infotainment, Instrument Cluster, HUD, other in-vehicle displays), AR/VR"},
+        {"id": "software", "name": "SW", "scope": "HMI, Personalization, AI cockpit, Connected Maps, Application Ecosystem, Local language Voice Assistant, In-Car Gaming"},
+        {"id": "system-integrator", "name": "System Integrator", "scope": "Pre-integrated Bundle + Bring-your-own Patterns, Architecture Design"}
+      ],
+      "bsf_ma_partnership": ["Video Perception", "AI Cockpit", "Strategic SoC"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "interior-systems",
+      "name": "Interior Systems",
+      "sub_fields": [
+        {"id": "seating", "name": "Seating", "scope": "Seating Controls, Massage seat"},
+        {"id": "vehicle-access", "name": "Vehicle Access", "scope": "Keyless entry, biometric, voice actuator"},
+        {"id": "occupant-monitoring", "name": "Occupant Monitoring", "scope": "Health Monitoring, Driver Monitoring"},
+        {"id": "air-purity", "name": "Air Purity Control", "scope": "In-cabin air quality"},
+        {"id": "ambient-smell", "name": "Ambient Smell", "scope": "In-cabin scenting"},
+        {"id": "automated-access", "name": "Automated Access Control", "scope": "Auto boot, doors, bonnet, sunroof, windows"}
+      ],
+      "bsf_ma_partnership": ["ADAS - Interior Sensing", "Comfort Actuators (EM)"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "active-suspension",
+      "name": "Active Suspension",
+      "sub_fields": [
+        {"id": "active-semi-active", "name": "Fully Active & Semi-Active Suspension", "scope": "Suspension systems"},
+        {"id": "control-units", "name": "Control Units", "scope": "Suspension ECUs"},
+        {"id": "control-algorithms", "name": "Control Algorithms", "scope": "Suspension control SW"},
+        {"id": "cross-domain", "name": "System-level Cross-Domain Function", "scope": "Improved ride comfort using ADAS sensor, roll mitigation, motion sickness reduction"}
+      ],
+      "bsf_ma_partnership": ["Compute", "Chassis System", "VMM"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "connectivity-cloud-cyber-data-arch",
+      "name": "Connectivity, Cloud, Cyber Security, Data Management, Architectures",
+      "sub_fields": [
+        {"id": "connectivity", "name": "Connectivity", "scope": "Connectivity HW, SW stack, SDV orientation, IoT, 6G, Data acquisition"},
+        {"id": "cloud", "name": "Cloud", "scope": "Storage, compute, SDV Support, Reliable Distributed Systems"},
+        {"id": "cyber-security", "name": "Cyber Security", "scope": "Vehicle, cloud, AI, user data protection, quantum"},
+        {"id": "data-management", "name": "Data Management", "scope": "SDV orientation, Data analytics, Federated Mobility"},
+        {"id": "architectures", "name": "Architectures", "scope": "SDV orientation, future tech trends and potential architectures, Open networks, web3.0"}
+      ],
+      "bsf_ma_partnership": ["Offboard SW & Services", "Data Processing", "Compute (connectivity HW under)", "SW & Services - CVS"],
+      "bbm_innovation": ["GenAI Products & Services", "SW System for SdV", "Future Vehicle System for SdV", "Software & Services for OEMs", "Workshop"]
+    },
+    {
+      "id": "electronic-control-architectures",
+      "name": "Electronic Control Architectures",
+      "sub_fields": [
+        {"id": "edge-compute", "name": "Edge Compute", "scope": "Edge computing in vehicle"},
+        {"id": "distributed-compute", "name": "Distributed Compute", "scope": "Distributed in-vehicle compute"},
+        {"id": "ai-compute", "name": "AI-Oriented Compute", "scope": "AI accelerators and compute"},
+        {"id": "semiconductor-tech", "name": "Future Semiconductor Tech", "scope": "Chiplets, ASICs, SoC, Processors, GaN, future compute architecture, RISC-V"},
+        {"id": "communication-tech", "name": "Communication Tech", "scope": "In-vehicle and external communication"},
+        {"id": "vehicle-as-sensor", "name": "Vehicle as a Sensor", "scope": "Vehicle sensing platform"}
+      ],
+      "bsf_ma_partnership": ["MEMS", "ECU", "Power Semiconductors", "IC", "ASICs", "Quantum Sensing"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "software",
+      "name": "Software",
+      "sub_fields": [
+        {"id": "interoperable-functions", "name": "Interoperable Functions", "scope": "Cross-platform vehicle functions"},
+        {"id": "communication-technologies", "name": "Communication Technologies", "scope": "SW communication stacks"},
+        {"id": "middleware-os", "name": "Middleware / OS + Integration", "scope": "Vehicle OS, middleware, integration"},
+        {"id": "ai-ml", "name": "AI / ML", "scope": "AI/ML for mobility software"},
+        {"id": "simulations", "name": "Simulations", "scope": "Simulation tooling"},
+        {"id": "digital-twin", "name": "Digital Twin", "scope": "Vehicle and fleet digital twins"},
+        {"id": "wasm", "name": "WASM", "scope": "WebAssembly in vehicle SW"}
+      ],
+      "bsf_ma_partnership": ["Onboard SW", "SDV Tooling", "Offboard SW & Services", "Data Processing"],
+      "bbm_innovation": ["GenAI Products & Services", "SW System for SdV", "Software & Services for OEMs"]
+    },
+    {
+      "id": "manufacturing",
+      "name": "Manufacturing",
+      "sub_fields": [
+        {"id": "ems", "name": "EMS", "scope": "Electronics Manufacturing Services"},
+        {"id": "contract-manufacturing", "name": "Contract Component Manufacturing", "scope": "Manufacturing as a Service"},
+        {"id": "i5", "name": "Industry 5.0", "scope": "I5.0 manufacturing"},
+        {"id": "dark-factories", "name": "Dark Factories", "scope": "Lights-out manufacturing"}
+      ],
+      "bsf_ma_partnership": ["EMS"],
+      "bbm_innovation": []
+    },
+    {
+      "id": "energy",
+      "name": "Energy",
+      "sub_fields": [
+        {"id": "v2g-charging", "name": "Vehicle-to-Grid & Charging", "scope": "Vehicle to Grid, Peer-to-peer energy trading, EV charging Management"},
+        {"id": "battery", "name": "Battery & BMS", "scope": "Battery, BMS, New battery tech, Manufacturing"},
+        {"id": "new-energy", "name": "New Energy Technology", "scope": "Biogas, Solar and other new energy technologies"}
+      ],
+      "bsf_ma_partnership": ["Thermal Management", "Alternate Fuels", "Charging Solutions", "Battery (PS-ESB)", "Power Electronics", "ME-SiCs GaN"],
+      "bbm_innovation": ["GenAI Products & Services", "SW System for SdV", "Future Vehicle System for SdV", "Software & Services for OEMs", "Workshop Services & Fleet"]
+    },
+    {
+      "id": "fintech",
+      "name": "Fintech",
+      "sub_fields": [
+        {"id": "in-vehicle-payment", "name": "In-Vehicle Payment", "scope": "Payments from the vehicle"},
+        {"id": "insurance", "name": "Insurance", "scope": "Mobility and usage-based insurance"},
+        {"id": "vehicle-aadhar", "name": "Vehicle Aadhar", "scope": "Vehicle digital identity"},
+        {"id": "vehicle-monetization", "name": "Vehicle Monetization", "scope": "Ads, Leasing compute"}
+      ],
+      "bsf_ma_partnership": ["AI Cockpit", "SW & Services", "Solutions in Tech Stack"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "sub_fields": [
+        {"id": "v2x", "name": "V2X", "scope": "Vehicle, Network, VRU, infrastructure"},
+        {"id": "urban-traffic", "name": "Urban Traffic Management", "scope": "City traffic systems"},
+        {"id": "tolling-parking", "name": "Tolling & Parking Solutions", "scope": "Tolling, parking"},
+        {"id": "map-services", "name": "Map Services - EV Charging", "scope": "Mapping for EV charging"},
+        {"id": "intermodal", "name": "Intermodal Mobility", "scope": "Multi-modal transport"}
+      ],
+      "bsf_ma_partnership": ["SW & Services", "Solutions in Tech Stack"],
+      "bbm_innovation": ["SW System for SdV", "Future Vehicle System for SdV"]
+    },
+    {
+      "id": "sustainability",
+      "name": "Sustainability",
+      "sub_fields": [
+        {"id": "battery-second-life", "name": "Battery Second Life & Recycling", "scope": "Second-life batteries, recycling"},
+        {"id": "carbon-credits", "name": "Carbon Credits", "scope": "Carbon markets for mobility"},
+        {"id": "right-to-repair", "name": "Right to Repair", "scope": "Repairability and regulation"},
+        {"id": "residual-value", "name": "Residual Value Estimation", "scope": "Vehicle residual value analytics"}
+      ],
+      "bsf_ma_partnership": ["SW & Services", "Solutions in Tech Stack"],
+      "bbm_innovation": ["Circular Economy"]
+    },
+    {
+      "id": "evtol",
+      "name": "EVTOL",
+      "sub_fields": [
+        {"id": "urban-air-mobility", "name": "Urban Air Mobility", "scope": "Passenger and goods, medical emergencies"},
+        {"id": "rural-applications", "name": "Rural Applications", "scope": "Rural EVTOL use cases"}
+      ],
+      "bsf_ma_partnership": [],
+      "bbm_innovation": []
+    },
+    {
+      "id": "robotics",
+      "name": "Robotics",
+      "sub_fields": [
+        {"id": "amr", "name": "AMR", "scope": "Autonomous Mobile Robots"},
+        {"id": "campus-shuttles", "name": "Autonomous Campus Shuttles", "scope": "Low-speed autonomous shuttles"},
+        {"id": "humanoids", "name": "Humanoids", "scope": "Sensors, actuators, SW, Controls"},
+        {"id": "robotics-sdv", "name": "Convergence of Robotics and SDV", "scope": "Shared stacks between robotics and SDV"}
+      ],
+      "bsf_ma_partnership": [],
+      "bbm_innovation": []
+    },
+    {
+      "id": "defence",
+      "name": "Defence",
+      "sub_fields": [
+        {"id": "contract-manufacturing-defence", "name": "Contract Manufacturing", "scope": "Defence contract manufacturing"},
+        {"id": "component-sales", "name": "Component Sales", "scope": "Components for defence platforms"}
+      ],
+      "bsf_ma_partnership": [],
+      "bbm_innovation": []
+    },
+    {
+      "id": "health-care",
+      "name": "Health Care",
+      "sub_fields": [
+        {"id": "e-call", "name": "E-Call", "scope": "Emergency call systems"},
+        {"id": "assisted-motion", "name": "Assisted Motion", "scope": "Mobility assistance"},
+        {"id": "dei-mobility-design", "name": "DEI Inclusion in Mobility Design", "scope": "Inclusive mobility design"}
+      ],
+      "bsf_ma_partnership": [],
+      "bbm_innovation": []
+    }
+  ]
+}

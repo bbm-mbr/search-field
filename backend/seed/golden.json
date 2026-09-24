@@ -1,0 +1,4868 @@
+{
+ "perField": {
+  "lighting": {
+   "pestel": {
+    "tail": 202,
+    "head": 226,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.06,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 79,
+    "W": 45,
+    "O": 49,
+    "T": 51,
+    "iri": 0.27,
+    "eai": -0.02,
+    "spi": 0.07,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      130
+     ],
+     [
+      "SO",
+      128
+     ],
+     [
+      "WT",
+      96
+     ],
+     [
+      "WO",
+      94
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 1,
+    "scaleVelocity": 3,
+    "mas": 3.2,
+    "mai": 0.1,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 1.86,
+     "Buyer power": 3,
+     "Supplier power": 1.4,
+     "Substitutes": 1.5,
+     "Rivalry": 4
+    },
+    "iaiRaw": 2.35,
+    "iai": 0.32,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.4,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "manufacturing",
+      4,
+      1,
+      -3,
+      0.25
+     ],
+     [
+      "supplyChain",
+      3,
+      2,
+      -1,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 18.75,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.6,
+    "neutralPower": 10,
+    "totalPower": 25,
+    "svi": 0.6,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     1,
+     "Minor Threat"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.33,
+    "advantageScore": 3,
+    "svs": 4,
+    "cpi": -0.25,
+    "label": "Standard Battle",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.3333333333333335,
+    "advantageScore": 3,
+    "svs": 4,
+    "cpi": -0.25,
+    "label": "Standard Battle",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 3,
+    "label": "Standard Sourcing",
+    "scvi": 0,
+    "band": "Manageable Friction"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 2.1,
+    "Buyer power": 5,
+    "Supplier power": 1,
+    "Substitutes": 1.3,
+    "Rivalry": 7.5
+   },
+   "horizon": {
+    "n1": 1,
+    "n2": 2,
+    "n3": 1,
+    "p1": 25,
+    "p2": 50,
+    "p3": 25,
+    "depth": 7
+   }
+  },
+  "cockpit": {
+   "pestel": {
+    "tail": 230,
+    "head": 216,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.03,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 85,
+    "W": 47,
+    "O": 63,
+    "T": 57,
+    "iri": 0.29,
+    "eai": 0.05,
+    "spi": 0.12,
+    "quadrant": "I",
+    "strategies": [
+     [
+      "SO",
+      148
+     ],
+     [
+      "ST",
+      142
+     ],
+     [
+      "WO",
+      110
+     ],
+     [
+      "WT",
+      104
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.55,
+    "mai": 0.27,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3.57,
+     "Buyer power": 3.33,
+     "Supplier power": 4.6,
+     "Substitutes": 2,
+     "Rivalry": 3.33
+    },
+    "iaiRaw": 3.37,
+    "iai": -0.19,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.13,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      3,
+      2,
+      -1,
+      0.05
+     ],
+     [
+      "supplyChain",
+      4,
+      2,
+      -2,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "talent",
+      4,
+      3,
+      -1,
+      0.25
+     ],
+     [
+      "organization",
+      3,
+      3,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 6.25,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.25,
+    "neutralPower": 15,
+    "totalPower": 20,
+    "svi": 0.25,
+    "band": "Contested / Volatile"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 1,
+    "label": "Unviable",
+    "scvi": -1,
+    "band": "Severe Vulnerability"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 6.4,
+    "Buyer power": 5.8,
+    "Supplier power": 9,
+    "Substitutes": 2.5,
+    "Rivalry": 5.8
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "interior": {
+   "pestel": {
+    "tail": 222,
+    "head": 222,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 79,
+    "W": 51,
+    "O": 33,
+    "T": 61,
+    "iri": 0.22,
+    "eai": -0.3,
+    "spi": -0.14,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      140
+     ],
+     [
+      "SO",
+      112
+     ],
+     [
+      "WT",
+      112
+     ],
+     [
+      "WO",
+      84
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.75,
+    "mai": 0.38,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3,
+     "Buyer power": 3,
+     "Supplier power": 1,
+     "Substitutes": 2.5,
+     "Rivalry": 2.67
+    },
+    "iaiRaw": 2.43,
+    "iai": 0.28,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.1,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.1
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 9.25,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.5,
+    "neutralPower": 8,
+    "totalPower": 16,
+    "svi": 0.5,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     4,
+     "Rising Star"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Advantaged Position",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 5,
+    "Buyer power": 5,
+    "Supplier power": 0,
+    "Substitutes": 3.8,
+    "Rivalry": 4.2
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "suspension": {
+   "pestel": {
+    "tail": 154,
+    "head": 208,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.15,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 89,
+    "W": 51,
+    "O": 33,
+    "T": 57,
+    "iri": 0.27,
+    "eai": -0.27,
+    "spi": -0.11,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      146
+     ],
+     [
+      "SO",
+      122
+     ],
+     [
+      "WT",
+      108
+     ],
+     [
+      "WO",
+      84
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 3,
+    "cagrScore": 3,
+    "scaleVelocity": 3,
+    "mas": 3.9,
+    "mai": 0.45,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 1.86,
+     "Buyer power": 3.67,
+     "Supplier power": 1.4,
+     "Substitutes": 4.5,
+     "Rivalry": 2.67
+    },
+    "iaiRaw": 2.82,
+    "iai": 0.09,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": 0,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      1,
+      1,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      2,
+      2,
+      0,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.25
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 4.5,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.23,
+    "neutralPower": 10,
+    "totalPower": 13,
+    "svi": 0.23,
+    "band": "Contested / Volatile"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     3,
+     "Fading Giant"
+    ],
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ]
+   ],
+   "advantage": {
+    "s": 2,
+    "label": "Trapped Strength"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 2,
+    "svs": 2.4,
+    "cpi": -0.65,
+    "label": "High-Risk Gambit",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 2,
+    "svs": 2.4,
+    "cpi": -0.65,
+    "label": "High-Risk Gambit",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 3,
+    "label": "Standard Sourcing",
+    "scvi": 0,
+    "band": "Manageable Friction"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 2.1,
+    "Buyer power": 6.7,
+    "Supplier power": 1,
+    "Substitutes": 8.8,
+    "Rivalry": 4.2
+   },
+   "horizon": {
+    "n1": 1,
+    "n2": 2,
+    "n3": 1,
+    "p1": 25,
+    "p2": 50,
+    "p3": 25,
+    "depth": 7
+   }
+  },
+  "connectivity": {
+   "pestel": {
+    "tail": 232,
+    "head": 182,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.12,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 89,
+    "W": 51,
+    "O": 61,
+    "T": 79,
+    "iri": 0.27,
+    "eai": -0.13,
+    "spi": -0.01,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      168
+     ],
+     [
+      "SO",
+      150
+     ],
+     [
+      "WT",
+      130
+     ],
+     [
+      "WO",
+      112
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.55,
+    "mai": 0.27,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 2.71,
+     "Buyer power": 2.67,
+     "Supplier power": 3.8,
+     "Substitutes": 1.5,
+     "Rivalry": 3
+    },
+    "iaiRaw": 2.74,
+    "iai": 0.13,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.08,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      2,
+      2,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "talent",
+      4,
+      3,
+      -1,
+      0.25
+     ],
+     [
+      "organization",
+      3,
+      3,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 15.5,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.57,
+    "neutralPower": 10,
+    "totalPower": 23,
+    "svi": 0.57,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     2,
+     "Niche Contender"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Managed Ecosystem",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 4.3,
+    "Buyer power": 4.2,
+    "Supplier power": 7,
+    "Substitutes": 1.3,
+    "Rivalry": 5
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "cyber": {
+   "pestel": {
+    "tail": 284,
+    "head": 190,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.2,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 105,
+    "W": 79,
+    "O": 67,
+    "T": 69,
+    "iri": 0.14,
+    "eai": -0.01,
+    "spi": 0.04,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      174
+     ],
+     [
+      "SO",
+      172
+     ],
+     [
+      "WT",
+      148
+     ],
+     [
+      "WO",
+      146
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.5,
+    "mai": 0.75,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3.57,
+     "Buyer power": 2.33,
+     "Supplier power": 1.8,
+     "Substitutes": 1.5,
+     "Rivalry": 3
+    },
+    "iaiRaw": 2.44,
+    "iai": 0.28,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.33,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      2,
+      2,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      2,
+      -1,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "talent",
+      4,
+      2,
+      -2,
+      0.25
+     ],
+     [
+      "organization",
+      4,
+      2,
+      -2,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 21.5,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.76,
+    "neutralPower": 5,
+    "totalPower": 21,
+    "svi": 0.76,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Rising Star"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4.33,
+    "advantageScore": 5,
+    "svs": 5.67,
+    "cpi": 0.17,
+    "label": "Targeted Takedown",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4.333333333333333,
+    "advantageScore": 5,
+    "svs": 5.67,
+    "cpi": 0.17,
+    "label": "Targeted Takedown",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Managed Ecosystem",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 6.4,
+    "Buyer power": 3.3,
+    "Supplier power": 2,
+    "Substitutes": 1.3,
+    "Rivalry": 5
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "clouddata": {
+   "pestel": {
+    "tail": 290,
+    "head": 194,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.2,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 105,
+    "W": 69,
+    "O": 69,
+    "T": 83,
+    "iri": 0.21,
+    "eai": -0.09,
+    "spi": 0,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      188
+     ],
+     [
+      "SO",
+      174
+     ],
+     [
+      "WT",
+      152
+     ],
+     [
+      "WO",
+      138
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.3,
+    "mai": 0.65,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3,
+     "Buyer power": 3,
+     "Supplier power": 3.8,
+     "Substitutes": 3,
+     "Rivalry": 3.33
+    },
+    "iaiRaw": 3.23,
+    "iai": -0.11,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.28,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      1,
+      1,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.05
+     ],
+     [
+      "g2m",
+      4,
+      2,
+      -2,
+      0.25
+     ],
+     [
+      "talent",
+      4,
+      3,
+      -1,
+      0.2
+     ],
+     [
+      "organization",
+      3,
+      2,
+      -1,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 14.5,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.52,
+    "neutralPower": 10,
+    "totalPower": 21,
+    "svi": 0.52,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4.67,
+    "advantageScore": 5,
+    "svs": 5.33,
+    "cpi": 0.08,
+    "label": "Battle of Titans",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4.666666666666667,
+    "advantageScore": 5,
+    "svs": 5.33,
+    "cpi": 0.08,
+    "label": "Battle of Titans",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Managed Ecosystem",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 5,
+    "Buyer power": 5,
+    "Supplier power": 7,
+    "Substitutes": 5,
+    "Rivalry": 5.8
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 3,
+    "n3": 1,
+    "p1": 33,
+    "p2": 50,
+    "p3": 17,
+    "depth": 10
+   }
+  },
+  "eca": {
+   "pestel": {
+    "tail": 182,
+    "head": 220,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.09,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 85,
+    "W": 45,
+    "O": 43,
+    "T": 57,
+    "iri": 0.31,
+    "eai": -0.14,
+    "spi": -0.01,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      142
+     ],
+     [
+      "SO",
+      128
+     ],
+     [
+      "WT",
+      102
+     ],
+     [
+      "WO",
+      88
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.75,
+    "mai": 0.38,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 1.29,
+     "Buyer power": 3.33,
+     "Supplier power": 5,
+     "Substitutes": 1,
+     "Rivalry": 2.67
+    },
+    "iaiRaw": 2.66,
+    "iai": 0.17,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.13,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      3,
+      3,
+      0,
+      0.25
+     ],
+     [
+      "supplyChain",
+      4,
+      2,
+      -2,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 6.25,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.28,
+    "neutralPower": 13,
+    "totalPower": 18,
+    "svi": 0.28,
+    "band": "Contested / Volatile"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     1,
+     "Minor Threat"
+    ]
+   ],
+   "advantage": {
+    "s": 4,
+    "label": "Strong Position"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3,
+    "advantageScore": 4,
+    "svs": 5.6,
+    "cpi": 0.15,
+    "label": "Lead the Pack",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3,
+    "advantageScore": 4,
+    "svs": 5.6,
+    "cpi": 0.15,
+    "label": "Lead the Pack",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 2,
+    "label": "High-Risk Sourcing",
+    "scvi": -0.5,
+    "band": "Severe Vulnerability"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 0.7,
+    "Buyer power": 5.8,
+    "Supplier power": 10,
+    "Substitutes": 0,
+    "Rivalry": 4.2
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 3,
+    "n3": 2,
+    "p1": 29,
+    "p2": 43,
+    "p3": 29,
+    "depth": 10
+   }
+  },
+  "semis": {
+   "pestel": {
+    "tail": 326,
+    "head": 212,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.21,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 99,
+    "W": 57,
+    "O": 73,
+    "T": 69,
+    "iri": 0.27,
+    "eai": 0.03,
+    "spi": 0.1,
+    "quadrant": "I",
+    "strategies": [
+     [
+      "SO",
+      172
+     ],
+     [
+      "ST",
+      168
+     ],
+     [
+      "WO",
+      130
+     ],
+     [
+      "WT",
+      126
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.1,
+    "mai": 0.55,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 1.86,
+     "Buyer power": 2.67,
+     "Supplier power": 4.2,
+     "Substitutes": 1.5,
+     "Rivalry": 2.33
+    },
+    "iaiRaw": 2.51,
+    "iai": 0.25,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.32,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "supplyChain",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "g2m",
+      3,
+      1,
+      -2,
+      0.15
+     ],
+     [
+      "talent",
+      4,
+      2,
+      -2,
+      0.15
+     ],
+     [
+      "organization",
+      3,
+      1,
+      -2,
+      0.1
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 12.5,
+    "TET": 5,
+    "baseSVI": 0.43,
+    "vsf": 0.71,
+    "neutralPower": 6,
+    "totalPower": 21,
+    "svi": 0.31,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Rising Star"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Advantaged Position",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 2.1,
+    "Buyer power": 4.2,
+    "Supplier power": 8,
+    "Substitutes": 1.3,
+    "Rivalry": 3.3
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 3,
+    "n3": 3,
+    "p1": 25,
+    "p2": 38,
+    "p3": 38,
+    "depth": 10
+   }
+  },
+  "software": {
+   "pestel": {
+    "tail": 196,
+    "head": 178,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.05,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 95,
+    "W": 37,
+    "O": 47,
+    "T": 73,
+    "iri": 0.44,
+    "eai": -0.22,
+    "spi": -0.02,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      168
+     ],
+     [
+      "SO",
+      142
+     ],
+     [
+      "WT",
+      110
+     ],
+     [
+      "WO",
+      84
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.3,
+    "mai": 0.65,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3.29,
+     "Buyer power": 3.33,
+     "Supplier power": 1.4,
+     "Substitutes": 2.5,
+     "Rivalry": 3.33
+    },
+    "iaiRaw": 2.77,
+    "iai": 0.11,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.07,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      1,
+      1,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      4,
+      1,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "talent",
+      4,
+      3,
+      -1,
+      0.25
+     ],
+     [
+      "organization",
+      3,
+      3,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 12,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.5,
+    "neutralPower": 8,
+    "totalPower": 16,
+    "svi": 0.5,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 5,
+    "svs": 6,
+    "cpi": 0.25,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Managed Ecosystem",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 5,
+    "label": "Growth Frontier",
+    "tpi": 1,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 5.7,
+    "Buyer power": 5.8,
+    "Supplier power": 1,
+    "Substitutes": 3.8,
+    "Rivalry": 5.8
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "manufacturing": {
+   "pestel": {
+    "tail": 182,
+    "head": 234,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.13,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 63,
+    "W": 41,
+    "O": 51,
+    "T": 47,
+    "iri": 0.21,
+    "eai": 0.04,
+    "spi": 0.09,
+    "quadrant": "I",
+    "strategies": [
+     [
+      "SO",
+      114
+     ],
+     [
+      "ST",
+      110
+     ],
+     [
+      "WO",
+      92
+     ],
+     [
+      "WT",
+      88
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.05,
+    "mai": 0.02,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3,
+     "Buyer power": 3.67,
+     "Supplier power": 2.2,
+     "Substitutes": 2,
+     "Rivalry": 4.67
+    },
+    "iaiRaw": 3.11,
+    "iai": -0.05,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.12,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      4,
+      3,
+      -1,
+      0.25
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 10,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.57,
+    "neutralPower": 6,
+    "totalPower": 14,
+    "svi": 0.57,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     3,
+     "Disruptor"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 3,
+    "label": "Standard Sourcing",
+    "scvi": 0,
+    "band": "Manageable Friction"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 5,
+    "Buyer power": 6.7,
+    "Supplier power": 3,
+    "Substitutes": 2.5,
+    "Rivalry": 9.2
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "energy": {
+   "pestel": {
+    "tail": 230,
+    "head": 184,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.11,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 95,
+    "W": 39,
+    "O": 51,
+    "T": 55,
+    "iri": 0.42,
+    "eai": -0.04,
+    "spi": 0.1,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      150
+     ],
+     [
+      "SO",
+      146
+     ],
+     [
+      "WT",
+      94
+     ],
+     [
+      "WO",
+      90
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.1,
+    "mai": 0.55,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 2.71,
+     "Buyer power": 4.33,
+     "Supplier power": 3.4,
+     "Substitutes": 1.5,
+     "Rivalry": 3.67
+    },
+    "iaiRaw": 3.12,
+    "iai": -0.06,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.27,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      4,
+      3,
+      -1,
+      0.25
+     ],
+     [
+      "supplyChain",
+      4,
+      2,
+      -2,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "talent",
+      4,
+      2,
+      -2,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      3,
+      1,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 18.75,
+    "TET": 5,
+    "baseSVI": 0.58,
+    "vsf": 0.8,
+    "neutralPower": 5,
+    "totalPower": 25,
+    "svi": 0.46,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ],
+    [
+     3,
+     "Disruptor"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.75,
+    "advantageScore": 5,
+    "svs": 6.25,
+    "cpi": 0.31,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.75,
+    "advantageScore": 5,
+    "svs": 6.25,
+    "cpi": 0.31,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 2,
+    "label": "High-Risk Sourcing",
+    "scvi": -0.5,
+    "band": "Severe Vulnerability"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 4.3,
+    "Buyer power": 8.3,
+    "Supplier power": 6,
+    "Substitutes": 1.3,
+    "Rivalry": 6.7
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 2,
+    "p1": 33,
+    "p2": 33,
+    "p3": 33,
+    "depth": 10
+   }
+  },
+  "fintech": {
+   "pestel": {
+    "tail": 216,
+    "head": 194,
+    "tailN": 18,
+    "headN": 18,
+    "index": 0.05,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 75,
+    "W": 51,
+    "O": 57,
+    "T": 57,
+    "iri": 0.19,
+    "eai": 0,
+    "spi": 0.06,
+    "quadrant": "I",
+    "strategies": [
+     [
+      "SO",
+      132
+     ],
+     [
+      "ST",
+      132
+     ],
+     [
+      "WO",
+      108
+     ],
+     [
+      "WT",
+      108
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.1,
+    "mai": 0.55,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 2.43,
+     "Buyer power": 3.33,
+     "Supplier power": 2.2,
+     "Substitutes": 4.5,
+     "Rivalry": 2.67
+    },
+    "iaiRaw": 3.03,
+    "iai": -0.01,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.22,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "ip",
+      3,
+      2,
+      -1,
+      0.2
+     ],
+     [
+      "manufacturing",
+      2,
+      2,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.25
+     ],
+     [
+      "talent",
+      3,
+      2,
+      -1,
+      0.2
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 10.75,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.44,
+    "neutralPower": 10,
+    "totalPower": 18,
+    "svi": 0.44,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     3,
+     "Disruptor"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.67,
+    "advantageScore": 3,
+    "svs": 3.8,
+    "cpi": -0.3,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.6666666666666665,
+    "advantageScore": 3,
+    "svs": 3.8,
+    "cpi": -0.3,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 3,
+    "label": "Standard Sourcing",
+    "scvi": 0,
+    "band": "Manageable Friction"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 3.6,
+    "Buyer power": 5.8,
+    "Supplier power": 3,
+    "Substitutes": 8.8,
+    "Rivalry": 4.2
+   },
+   "horizon": {
+    "n1": 1,
+    "n2": 2,
+    "n3": 1,
+    "p1": 25,
+    "p2": 50,
+    "p3": 25,
+    "depth": 7
+   }
+  },
+  "infrastructure": {
+   "pestel": {
+    "tail": 202,
+    "head": 220,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.04,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 53,
+    "W": 61,
+    "O": 57,
+    "T": 55,
+    "iri": -0.07,
+    "eai": 0.02,
+    "spi": -0.01,
+    "quadrant": "II",
+    "strategies": [
+     [
+      "WO",
+      118
+     ],
+     [
+      "WT",
+      116
+     ],
+     [
+      "SO",
+      110
+     ],
+     [
+      "ST",
+      108
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 3,
+    "scaleVelocity": 4,
+    "mas": 3.25,
+    "mai": 0.13,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 2.43,
+     "Buyer power": 4,
+     "Supplier power": 2.2,
+     "Substitutes": 1.5,
+     "Rivalry": 4
+    },
+    "iaiRaw": 2.83,
+    "iai": 0.08,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.03,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      3,
+      3,
+      0,
+      0.25
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 13.75,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.69,
+    "neutralPower": 5,
+    "totalPower": 16,
+    "svi": 0.69,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ]
+   ],
+   "advantage": {
+    "s": 4,
+    "label": "Growth Bet"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.33,
+    "advantageScore": 4,
+    "svs": 5.34,
+    "cpi": 0.08,
+    "label": "Lead the Pack",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.3333333333333335,
+    "advantageScore": 4,
+    "svs": 5.33,
+    "cpi": 0.08,
+    "label": "Lead the Pack",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 3,
+    "label": "Standard Sourcing",
+    "scvi": 0,
+    "band": "Manageable Friction"
+   },
+   "tpi": {
+    "tps": 5,
+    "label": "Growth Frontier",
+    "tpi": 1,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 3.6,
+    "Buyer power": 7.5,
+    "Supplier power": 3,
+    "Substitutes": 1.3,
+    "Rivalry": 7.5
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "sustainability": {
+   "pestel": {
+    "tail": 188,
+    "head": 198,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.03,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 59,
+    "W": 51,
+    "O": 45,
+    "T": 51,
+    "iri": 0.07,
+    "eai": -0.06,
+    "spi": -0.02,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      110
+     ],
+     [
+      "SO",
+      104
+     ],
+     [
+      "WT",
+      102
+     ],
+     [
+      "WO",
+      96
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 3,
+    "cagrScore": 5,
+    "scaleVelocity": 4,
+    "mas": 4.25,
+    "mai": 0.63,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3.57,
+     "Buyer power": 2.67,
+     "Supplier power": 3.4,
+     "Substitutes": 2.5,
+     "Rivalry": 3.33
+    },
+    "iaiRaw": 3.09,
+    "iai": -0.04,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.08,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "manufacturing",
+      2,
+      2,
+      0,
+      0.05
+     ],
+     [
+      "supplyChain",
+      3,
+      3,
+      0,
+      0.05
+     ],
+     [
+      "g2m",
+      3,
+      2,
+      -1,
+      0.25
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.2
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.15
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 10,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.5,
+    "neutralPower": 8,
+    "totalPower": 16,
+    "svi": 0.5,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ],
+    [
+     3,
+     "Steady Competitor"
+    ]
+   ],
+   "advantage": {
+    "s": 4,
+    "label": "Strong Position"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.67,
+    "advantageScore": 4,
+    "svs": 5.06,
+    "cpi": 0.01,
+    "label": "Focused Attack",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.6666666666666665,
+    "advantageScore": 4,
+    "svs": 5.07,
+    "cpi": 0.02,
+    "label": "Focused Attack",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Advantaged Position",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 5,
+    "label": "Growth Frontier",
+    "tpi": 1,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 6.4,
+    "Buyer power": 4.2,
+    "Supplier power": 6,
+    "Substitutes": 3.8,
+    "Rivalry": 5.8
+   },
+   "horizon": {
+    "n1": 1,
+    "n2": 2,
+    "n3": 1,
+    "p1": 25,
+    "p2": 50,
+    "p3": 25,
+    "depth": 7
+   }
+  },
+  "evtol": {
+   "pestel": {
+    "tail": 140,
+    "head": 224,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.23,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 25,
+    "W": 67,
+    "O": 25,
+    "T": 69,
+    "iri": -0.46,
+    "eai": -0.47,
+    "spi": -0.47,
+    "quadrant": "III",
+    "strategies": [
+     [
+      "WT",
+      136
+     ],
+     [
+      "ST",
+      94
+     ],
+     [
+      "WO",
+      92
+     ],
+     [
+      "SO",
+      50
+     ]
+    ],
+    "band": "Low Priority / Divest"
+   },
+   "mas": {
+    "samScore": 1,
+    "cagrScore": 5,
+    "scaleVelocity": 3,
+    "mas": 2.1,
+    "mai": -0.45,
+    "band": "Tier-3 / Portfolio Distractor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 2.14,
+     "Buyer power": 3.67,
+     "Supplier power": 4.6,
+     "Substitutes": 4.5,
+     "Rivalry": 3.67
+    },
+    "iaiRaw": 3.72,
+    "iai": -0.36,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.45,
+    "band": "Fatal Flaw / Unnatural Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "manufacturing",
+      3,
+      1,
+      -2,
+      0.25
+     ],
+     [
+      "supplyChain",
+      3,
+      1,
+      -2,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      1,
+      -2,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      2,
+      -1,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 3,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.23,
+    "neutralPower": 10,
+    "totalPower": 13,
+    "svi": 0.23,
+    "band": "Contested / Volatile"
+   },
+   "threats": [
+    [
+     2,
+     "Niche Contender"
+    ],
+    [
+     2,
+     "Niche Contender"
+    ],
+    [
+     5,
+     "Apex Predator"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3,
+    "advantageScore": 3,
+    "svs": 4.2,
+    "cpi": -0.2,
+    "label": "Standard Battle",
+    "band": "Contested"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3,
+    "advantageScore": 3,
+    "svs": 4.2,
+    "cpi": -0.2,
+    "label": "Standard Battle",
+    "band": "Contested"
+   },
+   "scvi": {
+    "scvs": 1,
+    "label": "Unviable",
+    "scvi": -1,
+    "band": "Severe Vulnerability"
+   },
+   "tpi": {
+    "tps": 2,
+    "label": "Watch & Wait",
+    "tpi": -0.5,
+    "band": "Obsolete / Highly Volatile"
+   },
+   "porterDerived": {
+    "New entrants": 2.9,
+    "Buyer power": 6.7,
+    "Supplier power": 9,
+    "Substitutes": 8.8,
+    "Rivalry": 6.7
+   },
+   "horizon": {
+    "n1": 0,
+    "n2": 1,
+    "n3": 2,
+    "p1": 0,
+    "p2": 33,
+    "p3": 67,
+    "depth": 3.5
+   }
+  },
+  "robotics": {
+   "pestel": {
+    "tail": 194,
+    "head": 206,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.03,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 79,
+    "W": 53,
+    "O": 49,
+    "T": 69,
+    "iri": 0.2,
+    "eai": -0.17,
+    "spi": -0.06,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      148
+     ],
+     [
+      "SO",
+      128
+     ],
+     [
+      "WT",
+      122
+     ],
+     [
+      "WO",
+      102
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 5,
+    "cagrScore": 5,
+    "scaleVelocity": 5,
+    "mas": 4.1,
+    "mai": 0.55,
+    "band": "Tier-1 / Aspiration Anchor Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3.57,
+     "Buyer power": 3.67,
+     "Supplier power": 2.6,
+     "Substitutes": 4,
+     "Rivalry": 4
+    },
+    "iaiRaw": 3.57,
+    "iai": -0.28,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": 0.07,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      4,
+      4,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      3,
+      3,
+      0,
+      0.25
+     ],
+     [
+      "supplyChain",
+      3,
+      4,
+      1,
+      0.2
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "talent",
+      3,
+      3,
+      0,
+      0.1
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.05
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 21.25,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 1,
+    "neutralPower": 0,
+    "totalPower": 16,
+    "svi": 1,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     5,
+     "Apex Predator"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     2,
+     "Niche Contender"
+    ]
+   ],
+   "advantage": {
+    "s": 5,
+    "label": "Perfect Opportunity"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 3.67,
+    "advantageScore": 5,
+    "svs": 6.33,
+    "cpi": 0.33,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 3.6666666666666665,
+    "advantageScore": 5,
+    "svs": 6.33,
+    "cpi": 0.33,
+    "label": "Targeted Takedown",
+    "band": "Advantaged"
+   },
+   "scvi": {
+    "scvs": 4,
+    "label": "Advantaged Position",
+    "scvi": 0.5,
+    "band": "Resilient / Localized"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Disruptive Incumbent",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 6.4,
+    "Buyer power": 6.7,
+    "Supplier power": 4,
+    "Substitutes": 7.5,
+    "Rivalry": 7.5
+   },
+   "horizon": {
+    "n1": 2,
+    "n2": 2,
+    "n3": 1,
+    "p1": 40,
+    "p2": 40,
+    "p3": 20,
+    "depth": 9
+   }
+  },
+  "health": {
+   "pestel": {
+    "tail": 160,
+    "head": 232,
+    "tailN": 18,
+    "headN": 18,
+    "index": -0.18,
+    "band": "Transitional Gale"
+   },
+   "swot": {
+    "S": 67,
+    "W": 67,
+    "O": 39,
+    "T": 63,
+    "iri": 0,
+    "eai": -0.24,
+    "spi": -0.17,
+    "quadrant": "IV",
+    "strategies": [
+     [
+      "ST",
+      130
+     ],
+     [
+      "WT",
+      130
+     ],
+     [
+      "SO",
+      106
+     ],
+     [
+      "WO",
+      106
+     ]
+    ],
+    "band": "Contested / Situational Play"
+   },
+   "mas": {
+    "samScore": 3,
+    "cagrScore": 3,
+    "scaleVelocity": 3,
+    "mas": 3,
+    "mai": 0,
+    "band": "Tier-2 / Standard Automotive Market"
+   },
+   "iai": {
+    "forceAvgs": {
+     "New entrants": 3,
+     "Buyer power": 4,
+     "Supplier power": 3,
+     "Substitutes": 4.5,
+     "Rivalry": 3
+    },
+    "iaiRaw": 3.5,
+    "iai": -0.25,
+    "band": "Moderately Competitive Industry (Choppy Waters)"
+   },
+   "cgi": {
+    "cgi": -0.05,
+    "band": "Manageable Fit",
+    "rows": [
+     [
+      "rdInfra",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "ip",
+      2,
+      2,
+      0,
+      0.15
+     ],
+     [
+      "manufacturing",
+      2,
+      2,
+      0,
+      0.15
+     ],
+     [
+      "supplyChain",
+      3,
+      2,
+      -1,
+      0.15
+     ],
+     [
+      "g2m",
+      3,
+      3,
+      0,
+      0.15
+     ],
+     [
+      "talent",
+      2,
+      2,
+      0,
+      0.15
+     ],
+     [
+      "organization",
+      2,
+      2,
+      0,
+      0.1
+     ]
+    ]
+   },
+   "svi": {
+    "TES": 10,
+    "TET": 0,
+    "baseSVI": 1,
+    "vsf": 0.44,
+    "neutralPower": 10,
+    "totalPower": 18,
+    "svi": 0.44,
+    "band": "Favorable Ecosystem"
+   },
+   "threats": [
+    [
+     4,
+     "Incumbent at Risk"
+    ],
+    [
+     4,
+     "Rising Star"
+    ],
+    [
+     4,
+     "Incumbent at Risk"
+    ]
+   ],
+   "advantage": {
+    "s": 3,
+    "label": "Standard Battle"
+   },
+   "cpiPortfolio": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "cpiFieldView": {
+    "avgThreatScore": 4,
+    "advantageScore": 3,
+    "svs": 3.6,
+    "cpi": -0.35,
+    "label": "Calculated Skirmish",
+    "band": "Hostile"
+   },
+   "scvi": {
+    "scvs": 2,
+    "label": "High-Risk Sourcing",
+    "scvi": -0.5,
+    "band": "Severe Vulnerability"
+   },
+   "tpi": {
+    "tps": 4,
+    "label": "Strategic Bet",
+    "tpi": 0.5,
+    "band": "Future-Proof / Standardized"
+   },
+   "porterDerived": {
+    "New entrants": 5,
+    "Buyer power": 7.5,
+    "Supplier power": 5,
+    "Substitutes": 8.8,
+    "Rivalry": 5
+   },
+   "horizon": {
+    "n1": 1,
+    "n2": 2,
+    "n3": 1,
+    "p1": 25,
+    "p2": 50,
+    "p3": 25,
+    "depth": 7
+   }
+  }
+ },
+ "portfolio": {
+  "lighting": {
+   "mgi": 0.03,
+   "pi": -0.06,
+   "spi": 0.07,
+   "mai": 0.1,
+   "iai": 0.32,
+   "cgi": -0.4,
+   "svi": 0.6,
+   "cpi": -0.25,
+   "scvi": 0,
+   "tpi": 0.5,
+   "mp": 0.04,
+   "rtw": -0.2,
+   "ev": 0.34,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "cockpit": {
+   "mgi": 0.03,
+   "pi": 0.03,
+   "spi": 0.12,
+   "mai": 0.27,
+   "iai": -0.19,
+   "cgi": -0.13,
+   "svi": 0.25,
+   "cpi": 0.25,
+   "scvi": -1,
+   "tpi": 0.5,
+   "mp": 0.19,
+   "rtw": 0.05,
+   "ev": -0.25,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "interior": {
+   "mgi": 0.17,
+   "pi": 0,
+   "spi": -0.14,
+   "mai": 0.38,
+   "iai": 0.28,
+   "cgi": -0.1,
+   "svi": 0.5,
+   "cpi": -0.35,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.25,
+   "rtw": -0.18,
+   "ev": 0.53,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "suspension": {
+   "mgi": 0.07,
+   "pi": -0.15,
+   "spi": -0.11,
+   "mai": 0.45,
+   "iai": 0.09,
+   "cgi": 0,
+   "svi": 0.23,
+   "cpi": -0.65,
+   "scvi": 0,
+   "tpi": 0.5,
+   "mp": 0.24,
+   "rtw": -0.2,
+   "ev": 0.19,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "connectivity": {
+   "mgi": 0.24,
+   "pi": 0.12,
+   "spi": -0.01,
+   "mai": 0.27,
+   "iai": 0.13,
+   "cgi": -0.08,
+   "svi": 0.57,
+   "cpi": 0.25,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.22,
+   "rtw": 0.03,
+   "ev": 0.55,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "cyber": {
+   "mgi": 0.35,
+   "pi": 0.2,
+   "spi": 0.04,
+   "mai": 0.75,
+   "iai": 0.28,
+   "cgi": -0.33,
+   "svi": 0.76,
+   "cpi": 0.17,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.56,
+   "rtw": -0.08,
+   "ev": 0.63,
+   "band": "Core Bet (Tier-1)"
+  },
+  "clouddata": {
+   "mgi": 0.3,
+   "pi": 0.2,
+   "spi": 0,
+   "mai": 0.65,
+   "iai": -0.11,
+   "cgi": -0.28,
+   "svi": 0.52,
+   "cpi": 0.08,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.49,
+   "rtw": -0.09,
+   "ev": 0.53,
+   "band": "Core Bet (Tier-1)"
+  },
+  "eca": {
+   "mgi": 0.08,
+   "pi": -0.09,
+   "spi": -0.01,
+   "mai": 0.38,
+   "iai": 0.17,
+   "cgi": -0.13,
+   "svi": 0.28,
+   "cpi": 0.15,
+   "scvi": -0.5,
+   "tpi": 0.5,
+   "mp": 0.22,
+   "rtw": -0.02,
+   "ev": -0.01,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "semis": {
+   "mgi": 0.27,
+   "pi": 0.21,
+   "spi": 0.1,
+   "mai": 0.55,
+   "iai": 0.25,
+   "cgi": -0.32,
+   "svi": 0.31,
+   "cpi": 0.25,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.43,
+   "rtw": -0.03,
+   "ev": 0.45,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "software": {
+   "mgi": 0.34,
+   "pi": 0.05,
+   "spi": -0.02,
+   "mai": 0.65,
+   "iai": 0.11,
+   "cgi": -0.07,
+   "svi": 0.5,
+   "cpi": 0.25,
+   "scvi": 0.5,
+   "tpi": 1,
+   "mp": 0.44,
+   "rtw": 0.03,
+   "ev": 0.63,
+   "band": "Core Bet (Tier-1)"
+  },
+  "manufacturing": {
+   "mgi": 0.04,
+   "pi": -0.13,
+   "spi": 0.09,
+   "mai": 0.02,
+   "iai": -0.05,
+   "cgi": -0.12,
+   "svi": 0.57,
+   "cpi": -0.35,
+   "scvi": 0,
+   "tpi": 0.5,
+   "mp": -0.03,
+   "rtw": -0.1,
+   "ev": 0.33,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "energy": {
+   "mgi": 0.18,
+   "pi": 0.11,
+   "spi": 0.1,
+   "mai": 0.55,
+   "iai": -0.06,
+   "cgi": -0.27,
+   "svi": 0.46,
+   "cpi": 0.31,
+   "scvi": -0.5,
+   "tpi": 0.5,
+   "mp": 0.4,
+   "rtw": 0,
+   "ev": 0.06,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "fintech": {
+   "mgi": 0.17,
+   "pi": 0.05,
+   "spi": 0.06,
+   "mai": 0.55,
+   "iai": -0.01,
+   "cgi": -0.22,
+   "svi": 0.44,
+   "cpi": -0.3,
+   "scvi": 0,
+   "tpi": 0.5,
+   "mp": 0.38,
+   "rtw": -0.14,
+   "ev": 0.28,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "infrastructure": {
+   "mgi": 0.15,
+   "pi": -0.04,
+   "spi": -0.01,
+   "mai": 0.13,
+   "iai": 0.08,
+   "cgi": -0.03,
+   "svi": 0.69,
+   "cpi": 0.08,
+   "scvi": 0,
+   "tpi": 1,
+   "mp": 0.07,
+   "rtw": 0,
+   "ev": 0.48,
+   "band": "Horizon Play (Tier-2)"
+  },
+  "sustainability": {
+   "mgi": 0.3,
+   "pi": -0.03,
+   "spi": -0.02,
+   "mai": 0.63,
+   "iai": -0.04,
+   "cgi": -0.08,
+   "svi": 0.5,
+   "cpi": 0.01,
+   "scvi": 0.5,
+   "tpi": 1,
+   "mp": 0.4,
+   "rtw": -0.04,
+   "ev": 0.63,
+   "band": "Core Bet (Tier-1)"
+  },
+  "evtol": {
+   "mgi": -0.4,
+   "pi": -0.23,
+   "spi": -0.47,
+   "mai": -0.45,
+   "iai": -0.36,
+   "cgi": -0.45,
+   "svi": 0.23,
+   "cpi": -0.2,
+   "scvi": -1,
+   "tpi": -0.5,
+   "mp": -0.37,
+   "rtw": -0.39,
+   "ev": -0.46,
+   "band": "Portfolio Distractor (Tier-3)"
+  },
+  "robotics": {
+   "mgi": 0.35,
+   "pi": -0.03,
+   "spi": -0.06,
+   "mai": 0.55,
+   "iai": -0.28,
+   "cgi": 0.07,
+   "svi": 1,
+   "cpi": 0.33,
+   "scvi": 0.5,
+   "tpi": 0.5,
+   "mp": 0.35,
+   "rtw": 0.09,
+   "ev": 0.72,
+   "band": "Core Bet (Tier-1)"
+  },
+  "health": {
+   "mgi": -0.07,
+   "pi": -0.18,
+   "spi": -0.17,
+   "mai": 0,
+   "iai": -0.25,
+   "cgi": -0.05,
+   "svi": 0.44,
+   "cpi": -0.35,
+   "scvi": -0.5,
+   "tpi": 0.5,
+   "mp": -0.06,
+   "rtw": -0.17,
+   "ev": 0.05,
+   "band": "Horizon Play (Tier-2)"
+  }
+ },
+ "stats": {
+  "mgi": {
+   "min": -0.4,
+   "max": 0.35,
+   "mean": 0.14,
+   "sd": 0.181,
+   "spread": 0.38,
+   "n": 18,
+   "power": "Moderate separator",
+   "rankOf": {
+    "cyber": 1,
+    "robotics": 2,
+    "software": 3,
+    "clouddata": 4,
+    "sustainability": 5,
+    "semis": 6,
+    "connectivity": 7,
+    "energy": 8,
+    "interior": 9,
+    "fintech": 10,
+    "infrastructure": 11,
+    "eca": 12,
+    "suspension": 13,
+    "manufacturing": 14,
+    "lighting": 15,
+    "cockpit": 16,
+    "health": 17,
+    "evtol": 18
+   }
+  },
+  "pi": {
+   "min": -0.23,
+   "max": 0.21,
+   "mean": 0,
+   "sd": 0.128,
+   "spread": 0.22,
+   "n": 18,
+   "power": "Weak separator",
+   "rankOf": {
+    "semis": 1,
+    "cyber": 2,
+    "clouddata": 3,
+    "connectivity": 4,
+    "energy": 5,
+    "software": 6,
+    "fintech": 7,
+    "cockpit": 8,
+    "interior": 9,
+    "sustainability": 10,
+    "robotics": 11,
+    "infrastructure": 12,
+    "lighting": 13,
+    "eca": 14,
+    "manufacturing": 15,
+    "suspension": 16,
+    "health": 17,
+    "evtol": 18
+   }
+  },
+  "spi": {
+   "min": -0.47,
+   "max": 0.12,
+   "mean": -0.02,
+   "sd": 0.135,
+   "spread": 0.29,
+   "n": 18,
+   "power": "Weak separator",
+   "rankOf": {
+    "cockpit": 1,
+    "semis": 2,
+    "energy": 3,
+    "manufacturing": 4,
+    "lighting": 5,
+    "fintech": 6,
+    "cyber": 7,
+    "clouddata": 8,
+    "connectivity": 9,
+    "eca": 10,
+    "infrastructure": 11,
+    "software": 12,
+    "sustainability": 13,
+    "robotics": 14,
+    "suspension": 15,
+    "interior": 16,
+    "health": 17,
+    "evtol": 18
+   }
+  },
+  "mai": {
+   "min": -0.45,
+   "max": 0.75,
+   "mean": 0.36,
+   "sd": 0.297,
+   "spread": 0.6,
+   "n": 18,
+   "power": "Strong separator",
+   "rankOf": {
+    "cyber": 1,
+    "clouddata": 2,
+    "software": 3,
+    "sustainability": 4,
+    "semis": 5,
+    "energy": 6,
+    "fintech": 7,
+    "robotics": 8,
+    "suspension": 9,
+    "interior": 10,
+    "eca": 11,
+    "cockpit": 12,
+    "connectivity": 13,
+    "infrastructure": 14,
+    "lighting": 15,
+    "manufacturing": 16,
+    "health": 17,
+    "evtol": 18
+   }
+  },
+  "iai": {
+   "min": -0.36,
+   "max": 0.32,
+   "mean": 0.02,
+   "sd": 0.199,
+   "spread": 0.34,
+   "n": 18,
+   "power": "Weak separator",
+   "rankOf": {
+    "lighting": 1,
+    "interior": 2,
+    "cyber": 3,
+    "semis": 4,
+    "eca": 5,
+    "connectivity": 6,
+    "software": 7,
+    "suspension": 8,
+    "infrastructure": 9,
+    "fintech": 10,
+    "sustainability": 11,
+    "manufacturing": 12,
+    "energy": 13,
+    "clouddata": 14,
+    "cockpit": 15,
+    "health": 16,
+    "robotics": 17,
+    "evtol": 18
+   }
+  },
+  "cgi": {
+   "min": -0.45,
+   "max": 0.07,
+   "mean": -0.17,
+   "sd": 0.142,
+   "spread": 0.26,
+   "n": 18,
+   "power": "Weak separator",
+   "rankOf": {
+    "robotics": 1,
+    "suspension": 2,
+    "infrastructure": 3,
+    "health": 4,
+    "software": 5,
+    "connectivity": 6,
+    "sustainability": 7,
+    "interior": 8,
+    "manufacturing": 9,
+    "cockpit": 10,
+    "eca": 11,
+    "fintech": 12,
+    "energy": 13,
+    "clouddata": 14,
+    "semis": 15,
+    "cyber": 16,
+    "lighting": 17,
+    "evtol": 18
+   }
+  },
+  "svi": {
+   "min": 0.23,
+   "max": 1,
+   "mean": 0.49,
+   "sd": 0.194,
+   "spread": 0.39,
+   "n": 18,
+   "power": "Moderate separator",
+   "rankOf": {
+    "robotics": 1,
+    "cyber": 2,
+    "infrastructure": 3,
+    "lighting": 4,
+    "connectivity": 5,
+    "manufacturing": 6,
+    "clouddata": 7,
+    "interior": 8,
+    "software": 9,
+    "sustainability": 10,
+    "energy": 11,
+    "fintech": 12,
+    "health": 13,
+    "semis": 14,
+    "eca": 15,
+    "cockpit": 16,
+    "suspension": 17,
+    "evtol": 18
+   }
+  },
+  "cpi": {
+   "min": -0.65,
+   "max": 0.33,
+   "mean": -0.02,
+   "sd": 0.288,
+   "spread": 0.49,
+   "n": 18,
+   "power": "Moderate separator",
+   "rankOf": {
+    "robotics": 1,
+    "energy": 2,
+    "cockpit": 3,
+    "connectivity": 4,
+    "semis": 5,
+    "software": 6,
+    "cyber": 7,
+    "eca": 8,
+    "clouddata": 9,
+    "infrastructure": 10,
+    "sustainability": 11,
+    "evtol": 12,
+    "lighting": 13,
+    "fintech": 14,
+    "interior": 15,
+    "manufacturing": 16,
+    "health": 17,
+    "suspension": 18
+   }
+  },
+  "scvi": {
+   "min": -1,
+   "max": 0.5,
+   "mean": 0.03,
+   "sd": 0.513,
+   "spread": 0.75,
+   "n": 18,
+   "power": "Strong separator",
+   "rankOf": {
+    "interior": 1,
+    "connectivity": 2,
+    "cyber": 3,
+    "clouddata": 4,
+    "semis": 5,
+    "software": 6,
+    "sustainability": 7,
+    "robotics": 8,
+    "lighting": 9,
+    "suspension": 10,
+    "manufacturing": 11,
+    "fintech": 12,
+    "infrastructure": 13,
+    "eca": 14,
+    "energy": 15,
+    "health": 16,
+    "cockpit": 17,
+    "evtol": 18
+   }
+  },
+  "tpi": {
+   "min": -0.5,
+   "max": 1,
+   "mean": 0.53,
+   "sd": 0.311,
+   "spread": 0.75,
+   "n": 18,
+   "power": "Strong separator",
+   "rankOf": {
+    "software": 1,
+    "infrastructure": 2,
+    "sustainability": 3,
+    "lighting": 4,
+    "cockpit": 5,
+    "interior": 6,
+    "suspension": 7,
+    "connectivity": 8,
+    "cyber": 9,
+    "clouddata": 10,
+    "eca": 11,
+    "semis": 12,
+    "manufacturing": 13,
+    "energy": 14,
+    "fintech": 15,
+    "robotics": 16,
+    "health": 17,
+    "evtol": 18
+   }
+  }
+ },
+ "ranks": {
+  "mgi": {
+   "lighting": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "cockpit": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "interior": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "suspension": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "connectivity": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "cyber": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "clouddata": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "eca": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "semis": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "software": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "manufacturing": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "energy": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "fintech": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "infrastructure": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "sustainability": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  },
+  "pi": {
+   "lighting": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "cockpit": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "interior": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "suspension": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "connectivity": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "cyber": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "clouddata": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "eca": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "semis": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "software": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "manufacturing": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "energy": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "fintech": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "infrastructure": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "sustainability": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  },
+  "spi": {
+   "lighting": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "cockpit": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "interior": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "suspension": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "connectivity": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "cyber": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "clouddata": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "eca": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "semis": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "software": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "manufacturing": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "energy": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "fintech": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "infrastructure": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "sustainability": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  },
+  "mai": {
+   "lighting": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "cockpit": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "interior": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "suspension": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "connectivity": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "cyber": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "clouddata": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "eca": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "semis": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "software": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "manufacturing": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "energy": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "fintech": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "infrastructure": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "sustainability": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  },
+  "iai": {
+   "lighting": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "cockpit": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "interior": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "suspension": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "connectivity": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "cyber": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "clouddata": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "eca": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "semis": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "software": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "manufacturing": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "energy": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "fintech": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "infrastructure": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "sustainability": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   },
+   "health": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   }
+  },
+  "cgi": {
+   "lighting": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   },
+   "cockpit": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "interior": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "suspension": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "connectivity": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "cyber": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "clouddata": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "eca": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "semis": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "software": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "manufacturing": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "energy": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "fintech": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "infrastructure": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "sustainability": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "health": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   }
+  },
+  "svi": {
+   "lighting": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "cockpit": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "interior": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "suspension": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   },
+   "connectivity": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "cyber": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "clouddata": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "eca": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "semis": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "software": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "manufacturing": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "energy": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "fintech": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "infrastructure": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "sustainability": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "health": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   }
+  },
+  "cpi": {
+   "lighting": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "cockpit": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "interior": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "suspension": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "connectivity": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "cyber": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "clouddata": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "eca": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "semis": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "software": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "manufacturing": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "energy": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "fintech": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "infrastructure": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "sustainability": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "evtol": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "robotics": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  },
+  "scvi": {
+   "lighting": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "cockpit": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   },
+   "interior": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "suspension": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "connectivity": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "cyber": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "clouddata": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "eca": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "semis": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "software": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "manufacturing": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "energy": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "fintech": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "infrastructure": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "sustainability": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "health": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   }
+  },
+  "tpi": {
+   "lighting": {
+    "rank": 4,
+    "of": 18,
+    "pct": 82
+   },
+   "cockpit": {
+    "rank": 5,
+    "of": 18,
+    "pct": 76
+   },
+   "interior": {
+    "rank": 6,
+    "of": 18,
+    "pct": 71
+   },
+   "suspension": {
+    "rank": 7,
+    "of": 18,
+    "pct": 65
+   },
+   "connectivity": {
+    "rank": 8,
+    "of": 18,
+    "pct": 59
+   },
+   "cyber": {
+    "rank": 9,
+    "of": 18,
+    "pct": 53
+   },
+   "clouddata": {
+    "rank": 10,
+    "of": 18,
+    "pct": 47
+   },
+   "eca": {
+    "rank": 11,
+    "of": 18,
+    "pct": 41
+   },
+   "semis": {
+    "rank": 12,
+    "of": 18,
+    "pct": 35
+   },
+   "software": {
+    "rank": 1,
+    "of": 18,
+    "pct": 100
+   },
+   "manufacturing": {
+    "rank": 13,
+    "of": 18,
+    "pct": 29
+   },
+   "energy": {
+    "rank": 14,
+    "of": 18,
+    "pct": 24
+   },
+   "fintech": {
+    "rank": 15,
+    "of": 18,
+    "pct": 18
+   },
+   "infrastructure": {
+    "rank": 2,
+    "of": 18,
+    "pct": 94
+   },
+   "sustainability": {
+    "rank": 3,
+    "of": 18,
+    "pct": 88
+   },
+   "evtol": {
+    "rank": 18,
+    "of": 18,
+    "pct": 0
+   },
+   "robotics": {
+    "rank": 16,
+    "of": 18,
+    "pct": 12
+   },
+   "health": {
+    "rank": 17,
+    "of": 18,
+    "pct": 6
+   }
+  }
+ }
+}

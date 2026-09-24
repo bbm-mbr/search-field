@@ -1,0 +1,44 @@
+# Search-Field Intelligence — the full stack, locally.
+#
+#   docker compose up -d --build     board on http://localhost:8080
+#
+# Same shape as Azure: nginx serves the board and proxies /api to FastAPI,
+# which reads Postgres. The database seeds itself on first boot.
+services:
+  api:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    env_file: backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-searchfield}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the shell or a root .env}@postgres:5432/${POSTGRES_DB:-searchfield}
+      # Inside a container localhost is the container; the cntlm proxy is on the host.
+      HTTPS_PROXY: http://host.docker.internal:53128
+      NO_PROXY: localhost,127.0.0.1,postgres,api,web
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["8000:8000"]
+    depends_on: { postgres: { condition: service_healthy } }
+    restart: unless-stopped
+
+  web:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    environment: { API_ORIGIN: "http://api:8000", PORT: "8080" }
+    ports: ["8080:8080"]
+    depends_on: [api]
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-searchfield}
+      POSTGRES_USER: ${POSTGRES_USER:-searchfield}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the shell or a root .env}
+    # 5433 on the host: 5432 is already taken by another local Postgres.
+    ports: ["5433:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-searchfield} -d ${POSTGRES_DB:-searchfield}"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,98 @@
+{
+  "criteria": [
+    {
+      "id": "macro-view",
+      "name": "Complete outside macro view of the Search-Field",
+      "framework": "PESTEL",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "pestel_grid"
+    },
+    {
+      "id": "opportunity-risk",
+      "name": "Opportunity & Risk Analysis",
+      "framework": "Risk Matrix + Opportunity Matrix",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "risk_opportunity_matrix"
+    },
+    {
+      "id": "competency",
+      "name": "Competency Analysis for Bosch vs requirement in Search-Field",
+      "framework": "Competency Analysis (as per BMC/UX)",
+      "in_decision_matrix": true,
+      "weight": 0.25,
+      "viz": "competency_bars"
+    },
+    {
+      "id": "swot",
+      "name": "Strength & weakness analysis with targeted strategy",
+      "framework": "SWOT (Bosch Mobility India specific, never generic)",
+      "in_decision_matrix": true,
+      "weight": 0.15,
+      "viz": "swot_quadrant"
+    },
+    {
+      "id": "market-sizing",
+      "name": "Market sizing (top-down) + customer landscape",
+      "framework": "TAM / SAM",
+      "in_decision_matrix": true,
+      "weight": 0.20,
+      "viz": "tam_sam_funnel"
+    },
+    {
+      "id": "attractiveness",
+      "name": "Attractiveness of the Search-Field",
+      "framework": "Porter's 5 Forces",
+      "in_decision_matrix": true,
+      "weight": 0.20,
+      "viz": "porter_radar"
+    },
+    {
+      "id": "stakeholder",
+      "name": "Stakeholder Analysis",
+      "framework": "Stakeholder Radar",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "stakeholder_radar"
+    },
+    {
+      "id": "competitor-landscape",
+      "name": "Competitor Landscape (Petal, MOAT, Market Valuation)",
+      "framework": "Perceptual Analysis",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "perceptual_map"
+    },
+    {
+      "id": "supplier-landscape",
+      "name": "Supplier Landscape",
+      "framework": "Kraljic Matrix",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "kraljic_matrix"
+    },
+    {
+      "id": "tech-growth",
+      "name": "Technology Growth Potential",
+      "framework": "McKinsey 3 Horizons",
+      "in_decision_matrix": true,
+      "weight": 0.20,
+      "viz": "three_horizons"
+    },
+    {
+      "id": "right-to-play",
+      "name": "Right to Play in the Search-Field",
+      "framework": "Decision Matrix (aggregates the five weighted criteria above)",
+      "in_decision_matrix": false,
+      "weight": 0.0,
+      "viz": "decision_matrix"
+    }
+  ],
+  "verdict_bands": [
+    {"verdict": "ENTER", "min_score": 7.5, "meaning": "Strong right to play and right to win. Build or buy now."},
+    {"verdict": "EXPLORE", "min_score": 6.0, "meaning": "Attractive but gaps exist. Enter via partnership, pilot or M&A."},
+    {"verdict": "WATCH", "min_score": 4.5, "meaning": "Monitor triggers (regulation, market inflection). Revisit in 6-12 months."},
+    {"verdict": "NO-GO", "min_score": 0.0, "meaning": "Weak attractiveness or weak right to play for Bosch Mobility India today."}
+  ]
+}

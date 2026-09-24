@@ -1,0 +1,14 @@
+.env
+*.db
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+frontend/dist/
+legacy/backend/.env
+legacy/backend/.cache/
+legacy/backend/.chroma/
+.sixth/
+.vscode/
+*.log
+legacy/frontend/dist/
