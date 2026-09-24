@@ -62,10 +62,12 @@ before the UI loads.
 Only Haiku 4.5 and the Gemini models may search the web under Bosch org policy.
 Opus 5 and Sonnet 5 reject `temperature` on the farm; the gateway omits it for them.
 
-## Known, preserved on purpose
+## Decisions since Phase 0
 
-The static UI computes Competitive Posture two ways (the leaderboard rounds the
-average threat first, the field card does not). They differ for Sustainability
-only: 0.01 vs 0.02. Phase 0 reproduces both exactly; the fix is a separate decision.
+- **CPI rounding unified (2026-09-24).** The static UI computed Competitive
+  Posture two ways and Sustainability showed 0.01 on the leaderboard but 0.02 on
+  its card. Both now round the average threat to 2dp first; 0.01 everywhere.
+- **The live frontend is now the source of truth.** `tools/split_frontend.py`
+  was a one-time migration; re-running it would overwrite later changes.
 
 `legacy/` holds the earlier attempt, kept for its prompts and PPTX export.

@@ -5,12 +5,13 @@ engine. Every comparison here is exact equality — no tolerance. A tolerance
 would let the two engines drift apart one rounding at a time, which is how the
 Porter radar and its sub-factor scores ended up disagreeing on 16 of 90 scorings.
 
-Known pre-existing inconsistency, preserved deliberately in Phase 0: the static
-UI computes CPI two ways. The leaderboard rounds the average competitor threat
-to 2dp before the matrix; the field card does not. They differ for exactly one
-field today (sustainability, 0.01 vs 0.02). The Python engine follows the
-leaderboard, and test_cpi_field_view_divergence_is_known pins the one known
-difference so any new one is caught.
+CPI: the static UI computed it two ways — the leaderboard rounded the average
+competitor threat to 2dp before the matrix, the field card did not — and they
+disagreed for sustainability (0.01 vs 0.02). Resolved 2026-09-24 in favour of
+the leaderboard: the live field card now rounds too, and the Python engine has
+always followed the leaderboard. golden.json still records both values from the
+static board, which is why test_cpi_field_view_divergence_is_known exists: it
+documents the one historical difference rather than a live one.
 """
 import json
 from pathlib import Path

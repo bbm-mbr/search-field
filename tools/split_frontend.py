@@ -16,6 +16,10 @@ module that imported DATA sees the new value. That is what lets the UI code
 keep referring to DATA, V8, PORTFOLIO... as plain names.
 
 Usage: python tools/split_frontend.py <static SearchField.jsx>
+
+ONE-TIME MIGRATION. It ran on 2026-09-24. Since then the live frontend is the
+source of truth and has diverged (CPI rounding fix); re-running this would
+overwrite those changes.
 """
 import io
 import json
