@@ -11,8 +11,8 @@ Three wire formats sit behind the one farm domain:
   OpenAI   POST /api/openai/deployments/{id}/chat/completions?api-version=...
            Bearer auth; `max_completion_tokens`, not `max_tokens`.
 
-Phase 0 uses this only for the connectivity smoke test. The pipeline in later
-phases calls `run(task, ...)`, which walks the tier's fallback chain.
+The pipeline calls `run(task, ...)`, which walks the tier's fallback chain and
+puts every web-searching call through the monthly cap in quota.py.
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from typing import List, Optional
 import httpx
 
 from ..config import get_settings
+from . import quota
 from .routing import CLAUDE, EMBED, GEMINI, OPENAI, Model, chain_for
 
 
@@ -35,6 +36,8 @@ class LLMResult:
     latency_s: float = 0.0
     citations: List[dict] = field(default_factory=list)
     searches: int = 0
+    raw: dict = field(default_factory=dict, repr=False)   # full response, for grounding metadata
+    truncated: bool = False                               # hit the token limit: re-ask, never repair
 
 
 class FarmError(RuntimeError):
@@ -77,7 +80,8 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
             u = d.get("usage", {})
             return LLMResult(model.id, text, u.get("input_tokens", 0), u.get("output_tokens", 0),
                              time.perf_counter() - t0, cites,
-                             (u.get("server_tool_use") or {}).get("web_search_requests", 0))
+                             (u.get("server_tool_use") or {}).get("web_search_requests", 0), d,
+                             d.get("stop_reason") == "max_tokens")
 
         if model.family == GEMINI:
             body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
@@ -96,9 +100,13 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
             cites = [{"url": (ch.get("web") or {}).get("uri"), "title": (ch.get("web") or {}).get("title")}
                      for ch in gm.get("groundingChunks") or gm.get("grounding_chunks") or []]
             u = d.get("usageMetadata") or d.get("usage_metadata") or {}
-            return LLMResult(model.id, text, u.get("promptTokenCount", 0), u.get("candidatesTokenCount", 0),
+            # Thinking tokens count against max_output_tokens on Gemini 3.x (a
+            # 260-token answer spent 925 thinking), so callers must budget for both.
+            return LLMResult(model.id, text, u.get("promptTokenCount", 0),
+                             u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0),
                              time.perf_counter() - t0, cites,
-                             len(gm.get("webSearchQueries") or gm.get("web_search_queries") or []))
+                             len(gm.get("webSearchQueries") or gm.get("web_search_queries") or []), d,
+                             (cand.get("finishReason") or cand.get("finish_reason")) == "MAX_TOKENS")
 
         if model.family == OPENAI:
             msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
@@ -109,8 +117,10 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
             _raise(r, model)
             d = r.json()
             u = d.get("usage", {})
-            return LLMResult(model.id, d["choices"][0]["message"].get("content") or "",
-                             u.get("prompt_tokens", 0), u.get("completion_tokens", 0), time.perf_counter() - t0)
+            ch = d["choices"][0]
+            return LLMResult(model.id, ch["message"].get("content") or "",
+                             u.get("prompt_tokens", 0), u.get("completion_tokens", 0), time.perf_counter() - t0,
+                             raw=d, truncated=ch.get("finish_reason") == "length")
 
         if model.family == EMBED:
             r = c.post(f"{base}/api/openai/deployments/{model.id}/embeddings",
@@ -124,15 +134,33 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
     raise FarmError(f"unknown model family {model.family}")
 
 
-def run(task: str, prompt: str, **kw) -> LLMResult:
-    """Walk the task's fallback chain; the first model that answers wins."""
+def run(task: str, prompt: str, *, run_id: Optional[int] = None, **kw) -> LLMResult:
+    """Walk the task's fallback chain; the first model that answers wins.
+
+    Web-searching calls go through the monthly cap: searches are reserved before
+    the call and settled to the real count after it. A model whose provider is
+    over its cap is skipped, so Gemini running out falls through to Haiku's
+    (separately capped) search rather than failing the run."""
     grounded = kw.pop("web_search", task.startswith(("research.search", "verify", "size")))
     errors = []
     for m in chain_for(task):
+        ledger_id = None
         try:
-            return call(m, prompt, web_search=grounded, **kw)
+            if grounded:
+                ledger_id = quota.reserve(m, run_id)
+            r = call(m, prompt, web_search=grounded, **kw)
+            if ledger_id is not None:
+                quota.settle(ledger_id, r.searches)
+            return r
+        except quota.QuotaExceeded as e:
+            errors.append(str(e))
         except (FarmError, httpx.HTTPError) as e:
+            # A failed request is not billed; keep the ledger honest.
+            if ledger_id is not None:
+                quota.release(ledger_id)
             errors.append(f"{m.id}: {e}")
+    if errors and all("monthly cap" in e for e in errors):
+        raise quota.QuotaExceeded(" | ".join(errors))
     raise FarmError(f"every model failed for task '{task}': " + " | ".join(errors))
 
 

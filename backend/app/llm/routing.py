@@ -60,6 +60,7 @@ TIERS: Dict[str, List[Model]] = {
 # Task → tier. The pipeline asks for a task; it never names a model.
 TASKS: Dict[str, str] = {
     "research.plan": "fast",
+    "research.relevance": "fast",
     "research.search": "grounded",
     "verify.claim": "grounded",
     "size.market": "grounded",

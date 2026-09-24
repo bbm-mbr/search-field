@@ -58,6 +58,73 @@ board_meta = Table(
     Column("value", Text, nullable=False),
 )
 
+# ── Phase 1: the evidence store ──────────────────────────────────────────────
+# One row per source per entity. A source cited by many runs stays one row and
+# accumulates evidence_support rows — one per sentence it was used to support.
+research_run = Table(
+    "research_run", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("entity_id", String(160), nullable=False),
+    Column("kind", String(32), nullable=False),            # research | discovery | verify
+    Column("status", String(16), nullable=False),          # running | done | failed | partial
+    Column("started_at", String(40), nullable=False),
+    Column("finished_at", String(40)),
+    Column("plan", Text),                                  # JSON: queries, guardrail, must_resolve
+    Column("model_calls", Integer, default=0),
+    Column("searches", Integer, default=0),
+    Column("tokens_in", Integer, default=0),
+    Column("tokens_out", Integer, default=0),
+    Column("kept", Integer, default=0),
+    Column("rejected", Integer, default=0),
+    Column("error", Text),
+)
+
+evidence = Table(
+    "evidence", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("entity_id", String(160), nullable=False),
+    Column("canonical_url", String(1000), nullable=False),
+    Column("resolved_url", String(2000)),
+    Column("redirect_url", String(2000)),
+    Column("domain", String(255), nullable=False),
+    Column("title", String(500)),
+    Column("tier", Integer, nullable=False),               # 1 primary · 2 analyst · 3 press · 4 unrated · 9 rejected source type
+    Column("tier_reason", String(200)),
+    Column("status", String(16), nullable=False),          # kept | rejected
+    Column("reject_reason", String(300)),
+    Column("first_run_id", Integer),
+    Column("first_seen_at", String(40), nullable=False),
+    Column("last_seen_at", String(40), nullable=False),
+    Column("times_seen", Integer, nullable=False, default=1),
+    UniqueConstraint("entity_id", "canonical_url", name="uq_evidence_entity_url"),
+)
+
+evidence_support = Table(
+    "evidence_support", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("evidence_id", Integer, nullable=False),
+    Column("run_id", Integer, nullable=False),
+    Column("query", Text),
+    Column("claim", Text, nullable=False),                 # the sentence this source was used to support
+    Column("model", String(80)),
+    Column("created_at", String(40), nullable=False),
+)
+Index("ix_support_evidence", evidence_support.c.evidence_id)
+
+# Every web-searching call is recorded here BEFORE its result is used, so the
+# monthly cap holds even if a run crashes half way. Google's free grounded
+# allowance is shared with Mobility Intelligence, so this app has its own cap.
+search_ledger = Table(
+    "search_ledger", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("month", String(7), nullable=False),            # 2026-09
+    Column("provider", String(32), nullable=False),        # google_grounding | anthropic_web_search
+    Column("model", String(80), nullable=False),
+    Column("searches", Integer, nullable=False),
+    Column("run_id", Integer),
+    Column("created_at", String(40), nullable=False),
+)
+
 _engine = None
 
 

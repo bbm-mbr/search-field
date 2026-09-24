@@ -27,6 +27,12 @@ class Settings:
     https_proxy: str = os.getenv("HTTPS_PROXY", "")
     no_proxy: str = os.getenv("NO_PROXY", "localhost,127.0.0.1")
 
+    # Monthly web-search caps for this app. Google's free grounded allowance
+    # (5,000/month) is shared with Mobility Intelligence, so this app claims
+    # well under half of it. Anthropic web search is billed per search.
+    grounded_monthly_cap: int = int(os.getenv("GROUNDED_MONTHLY_CAP", "1500"))
+    anthropic_search_monthly_cap: int = int(os.getenv("ANTHROPIC_SEARCH_MONTHLY_CAP", "300"))
+
 
 @lru_cache
 def get_settings() -> Settings:

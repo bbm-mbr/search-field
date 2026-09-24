@@ -1,18 +1,24 @@
-"""Search-Field Intelligence API — Phase 0: read-only.
+"""Search-Field Intelligence API — read-only.
 
-Serves the board from the database, and scores computed by the Python engine.
-Nothing here writes content; agents, refresh and review arrive in later phases.
+Serves the board from the database, scores computed by the Python engine, and
+(Phase 1) the evidence store that grounded research fills. Nothing here writes;
+research runs from the CLI (python -m scripts.research) until the scheduler
+arrives in a later phase.
 """
 import hashlib
 import json
 from functools import lru_cache
 
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException, Request, Response
+from sqlalchemy import func, select
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from .config import get_settings
-from .db import create_all
+from .db import create_all, entity, evidence, evidence_support, get_engine, research_run
+from .llm import quota
 from .engine import scoring as E
 from .repository import assemble_board, board_stats
 
@@ -107,3 +113,48 @@ def field_scores(field_id: str):
         raise HTTPException(404, f"Unknown field '{field_id}'")
     ranks = {k: E.index_rank(s["stats"], k, field_id) for k, _, _ in E.INDEX_KEYS}
     return {**s["fields"][field_id], "ranks": ranks}
+
+
+# ── Phase 1: evidence store ──────────────────────────────────────────────────
+@app.get("/api/evidence/{entity_id}")
+def evidence_for(entity_id: str, status: Optional[str] = "kept", tier: Optional[int] = None, claims: int = 3):
+    """Sources for one field or sub-field, best tier first. status=all includes
+    rejected sources with the reason they were rejected."""
+    eng = get_engine()
+    with eng.connect() as c:
+        if c.execute(select(entity.c.id).where(entity.c.id == entity_id)).first() is None:
+            raise HTTPException(404, f"Unknown entity '{entity_id}'")
+        q = select(evidence).where(evidence.c.entity_id == entity_id)
+        if status and status != "all":
+            q = q.where(evidence.c.status == status)
+        if tier is not None:
+            q = q.where(evidence.c.tier == tier)
+        rows = [dict(r) for r in c.execute(q.order_by(evidence.c.tier, evidence.c.times_seen.desc(),
+                                                       evidence.c.id)).mappings()]
+        for r in rows:
+            # Distinct sentences, most recently cited first: the same sentence
+            # cited on every run is one claim, not one per sighting.
+            r["claims"] = [x.claim for x in c.execute(
+                select(evidence_support.c.claim).where(evidence_support.c.evidence_id == r["id"])
+                .group_by(evidence_support.c.claim).order_by(func.max(evidence_support.c.id).desc())
+                .limit(max(0, min(claims, 20))))]
+        by_tier = dict(c.execute(select(evidence.c.tier, func.count()).where(
+            evidence.c.entity_id == entity_id, evidence.c.status == "kept").group_by(evidence.c.tier)).all())
+    return {"entity": entity_id, "count": len(rows), "kept_by_tier": by_tier, "sources": rows}
+
+
+@app.get("/api/research/runs")
+def research_runs(entity_id: Optional[str] = None, limit: int = 50):
+    q = select(research_run).order_by(research_run.c.id.desc()).limit(max(1, min(limit, 500)))
+    if entity_id:
+        q = q.where(research_run.c.entity_id == entity_id)
+    with get_engine().connect() as c:
+        rows = [dict(r) for r in c.execute(q).mappings()]
+    for r in rows:
+        r["plan"] = json.loads(r["plan"]) if r["plan"] else None
+    return rows
+
+
+@app.get("/api/quota")
+def search_quota():
+    return quota.status()
