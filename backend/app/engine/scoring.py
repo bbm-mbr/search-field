@@ -139,16 +139,23 @@ MAI_BANDS = [
 ]
 
 
-def sam_score_from_usd(sam_usd: float) -> int:
-    return 5 if sam_usd > 500e6 else 3 if sam_usd > 100e6 else 1
+# Market-size bands are calibrated for whole search fields. A sub-field is a
+# slice of one, so it is judged on the same bands scaled by SUB_FIELD_SAM_SCALE
+# (agreed 2026-09-25: > $100M = 5, > $20M = 3). Every other V9 index is a
+# ratio and needs no scaling.
+SUB_FIELD_SAM_SCALE = 0.2
+
+
+def sam_score_from_usd(sam_usd: float, scale: float = 1.0) -> int:
+    return 5 if sam_usd > 500e6 * scale else 3 if sam_usd > 100e6 * scale else 1
 
 
 def cagr_score_from_pct(cagr_pct: float) -> int:
     return 5 if cagr_pct > 20 else 3 if cagr_pct >= 10 else 1
 
 
-def compute_mas(m: dict) -> dict:
-    sam_score = sam_score_from_usd(m["samUSD"])
+def compute_mas(m: dict, sam_scale: float = 1.0) -> dict:
+    sam_score = sam_score_from_usd(m["samUSD"], sam_scale)
     cagr_score = cagr_score_from_pct(m["cagrPct"])
     scale_velocity = (sam_score + cagr_score) / 2
     mas = _fx(0.35 * scale_velocity + 0.2 * m["scurveScore"] + 0.2 * m["revenueQualityScore"]
@@ -354,7 +361,8 @@ def compute_mgi(mai, pi, cgi, spi, cpi, scvi, svi, tpi) -> Optional[dict]:
 
 
 # ── Field and portfolio roll-up ──────────────────────────────────────────────
-def score_field(v8: Optional[dict], horizons: Optional[dict] = None) -> Optional[Dict[str, Any]]:
+def score_field(v8: Optional[dict], horizons: Optional[dict] = None,
+                sam_scale: float = 1.0) -> Optional[Dict[str, Any]]:
     """Every index for one field. CPI uses the portfolio call site's rounding
     (average threat rounded to 2dp before the matrix), which is the value the
     leaderboard ranks on. The field card in the static UI does not round; see
@@ -363,7 +371,7 @@ def score_field(v8: Optional[dict], horizons: Optional[dict] = None) -> Optional
         return None
     pi = compute_pestel_index(v8["pestel"]) if v8.get("pestel") else None
     sw = compute_swot_posture(v8["swot"]) if v8.get("swot") else None
-    mas = compute_mas(v8["market"]) if v8.get("market") else None
+    mas = compute_mas(v8["market"], sam_scale) if v8.get("market") else None
     iai = compute_iai(v8["iai"]) if v8.get("iai") else None
     cgi = compute_cgi(v8.get("competency"))
     svi = compute_svi(v8.get("stakeholders"))

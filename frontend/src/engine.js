@@ -121,10 +121,13 @@ export const MAI_BANDS = [
   { v: "Tier-2 / Standard Automotive Market", min: -0.4, color: "#D97706", light: "yellow", code: "PROCEED WITH CAUTION", m: "Viable but standard — lacks the scale/profitability to be an Aspiration Anchor on its own. Contingent bet: only proceed with an exceptionally high Right-to-Win." },
   { v: "Tier-3 / Portfolio Distractor Market", min: -1.01, color: "#DC2626", light: "red", code: "NO-GO", m: "A value trap — low profit potential, slow growth, commoditised revenue. Avoid and reallocate, even with world-class capability." },
 ];
-export function samScoreFromUSD(samUSD) { return samUSD > 500e6 ? 5 : samUSD > 100e6 ? 3 : 1; }
+/* Field bands; a sub-field is scored on the same bands scaled by SUB_FIELD_SAM_SCALE
+   (agreed 2026-09-25: > $100M = 5, > $20M = 3). Mirrors backend/app/engine/scoring.py. */
+export const SUB_FIELD_SAM_SCALE = 0.2;
+export function samScoreFromUSD(samUSD, scale = 1) { return samUSD > 500e6 * scale ? 5 : samUSD > 100e6 * scale ? 3 : 1; }
 export function cagrScoreFromPct(cagrPct) { return cagrPct > 20 ? 5 : cagrPct >= 10 ? 3 : 1; }
-export function computeMAS(m) {
-  const samScore = samScoreFromUSD(m.samUSD);
+export function computeMAS(m, samScale = 1) {
+  const samScore = samScoreFromUSD(m.samUSD, samScale);
   const cagrScore = cagrScoreFromPct(m.cagrPct);
   const scaleVelocity = (samScore + cagrScore) / 2;
   const mas = +(0.35 * scaleVelocity + 0.2 * m.scurveScore + 0.2 * m.revenueQualityScore + 0.25 * m.profitabilityScore).toFixed(2);
