@@ -24,7 +24,7 @@ import httpx
 
 from ..config import get_settings
 from . import quota
-from .routing import CLAUDE, EMBED, GEMINI, OPENAI, Model, chain_for
+from .routing import CLAUDE, EMBED, GEMINI, OPENAI, TASK_EFFORT, Model, chain_for
 
 
 @dataclass
@@ -38,6 +38,7 @@ class LLMResult:
     searches: int = 0
     raw: dict = field(default_factory=dict, repr=False)   # full response, for grounding metadata
     truncated: bool = False                               # hit the token limit: re-ask, never repair
+    thinking_tokens: int = 0                              # part of output_tokens: billed, never shown
 
 
 class FarmError(RuntimeError):
@@ -50,7 +51,8 @@ def _client() -> httpx.Client:
 
 
 def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens: int = 1024,
-         temperature: Optional[float] = 0.2, web_search: bool = False) -> LLMResult:
+         temperature: Optional[float] = 0.2, web_search: bool = False,
+         effort: Optional[str] = None) -> LLMResult:
     s = get_settings()
     if not s.farm_api_key:
         raise FarmError("LLM_FARM_API_KEY is not set in backend/.env")
@@ -67,6 +69,8 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
                 body["system"] = system
             if temperature is not None and model.temperature:
                 body["temperature"] = temperature
+            if effort and model.effort:
+                body["output_config"] = {"effort": effort}
             if web_search:
                 body["tools"] = [{"type": "web_search_20250305", "name": "web_search", "max_uses": 3}]
             r = c.post(f"{base}/api/google/v1/publishers/anthropic/models/{model.id}:rawPredict",
@@ -81,7 +85,8 @@ def call(model: Model, prompt: str, *, system: Optional[str] = None, max_tokens:
             return LLMResult(model.id, text, u.get("input_tokens", 0), u.get("output_tokens", 0),
                              time.perf_counter() - t0, cites,
                              (u.get("server_tool_use") or {}).get("web_search_requests", 0), d,
-                             d.get("stop_reason") == "max_tokens")
+                             d.get("stop_reason") == "max_tokens",
+                             (u.get("output_tokens_details") or {}).get("thinking_tokens", 0))
 
         if model.family == GEMINI:
             body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
@@ -142,6 +147,7 @@ def run(task: str, prompt: str, *, run_id: Optional[int] = None, **kw) -> LLMRes
     over its cap is skipped, so Gemini running out falls through to Haiku's
     (separately capped) search rather than failing the run."""
     grounded = kw.pop("web_search", task.startswith(("research.search", "verify", "size")))
+    kw.setdefault("effort", TASK_EFFORT.get(task))
     errors = []
     for m in chain_for(task):
         ledger_id = None

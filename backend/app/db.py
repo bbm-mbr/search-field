@@ -125,6 +125,73 @@ search_ledger = Table(
     Column("created_at", String(40), nullable=False),
 )
 
+# ── Phase 2: guidance and proposals ──────────────────────────────────────────
+# Guidance is what humans tell the authors, and it outlives any one run: a
+# reviewer's note on a field, a field's scope charter, or a portfolio-wide
+# rule (entity_id '*'). Every author stage receives the guidance that applies to
+# it, and the critic checks each open note was actually addressed. That is how
+# a review comment changes the board for good instead of being fixed once and
+# regenerated away by the next refresh.
+guidance = Table(
+    "guidance", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("entity_id", String(160), nullable=False),      # field id, sub-field id, or '*'
+    Column("kind", String(16), nullable=False),            # rule | charter | review
+    Column("stage", String(32)),                           # pestel | swot | ... ; NULL = every stage
+    Column("text", Text, nullable=False),
+    Column("source", String(200)),                         # who / which review
+    Column("status", String(16), nullable=False),          # open | addressed | retired
+    Column("created_at", String(40), nullable=False),
+    Column("key", String(80)),                             # stable id for seeded guidance
+    UniqueConstraint("key", name="uq_guidance_key"),
+)
+
+# A proposal is one authoring pass over one field. Its sections live in
+# proposal_section until a human publishes them; the live board never reads
+# this table.
+proposal = Table(
+    "proposal", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("entity_id", String(160), nullable=False),
+    Column("status", String(16), nullable=False),          # drafting | ready | blocked | failed | published | rejected
+    Column("created_at", String(40), nullable=False),
+    Column("finished_at", String(40)),
+    Column("stages", Text),                                # JSON: per stage model, tokens, attempts, defects
+    Column("checks", Text),                                # JSON: mechanical validation results
+    Column("critic", Text),                                # JSON: second-model review
+    Column("blind", Text),                                 # JSON: blind second scoring and its comparison
+    Column("scores", Text),                                # JSON: before/after for this field and the portfolio
+    Column("guidance_check", Text),                        # JSON: each open note, addressed or not
+    Column("sources", Text),                               # JSON: the numbered source list the sections cite
+    Column("usage", Text),                                 # JSON: calls and tokens by model
+    Column("error", Text),
+)
+
+proposal_section = Table(
+    "proposal_section", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("proposal_id", Integer, nullable=False),
+    Column("layer", String(16), nullable=False),
+    Column("section", String(80), nullable=False),
+    Column("content", Text, nullable=False),               # JSON text, key order preserved
+    Column("fingerprint", String(64), nullable=False),
+    Column("changed", Text),                               # JSON: the author's own list of what moved and why
+    UniqueConstraint("proposal_id", "layer", "section", name="uq_proposal_section"),
+)
+
+# Each finished stage is checkpointed, so a failure later in the pass resumes
+# instead of paying for the finished stages again (scripts.propose --resume).
+proposal_draft = Table(
+    "proposal_draft", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("proposal_id", Integer, nullable=False),
+    Column("stage", String(32), nullable=False),
+    Column("content", Text),                               # JSON: the stage's parsed output
+    Column("meta", Text, nullable=False),                  # JSON: status, attempts, defects, model
+    Column("created_at", String(40), nullable=False),
+    UniqueConstraint("proposal_id", "stage", name="uq_proposal_draft"),
+)
+
 _engine = None
 
 

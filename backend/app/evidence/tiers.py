@@ -53,7 +53,8 @@ ANALYST_DOMAINS = {
     "statista.com", "marketsandmarkets.com", "grandviewresearch.com", "imarcgroup.com",
     "fortunebusinessinsights.com", "techsciresearch.com", "interactanalysis.com",
     "rmi.org", "wri.org", "wri-india.org", "ceew.in", "icct.org", "theicct.org", "marklines.com",
-    "tracxn.com", "gartner.com", "idc.com", "spglobal.com", "jdpower.com", "frost.com",
+    "tracxn.com", "gartner.com", "idc.com", "spglobal.com", "jdpower.com", "frost.com", "iisd.org",
+    "cmrindia.com",
     # syndicated-report houses: named and dated, but figures vary widely between
     # them — the Phase 2 plausibility gate is what keeps a stray one out
     "databridgemarketresearch.com", "maximizemarketresearch.com", "researchandmarkets.com",
@@ -77,6 +78,7 @@ PRESS_DOMAINS = {
     "thequint.com", "scroll.in", "livelaw.in", "moneylife.in", "electronicsforu.com", "emsnow.com",
     "evmechanica.com", "gaadiwaadi.com", "team-bhp.com", "motorbeam.com",
     "electronicsmedia.info", "eletimes.ai", "semiconductor-today.com", "anandtech.com",
+    "m.economictimes.com", "newindianexpress.com", "bwautoworld.com", "businessworld.in", "etedge-insights.com",
 }
 REJECT_DOMAINS = {
     "facebook.com", "linkedin.com", "x.com", "twitter.com", "instagram.com", "youtube.com",
@@ -86,7 +88,7 @@ REJECT_DOMAINS = {
     # marketplaces, file CDNs and exam-prep digests: derivative, never a source
     "imimg.com", "indiamart.com", "scribd.com", "slideshare.net", "coursehero.com",
     "drishtiias.com", "visionias.in", "insightsonindia.com", "byjus.com", "testbook.com",
-    "studocu.com", "brainly.in",
+    "studocu.com", "brainly.in", "pmfias.com", "iasbaba.com", "clearias.com",
 }
 REJECT_PATTERNS = (r"\.blogspot\.", r"\.wordpress\.com$", r"\.medium\.com$", r"^medium\.com$",
                    r"\.substack\.com$", r"\.wixsite\.com$")

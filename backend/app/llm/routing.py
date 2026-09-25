@@ -36,11 +36,13 @@ class Model:
     # HTTP 400, found by the smoke test 2026-09-24). Determinism for them comes
     # from the prompt and the validator, not from a sampling parameter.
     temperature: bool = True
+    # Accepts output_config.effort (Opus 5, Sonnet 5, Sonnet 4.6; not Haiku 4.5).
+    effort: bool = False
 
 
-OPUS_5 = Model("claude-opus-5", CLAUDE, temperature=False)
-SONNET_5 = Model("claude-sonnet-5", CLAUDE, temperature=False)
-SONNET_46 = Model("claude-sonnet-4-6", CLAUDE)
+OPUS_5 = Model("claude-opus-5", CLAUDE, temperature=False, effort=True)
+SONNET_5 = Model("claude-sonnet-5", CLAUDE, temperature=False, effort=True)
+SONNET_46 = Model("claude-sonnet-4-6", CLAUDE, effort=True)
 HAIKU_45 = Model("claude-haiku-4-5@20251001", CLAUDE, web_search=True)
 GEMINI_37_FLASH = Model("gemini-3.7-flash", GEMINI, web_search=True)
 GEMINI_25_PRO = Model("gemini-2.5-pro", GEMINI, web_search=True)
@@ -74,6 +76,21 @@ TASKS: Dict[str, str] = {
     "triage.news": "fast",
     "repair.json": "fast",
     "embed": "embed",
+}
+
+
+# Thinking depth per task. Opus 5 and Sonnet 5 think adaptively by default at
+# effort "high", and thinking is billed as output. Measured on the Manufacturing
+# market stage (2026-09-25), same prompt: high 22,153 output tokens (17,889 of
+# them thinking), medium 9,106 (4,484) with a valid answer, low 5,042 (1,322)
+# with six shape defects. Medium is the setting for bulk writing and scoring;
+# the premium judgement calls keep the default.
+TASK_EFFORT: Dict[str, str] = {
+    "write.framework": "medium",
+    "write.subfield": "medium",
+    "score.rubric": "medium",
+    "write.verdict": "high",
+    "escalate": "high",
 }
 
 

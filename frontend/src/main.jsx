@@ -43,6 +43,24 @@ function Boot() {
   )
 }
 
+/* #/review is the read-only proposal review; everything else is the board. */
+const isReview = () => window.location.hash.startsWith('#/review')
+
+function Router() {
+  const [review, setReview] = useState(isReview())
+  const [Review, setReviewComp] = useState(null)
+  useEffect(() => {
+    const h = () => setReview(isReview())
+    window.addEventListener('hashchange', h)
+    return () => window.removeEventListener('hashchange', h)
+  }, [])
+  useEffect(() => {
+    if (review && !Review) import('./Review.jsx').then(m => setReviewComp(() => m.default))
+  }, [review, Review])
+  if (review) return Review ? <Review /> : null
+  return <Boot />
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode><Boot /></React.StrictMode>,
+  <React.StrictMode><Router /></React.StrictMode>,
 )

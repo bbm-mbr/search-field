@@ -75,10 +75,25 @@ PLAN_SYSTEM = ("You plan web research for Bosch's India market-intelligence boar
                "you do not answer them.")
 
 
+def _charter(ctx: dict) -> str:
+    """The field's scope charter, if one exists: research must cover the field
+    the charter describes, not its most searchable corner."""
+    try:
+        from ..pipeline import guidance
+        rows = [g for g in guidance.for_entity(ctx["id"]) if g["kind"] in ("charter", "review") and g["stage"] is None]
+    except Exception:
+        return ""
+    if not rows:
+        return ""
+    lines = "\n".join(f"- {g['text']}" for g in rows)
+    return f"\nScope set by the field owner — the questions must follow it:\n{lines}"
+
+
 def plan(ctx: dict, max_queries: int = 6) -> dict:
-    prompt = f"""{_describe(ctx)}
+    prompt = f"""{_describe(ctx)}{_charter(ctx)}
 
 Write up to {max_queries} web-research questions about this {'sub-field' if ctx['kind'] == 'subfield' else 'search field'} in India.
+Spread the questions across the sub-fields rather than concentrating on one.
 Cover, as far as the count allows: market size and growth with a source year; policy and regulation;
 the main competitors and suppliers active in India; Bosch's own position; and AT LEAST ONE adversarial
 question that looks for evidence AGAINST this being an attractive market (delays, failures, shrinking

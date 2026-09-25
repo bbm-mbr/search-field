@@ -1,9 +1,10 @@
 """Search-Field Intelligence API — read-only.
 
-Serves the board from the database, scores computed by the Python engine, and
-(Phase 1) the evidence store that grounded research fills. Nothing here writes;
-research runs from the CLI (python -m scripts.research) until the scheduler
-arrives in a later phase.
+Serves the board from the database, scores computed by the Python engine, the
+evidence store that grounded research fills (Phase 1), and the proposals the
+author pipeline writes (Phase 2). Nothing here writes: research and authoring
+run from the CLI (scripts.research, scripts.propose) until the scheduler
+arrives, and publishing a proposal is a later, deliberate step.
 """
 import hashlib
 import json
@@ -17,7 +18,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from .config import get_settings
-from .db import create_all, entity, evidence, evidence_support, get_engine, research_run
+from .db import (create_all, entity, evidence, evidence_support, get_engine, proposal, proposal_section,
+                 research_run)
 from .llm import quota
 from .engine import scoring as E
 from .repository import assemble_board, board_stats
@@ -33,6 +35,8 @@ def _startup():
     """Create tables; on an empty database (first boot in Docker or Azure),
     load the seed so the board is never served empty."""
     create_all()
+    from .pipeline import guidance as _g
+    _g.load_seed()
     if not board_stats()["entities"] and (settings.seed_dir / "board.json").exists():
         import json
         from .repository import seed_from_board
@@ -158,3 +162,55 @@ def research_runs(entity_id: Optional[str] = None, limit: int = 50):
 @app.get("/api/quota")
 def search_quota():
     return quota.status()
+
+
+# ── Phase 2: guidance and proposals (read-only) ─────────────────────────────
+def _j(v):
+    return json.loads(v) if v else None
+
+
+@app.get("/api/guidance/{entity_id}")
+def guidance_for(entity_id: str):
+    from .pipeline import guidance as g
+    return g.for_entity(entity_id)
+
+
+@app.get("/api/proposals")
+def proposals(entity_id: Optional[str] = None, limit: int = 50):
+    q = select(proposal.c.id, proposal.c.entity_id, proposal.c.status, proposal.c.created_at,
+               proposal.c.finished_at, proposal.c.scores, proposal.c.critic).order_by(proposal.c.id.desc())         .limit(max(1, min(limit, 200)))
+    if entity_id:
+        q = q.where(proposal.c.entity_id == entity_id)
+    out = []
+    with get_engine().connect() as c:
+        for r in c.execute(q).mappings():
+            sc, cr = _j(r["scores"]) or {}, _j(r["critic"]) or {}
+            out.append({"id": r["id"], "entity_id": r["entity_id"], "status": r["status"],
+                        "created_at": r["created_at"], "finished_at": r["finished_at"],
+                        "mgi_before": (sc.get("before") or {}).get("mgi"), "mgi_after": (sc.get("after") or {}).get("mgi"),
+                        "critic": cr.get("verdict")})
+    return out
+
+
+@app.get("/api/proposals/{proposal_id}")
+def proposal_detail(proposal_id: int):
+    with get_engine().connect() as c:
+        p = c.execute(select(proposal).where(proposal.c.id == proposal_id)).mappings().first()
+        if p is None:
+            raise HTTPException(404, f"No proposal {proposal_id}")
+        secs = c.execute(select(proposal_section).where(proposal_section.c.proposal_id == proposal_id)
+                         .order_by(proposal_section.c.id)).mappings().all()
+    b = _board()
+    fid = p["entity_id"]
+    sections = []
+    for s in secs:
+        before = (b.get(s["layer"]) or {}).get(fid, {}).get(s["section"])
+        after = json.loads(s["content"])
+        sections.append({"layer": s["layer"], "section": s["section"], "before": before, "after": after,
+                         "identical": before == after, "changed": _j(s["changed"]) or []})
+    out = {k: p[k] for k in ("id", "entity_id", "status", "created_at", "finished_at", "error")}
+    for k in ("stages", "checks", "critic", "blind", "scores", "guidance_check", "sources", "usage"):
+        out[k] = _j(p[k])
+    out["field_name"] = next((f["name"] for f in b["FIELDS"] if f["id"] == fid), fid)
+    out["sections"] = sections
+    return out

@@ -107,7 +107,7 @@ class FakeFarm:
         self.calls = []
         self.n = 0
 
-    def __call__(self, model, prompt, *, system=None, max_tokens=1024, temperature=0.2, web_search=False):
+    def __call__(self, model, prompt, *, system=None, max_tokens=1024, temperature=0.2, web_search=False, effort=None):
         from app.llm.gateway import LLMResult
         self.calls.append((model.id, web_search))
         if "Write up to" in prompt:
