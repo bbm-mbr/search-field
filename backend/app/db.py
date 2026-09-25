@@ -153,7 +153,7 @@ proposal = Table(
     "proposal", metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("entity_id", String(160), nullable=False),
-    Column("status", String(16), nullable=False),          # drafting | ready | blocked | failed | published | rejected
+    Column("status", String(16), nullable=False),          # drafting | ready | review | blocked | failed | superseded | published | rejected
     Column("created_at", String(40), nullable=False),
     Column("finished_at", String(40)),
     Column("stages", Text),                                # JSON: per stage model, tokens, attempts, defects

@@ -1,58 +1,316 @@
 {
-  "_about": "Standing guidance for the author stages. rule = portfolio-wide ('*'); charter = a field's scope; review = a reviewer's note, open until a proposal addresses it. Loaded by scripts/guidance.py; entries are matched on 'key', so editing text here and re-loading updates them in place.",
-  "items": [
-    {"key": "rule.pestel.political", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Political = government intent and instruments: schemes, subsidies and PLI, import and customs duty, free-trade agreements, trade and export-promotion policy, industrial policy. An FTA or export-hub policy that opens markets is a Political tailwind; state the export numbers where evidence exists."},
-    {"key": "rule.pestel.economic", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Economic = costs, prices, demand, margins, interest rates, investment. India's low labour cost is a cost ADVANTAGE for anyone manufacturing or engineering in India, so it is normally a tailwind; never file it as a headwind by default. If you do call a cost a headwind, say for whom (e.g. the automation business case) and why."},
-    {"key": "rule.pestel.social", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Social = people: buyer and consumer behaviour and preferences, workforce skills and demographics, attitudes. Buyer behaviour is Social, not Economic. Climate and weather are NOT Social."},
-    {"key": "rule.pestel.technological", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Technological = technology maturity and adoption, standards, platform and OEM design cycles (an OEM design-freeze window is Technological, not Economic)."},
-    {"key": "rule.pestel.environmental", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Environmental = climate, heat, dust and humidity, physical site and floor conditions, energy availability (solar and wind availability and green-power access are Environmental tailwinds), emissions, waste and circularity."},
-    {"key": "rule.pestel.legal", "entity_id": "*", "kind": "rule", "stage": "pestel",
-     "text": "Legal = enacted law and its enforcement: certification and homologation mandates, product liability, data law, company and corporate-governance law, FDI and profit-repatriation rules, ease-of-doing-business reforms. Look for Legal TAILWINDS (laws that make doing business easier) as well as compliance burdens. A scheme's intent is Political; the notified rule that enforces it is Legal."},
-    {"key": "rule.pestel.balance", "entity_id": "*", "kind": "rule", "stage": null,
-     "text": "Cover the WHOLE field, not its most visible sub-field. Every sub-field listed for the field must be the subject of at least one PESTEL point, and no single sub-field or single use case (e.g. HVAC in Interior, AMRs in Manufacturing) may dominate the analysis. When evidence is thin for a sub-field, say so in a point rather than leaving it out."},
-    {"key": "rule.competitors.same-business", "entity_id": "*", "kind": "rule", "stage": "landscape",
-     "text": "A competitor must compete for the same customers in the same business as one of the field's sub-fields. Name that sub-field in the reasoning. A company that is a supplier, a customer or a player in an adjacent business (e.g. a robot maker in an EMS analysis) is not a competitor; it can appear as a stakeholder instead."},
-    {"key": "rule.competency.names", "entity_id": "*", "kind": "rule", "stage": "competency",
-     "text": "Name a competency for the capability, not for a symptom. Where Bosch's gap is scale or unit cost rather than the capability itself, say so in the name (e.g. 'Manufacturing cost' rather than a low 'Manufacturing' rating), and rate the capability on its own merits."},
-
-    {"key": "charter.manufacturing", "entity_id": "manufacturing", "kind": "charter", "stage": null,
-     "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
-     "text": "Scope: manufacturing FOR mobility in India, covering all five sub-fields with balanced weight: Automotive Module Assembly, EMS, Contract Mfg (MaaS), Industry 5.0 and Dark Factories. EMS means automotive-grade electronics manufacturing services; commodity consumer-electronics EMS (phones, TVs, appliances) is OUT of scope except as a source of capacity, competition for talent, or scale economics. AMRs and factory robots are one enabler inside Industry 5.0 and Dark Factories, not the field's centre."},
-    {"key": "charter.interior", "entity_id": "interior", "kind": "charter", "stage": null,
-     "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
-     "text": "Scope: the vehicle interior across all six sub-fields with balanced weight: Seating, Vehicle Access, Occupant Monitoring, Air Purity, Ambient Smell and Automated Access. HVAC and cabin air are relevant only to Air Purity and Ambient Smell and must not dominate the analysis. Plant or building HVAC is out of scope."},
-
-    {"key": "review.manufacturing.2026-09-11.1", "entity_id": "manufacturing", "kind": "review", "stage": null, "source": "Manufacturing review, 11-Sep-2026",
-     "text": "The analysis is mostly written for the AMR use case. Re-centre it on manufacturing for mobility and state the EMS focus: which sectors are included and which (e.g. commodity) are excluded."},
-    {"key": "review.manufacturing.2026-09-11.2", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "PESTEL reads as AMR-centric rather than manufacturing. Rebuild it around manufacturing in India."},
-    {"key": "review.manufacturing.2026-09-11.3", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Political: labour protection shown as a headwind contradicts the rest of the analysis. PLI and import duty belong under Political. A free-trade agreement / export-hub point, with export-potential numbers, is missing from the top three Political tailwinds."},
-    {"key": "review.manufacturing.2026-09-11.4", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Economic: do not treat labour cost as a headwind."},
-    {"key": "review.manufacturing.2026-09-11.5", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Social: shop-floor conditions belong under Environmental, not Social."},
-    {"key": "review.manufacturing.2026-09-11.6", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Legal: capture Legal tailwinds — ease of doing business, company-governance law, laws on profit repatriation and investment."},
-    {"key": "review.manufacturing.2026-09-11.7", "entity_id": "manufacturing", "kind": "review", "stage": "pestel", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Environmental: solar and wind energy availability is a tailwind and is missing."},
-    {"key": "review.manufacturing.2026-09-11.8", "entity_id": "manufacturing", "kind": "review", "stage": "competency", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Competency: if manufacturing is a Bosch competency it should be rated on par. The gap is scale at the moment — rename it 'Manufacturing cost' rather than rating manufacturing capability low."},
-    {"key": "review.manufacturing.2026-09-11.9", "entity_id": "manufacturing", "kind": "review", "stage": "landscape", "source": "Manufacturing review, 11-Sep-2026",
-     "text": "Competitors: Fanuc is probably the wrong competitor for EMS. Competitors must be EMS / contract-manufacturing players."},
-
-    {"key": "review.interior.2026-09-11.1", "entity_id": "interior", "kind": "review", "stage": null, "source": "Interior review, 11-Sep-2026",
-     "text": "Put a boundary on the main focus area. SWOT and PESTEL are heavily HVAC-inclined; cover all interior sub-fields."},
-    {"key": "review.interior.2026-09-11.2", "entity_id": "interior", "kind": "review", "stage": "pestel", "source": "Interior review, 11-Sep-2026",
-     "text": "Economic: EV thermal management is wrongly captured there. Buyer behaviour should be Social. OEM design freeze should be Technological."},
-    {"key": "review.interior.2026-09-11.3", "entity_id": "interior", "kind": "review", "stage": "pestel", "source": "Interior review, 11-Sep-2026",
-     "text": "Social: climate is captured as a Social headwind; it belongs under Environmental."},
-    {"key": "review.interior.2026-09-11.4", "entity_id": "interior", "kind": "review", "stage": "swot", "source": "Interior review, 11-Sep-2026",
-     "text": "SWOT Strength: clarify how a plant/building HVAC capability compares to vehicle HVAC — do not claim one as the other."}
-  ]
+ "_about": "Standing guidance for the author stages. rule = portfolio-wide ('*'); charter = a field's scope; review = a reviewer's note, open until a proposal addresses it. Loaded by scripts/guidance.py; entries are matched on 'key', so editing text here and re-loading updates them in place.",
+ "items": [
+  {
+   "key": "rule.pestel.political",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Political = government intent and instruments: schemes, subsidies and PLI, import and customs duty, free-trade agreements, trade and export-promotion policy, industrial policy. An FTA or export-hub policy that opens markets is a Political tailwind; state the export numbers where evidence exists."
+  },
+  {
+   "key": "rule.pestel.economic",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Economic = costs, prices, demand, margins, interest rates, investment. India's low labour cost is a cost ADVANTAGE for anyone manufacturing or engineering in India, so it is normally a tailwind; never file it as a headwind by default. If you do call a cost a headwind, say for whom (e.g. the automation business case) and why."
+  },
+  {
+   "key": "rule.pestel.social",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Social = people: buyer and consumer behaviour and preferences, workforce skills and demographics, attitudes. Buyer behaviour is Social, not Economic. Climate and weather are NOT Social."
+  },
+  {
+   "key": "rule.pestel.technological",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Technological = technology maturity and adoption, standards, platform and OEM design cycles (an OEM design-freeze window is Technological, not Economic)."
+  },
+  {
+   "key": "rule.pestel.environmental",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Environmental = climate, heat, dust and humidity, physical site and floor conditions, energy availability (solar and wind availability and green-power access are Environmental tailwinds), emissions, waste and circularity."
+  },
+  {
+   "key": "rule.pestel.legal",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "pestel",
+   "text": "Legal = enacted law and its enforcement: certification and homologation mandates, product liability, data law, company and corporate-governance law, FDI and profit-repatriation rules, ease-of-doing-business reforms. Look for Legal TAILWINDS (laws that make doing business easier) as well as compliance burdens. A scheme's intent is Political; the notified rule that enforces it is Legal."
+  },
+  {
+   "key": "rule.pestel.balance",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": null,
+   "text": "Cover the WHOLE field, not its most visible sub-field. Every sub-field listed for the field must be the subject of at least one PESTEL point, and no single sub-field or single use case (e.g. HVAC in Interior, AMRs in Manufacturing) may dominate the analysis. When evidence is thin for a sub-field, say so in a point rather than leaving it out."
+  },
+  {
+   "key": "rule.competitors.same-business",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "landscape",
+   "text": "A competitor must compete for the same customers in the same business as one of the field's sub-fields. Name that sub-field in the reasoning. A company that is a supplier, a customer or a player in an adjacent business (e.g. a robot maker in an EMS analysis) is not a competitor; it can appear as a stakeholder instead."
+  },
+  {
+   "key": "rule.competency.names",
+   "entity_id": "*",
+   "kind": "rule",
+   "stage": "competency",
+   "text": "Name a competency for the capability, not for a symptom. Where Bosch's gap is scale or unit cost rather than the capability itself, say so in the name (e.g. 'Manufacturing cost' rather than a low 'Manufacturing' rating), and rate the capability on its own merits."
+  },
+  {
+   "key": "charter.manufacturing",
+   "entity_id": "manufacturing",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: manufacturing FOR mobility in India, covering all five sub-fields with balanced weight: Automotive Module Assembly, EMS, Contract Mfg (MaaS), Industry 5.0 and Dark Factories. EMS means automotive-grade electronics manufacturing services; commodity consumer-electronics EMS (phones, TVs, appliances) is OUT of scope except as a source of capacity, competition for talent, or scale economics. AMRs and factory robots are one enabler inside Industry 5.0 and Dark Factories, not the field's centre."
+  },
+  {
+   "key": "charter.interior",
+   "entity_id": "interior",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: the vehicle interior across all six sub-fields with balanced weight: Seating, Vehicle Access, Occupant Monitoring, Air Purity, Ambient Smell and Automated Access. HVAC and cabin air are relevant only to Air Purity and Ambient Smell and must not dominate the analysis. Plant or building HVAC is out of scope."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.1",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": null,
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "The analysis is mostly written for the AMR use case. Re-centre it on manufacturing for mobility and state the EMS focus: which sectors are included and which (e.g. commodity) are excluded."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.2",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "PESTEL reads as AMR-centric rather than manufacturing. Rebuild it around manufacturing in India."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.3",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Political: labour protection shown as a headwind contradicts the rest of the analysis. PLI and import duty belong under Political. A free-trade agreement / export-hub point, with export-potential numbers, is missing from the top three Political tailwinds."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.4",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Economic: do not treat labour cost as a headwind."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.5",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Social: shop-floor conditions belong under Environmental, not Social."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.6",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Legal: capture Legal tailwinds — ease of doing business, company-governance law, laws on profit repatriation and investment."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.7",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Environmental: solar and wind energy availability is a tailwind and is missing."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.8",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "competency",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Competency: if manufacturing is a Bosch competency it should be rated on par. The gap is scale at the moment — rename it 'Manufacturing cost' rather than rating manufacturing capability low."
+  },
+  {
+   "key": "review.manufacturing.2026-09-11.9",
+   "entity_id": "manufacturing",
+   "kind": "review",
+   "stage": "landscape",
+   "source": "Manufacturing review, 11-Sep-2026",
+   "text": "Competitors: Fanuc is probably the wrong competitor for EMS. Competitors must be EMS / contract-manufacturing players."
+  },
+  {
+   "key": "review.interior.2026-09-11.1",
+   "entity_id": "interior",
+   "kind": "review",
+   "stage": null,
+   "source": "Interior review, 11-Sep-2026",
+   "text": "Put a boundary on the main focus area. SWOT and PESTEL are heavily HVAC-inclined; cover all interior sub-fields."
+  },
+  {
+   "key": "review.interior.2026-09-11.2",
+   "entity_id": "interior",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Interior review, 11-Sep-2026",
+   "text": "Economic: EV thermal management is wrongly captured there. Buyer behaviour should be Social. OEM design freeze should be Technological."
+  },
+  {
+   "key": "review.interior.2026-09-11.3",
+   "entity_id": "interior",
+   "kind": "review",
+   "stage": "pestel",
+   "source": "Interior review, 11-Sep-2026",
+   "text": "Social: climate is captured as a Social headwind; it belongs under Environmental."
+  },
+  {
+   "key": "review.interior.2026-09-11.4",
+   "entity_id": "interior",
+   "kind": "review",
+   "stage": "swot",
+   "source": "Interior review, 11-Sep-2026",
+   "text": "SWOT Strength: clarify how a plant/building HVAC capability compares to vehicle HVAC — do not claim one as the other."
+  },
+  {
+   "key": "charter.lighting",
+   "entity_id": "lighting",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: vehicle lighting systems in India across Interior Lighting, Exterior Lighting, Controllers and Application SW, with balanced weight. Bosch has no optics or photometrics franchise: the opportunity sits in lighting controllers, electronics and software (adaptive and matrix functions, lighting as an SDV feature), not in lamps and optics. OUT: building, street and architectural lighting; aftermarket bulbs."
+  },
+  {
+   "key": "charter.cockpit",
+   "entity_id": "cockpit",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: the vehicle infotainment and cockpit domain in India across Hardware (cockpit domain controllers and display electronics), SW (HMI, OS, apps, AI assistants) and the System Integrator role, with balanced weight. OUT: consumer electronics and smartphone projection as products in their own right (they appear only as competition or substitutes)."
+  },
+  {
+   "key": "charter.suspension",
+   "entity_id": "suspension",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: active and semi-active suspension for vehicles sold in India across Active & Semi-Active hardware, Control Units, Control Algorithms and Cross-Domain Function (vehicle motion management), with balanced weight; cover 2W, 3W and commercial vehicles where evidence exists. Passive dampers appear only as the incumbent baseline. OUT: aftermarket lift kits, rail and industrial suspension."
+  },
+  {
+   "key": "charter.connectivity",
+   "entity_id": "connectivity",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: vehicle connectivity in India across Embedded Telematics (including AIS-140), eSIM & Carriage, V2X Vehicle Side, OTA Pipeline and Connected Services, with balanced weight. OUT: roadside V2X units and traffic systems (Infrastructure field), vehicle cybersecurity (Cybersecurity field), and the telecom market in general."
+  },
+  {
+   "key": "charter.cyber",
+   "entity_id": "cyber",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: automotive cybersecurity in India across CSMS (AIS-189), SUMS (AIS-190), Managed Vehicle SOC, Secure OTA & Keys and Pen-Test & Homologation, with balanced weight. OUT: enterprise IT security and consumer security products, except where they compete for the same OEM budgets."
+  },
+  {
+   "key": "charter.clouddata",
+   "entity_id": "clouddata",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: vehicle and mobility data architecture in India across Vehicle Cloud, Data Platforms, SDV Data Architecture, Vehicle as Sensor, Federated Data Exchange and the DPDP Compliance Layer, with balanced weight. Bosch has no hyperscale cloud: position data architecture and services on partners' clouds. OUT: the general enterprise cloud and hosting market."
+  },
+  {
+   "key": "charter.eca",
+   "entity_id": "eca",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: vehicle E/E architecture and compute in India across Zonal Controllers, Central Compute (HPC), Domain ECUs, In-Vehicle Networking, Power Net & Distribution and the Architecture Toolchain, with balanced weight. Chips appear only as inputs; silicon itself belongs to the Semiconductors field. OUT: consumer and data-centre compute."
+  },
+  {
+   "key": "charter.semis",
+   "entity_id": "semis",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: semiconductors for mobility in India across Automotive Qualification (ISM), ASIC & Custom Silicon, Chiplets (UCIe), Power Semiconductors (SiC/GaN), MEMS & Sensor Silicon and RISC-V & Sovereign Compute, with balanced weight. Bosch has no leading-edge logic foundry. OUT: solar wafers, consumer-phone chips, displays, and chip-design education except as a talent source."
+  },
+  {
+   "key": "charter.software",
+   "entity_id": "software",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: automotive software for vehicles and SDV development in India across Interoperable Functions, Comm. Technologies, Middleware/OS, AI/ML, Simulations, Digital Twin and WASM, with balanced weight; India engineering centres are a delivery base, not the market. OUT: generic enterprise IT services and non-mobility applications."
+  },
+  {
+   "key": "charter.energy",
+   "entity_id": "energy",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: energy for mobility in India across V2G & Charging, Battery & BMS and New Energy Tech (hydrogen, alternate fuels), with balanced weight. Bosch does not make cells: the opportunity is in systems, BMS, power electronics, thermal management and charging. OUT: utility-scale generation and household solar, except where tied to charging or V2G."
+  },
+  {
+   "key": "charter.fintech",
+   "entity_id": "fintech",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: mobility fintech in India across In-Vehicle Payment, Insurance (telematics and usage-based), Vehicle Aadhar (vehicle identity) and Vehicle Monetization, with balanced weight. Bosch holds no financial-services licence: its role is enabler and partner (devices, data, platforms). OUT: general consumer banking and lending."
+  },
+  {
+   "key": "charter.infrastructure",
+   "entity_id": "infrastructure",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: mobility infrastructure in India across V2X (roadside), Urban Traffic Mgmt, Tolling & Parking (FASTag, ANPR), Map Services and Intermodal, with balanced weight. OUT: civil construction, the power grid (except for charging), and rail rolling stock."
+  },
+  {
+   "key": "charter.sustainability",
+   "entity_id": "sustainability",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: circular economy for mobility in India across Battery Second Life, Battery Recycling, Right to Repair, Residual Value and Carbon Credits, with balanced weight. OUT: corporate ESG reporting in general and recycling of non-vehicle products."
+  },
+  {
+   "key": "charter.evtol",
+   "entity_id": "evtol",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: eVTOL and advanced air mobility in India across Urban Air Mobility and Rural Applications (medical, logistics, connectivity to remote areas), with balanced weight. Bosch has no aerospace certification (DO-178C/DO-254): position through components, sensors and partnering. OUT: defence and agricultural spraying drones, and conventional aviation."
+  },
+  {
+   "key": "charter.robotics",
+   "entity_id": "robotics",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: robotics with a mobility link in India across AMR, Campus Shuttles, Humanoids and Robotics × SDV (shared compute, sensors and software with vehicles), with balanced weight. This field, not Manufacturing, owns the AMR analysis. OUT: industrial robot arms as a market in their own right, and consumer robots."
+  },
+  {
+   "key": "charter.health",
+   "entity_id": "health",
+   "kind": "charter",
+   "stage": null,
+   "source": "Proposed default (2026-09-25) — to be confirmed by the field owner",
+   "text": "Scope: health through mobility in India across E-Call, Assisted Motion and DEI Mobility Design (accessible vehicles and services), with balanced weight. Bosch has no CDSCO medical-device capability. OUT: hospital equipment, pharma and healthcare delivery in general."
+  }
+ ]
 }

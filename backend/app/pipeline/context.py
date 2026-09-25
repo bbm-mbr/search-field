@@ -51,6 +51,34 @@ def source_list(field_id: str, board: dict, limit: int = 45) -> List[dict]:
     return out
 
 
+def append_evidence(srcs: List[dict], evidence_ids: List[int]) -> Dict[int, int]:
+    """Add evidence rows to the END of an existing numbered list — sections
+    already cite the numbers in it, so nothing may move. Returns evidence id →
+    its number (existing rows keep theirs)."""
+    have = {s.get("evidence_id"): s["n"] for s in srcs if s.get("evidence_id")}
+    urls = {canonical_url(s["url"]): s["n"] for s in srcs if s.get("url")}
+    out: Dict[int, int] = {}
+    with get_engine().connect() as c:
+        for eid in evidence_ids:
+            if eid in have:
+                out[eid] = have[eid]
+                continue
+            r = c.execute(select(evidence).where(evidence.c.id == eid)).mappings().first()
+            if r is None:
+                continue
+            if r["canonical_url"] in urls:
+                out[eid] = urls[r["canonical_url"]]
+                continue
+            claims = [x.claim for x in c.execute(
+                select(evidence_support.c.claim).where(evidence_support.c.evidence_id == eid)
+                .group_by(evidence_support.c.claim).order_by(evidence_support.c.claim).limit(3))]
+            n = len(srcs) + 1
+            srcs.append({"label": None, "url": r["resolved_url"] or r["canonical_url"], "domain": r["domain"],
+                         "tier": r["tier"], "origin": "evidence", "claims": claims, "evidence_id": eid, "n": n})
+            have[eid] = urls[r["canonical_url"]] = out[eid] = n
+    return out
+
+
 def render_sources(srcs: List[dict]) -> str:
     lines = []
     for s in srcs:

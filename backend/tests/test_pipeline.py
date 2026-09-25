@@ -124,7 +124,7 @@ class Farm:
                         p["subs"] = [SUBS[0]]
             return R({**out, "_changed": ["G1: rebalanced"], "confidence": 0.7})
         if task == "score":
-            if model.family == "openai" and self.blind_level != 3:      # a genuinely different reading
+            if model.family != "claude" and self.blind_level != 3:      # a genuinely different reading
                 return R(v8(self.sam, self.blind_level, "High", hostile=True))
             return R(v8(self.sam))
         if task == "the":                                          # "TASK: the field verdict"
@@ -173,8 +173,8 @@ def test_every_task_routes_to_the_policy_tier(env):
         by.setdefault(task, set()).add(model)
     assert by["pestel"] == {"claude-sonnet-5"}                 # standard tier authors
     assert by["the"] == {"claude-opus-5"}                      # premium only for the verdict
-    assert by["score"] == {"claude-sonnet-5", "gpt-5.5-2026-04-24"}   # two families score independently
-    assert by["critic"] == {"gpt-5.5-2026-04-24"}
+    assert by["score"] == {"claude-sonnet-5", "gemini-3.7-flash"}     # two families score independently
+    assert by["critic"] == {"gpt-5.6-terra-2026-07-09"}               # and a third family critiques
     assert "claude-opus-5" not in {m for t, m in farm.calls if t != "the"}
 
 
@@ -437,3 +437,58 @@ def test_truncation_jumps_straight_to_the_ceiling(env):
                             author.Usage(), validate.pestel)
     assert seen == [author.MAX_TOKENS["pestel"], author.TRUNCATION_CEILING]
     assert meta["status"] == "ok" and meta["attempts"] == 1
+
+
+def test_unsupported_claims_are_web_checked_before_revision(env):
+    farm = Farm()
+    orig = farm.__call__
+    state = {"critic": 0, "fb": None, "checked": None}
+
+    def call(model, prompt, **kw):
+        if "TASK:" not in prompt and "two independent scorers" not in prompt:
+            state["critic"] += 1
+            from app.llm.gateway import LLMResult
+            if state["critic"] == 1:
+                return LLMResult(model.id, json.dumps({"verdict": "BLOCK", "defects": [
+                    {"severity": "major", "location": "DATA.swot.S[0]",
+                     "problem": "The 17 IATF-certified plants claim is not supported by cited sources",
+                     "fix": "cite or drop"}]}), 10, 10)
+            return orig(model, prompt, **kw)
+        if "TASK: SWOT" in prompt and "A reviewer found these defects" in prompt:
+            state["fb"] = prompt
+        return orig(model, prompt, **kw)
+
+    def fake_verify(entity_id, claims, scope, resolver=None):
+        state["checked"] = claims
+        return {"run_id": 9, "status": "done", "tokens_in": 5, "tokens_out": 5,
+                "findings": [{"claim": claims[0], "finding": "Bosch reports IATF 16949 at its India plants [PIB].",
+                              "evidence_ids": []}]}
+    from app.llm import gateway
+    from app.pipeline import author
+    env.setattr(gateway, "call", call)
+    env.setattr(author.evidence_research, "verify_claims", fake_verify)
+    s = author.propose(FID, as_of="25 September 2026")
+    assert state["checked"] == ["The 17 IATF-certified plants claim is not supported by cited sources"]
+    assert "Web check of this point: Bosch reports IATF 16949" in state["fb"]
+    assert s["revision"]["verified"][0]["sources"] == []
+
+
+def test_resume_keeps_the_source_numbering_even_if_evidence_grew(env):
+    """Live bug 2026-09-25: a resume rebuilt the numbered source list from an
+    evidence store that verification had grown, so reused drafts cited the
+    wrong sources."""
+    from datetime import datetime, timezone
+    from sqlalchemy import insert
+    from app.db import evidence, get_engine
+    from app.llm import gateway
+    from app.pipeline.author import _load_drafts, propose
+    env.setattr(gateway, "call", Farm())
+    propose(FID, as_of="25 September 2026")
+    frozen = _load_drafts(1)["_sources"][0]
+    now = datetime.now(timezone.utc).isoformat()
+    with get_engine().begin() as c:            # a tier-1 source arrives: it would sort to the top
+        c.execute(insert(evidence).values(entity_id=FID, canonical_url="https://pib.gov.in/new", domain="pib.gov.in",
+                                          tier=1, tier_reason="primary", status="kept", first_seen_at=now,
+                                          last_seen_at=now, times_seen=9))
+    propose(FID, as_of="25 September 2026", resume=1, revise=False)
+    assert _load_drafts(1)["_sources"][0] == frozen

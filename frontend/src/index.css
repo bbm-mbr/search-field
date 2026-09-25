@@ -2,6 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Bosch FROK base.
+
+   The board is designed for light surfaces, so it declares itself light-only.
+   News-Radar's dark-mode bug came from the opposite: Vite's starter CSS
+   declared `color-scheme: light dark` with near-white text and a #242424
+   background as the default, restoring light values only under
+   `prefers-color-scheme: light` — so in a dark-mode browser inherited text
+   turned near-white on the app's white cards, and native inputs went dark.
+   `only light` also stops browsers that force-darken pages (Chrome/Edge
+   "auto dark mode", Samsung Internet) from inverting the board. */
+:root {
+  color-scheme: only light;
+  --bosch-ink: #0e1a2e;
+  --bosch-surface: #f7f8fa;
+  --bosch-supergraphic: url("/bosch/supergraphic.svg");
+  font-family: "Bosch Sans", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--bosch-ink);
+  background-color: var(--bosch-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  color: var(--bosch-ink);
+  background-color: var(--bosch-surface);
+}
+
+/* Form controls follow the page, never the OS theme. */
+input, select, textarea, button {
+  color-scheme: only light;
+  font-family: inherit;
+}
+
+/* The Bosch supergraphic strip that tops every FROK page. */
+.bosch-supergraphic {
+  height: 6px;
+  flex-shrink: 0;
+  background-image: var(--bosch-supergraphic);
+  background-size: cover;
+  background-position: center;
+}
+
 /* Tooltips open after a dwell delay; this fades them in so the appearance
    reads as deliberate rather than as a flicker. */
 @keyframes tipIn {

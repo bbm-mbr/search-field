@@ -1,21 +1,29 @@
 """Which model does which job — the cost policy, in one place.
 
-Policy (agreed 2026-09-24): premium models only where the judgement genuinely
-needs them, and sparingly; the best general-purpose model everywhere else.
+Aim: the best output for the least money. Premium models only where the
+judgement needs them; every other choice below was measured, not assumed.
 
-  premium   Opus 5. The 18 field-level verdicts and AI Analyst syntheses, plus
-            escalation when the critic and the author disagree on something
-            material. Roughly 20-30 calls per full portfolio pass.
-  standard  Sonnet 5. Framework writing (PESTEL, SWOT, market, Porter,
-            competency, horizons, landscape) for fields AND the 83 sub-fields,
-            and rubric scoring. The workhorse.
-  fast      Haiku 4.5. News triage and tagging, JSON repair, short extraction.
+Farm prices, USD per 1M tokens in / out (2026-09-25; thinking bills as output):
+  Opus 5 5/25 · Sonnet 5 2/10 · Haiku 4.5 1/5 · Gemini 3.7 Flash 0.75/3.75
+  (promo to 2026-12-31, then 1.50/7.50) · Gemini 2.5 Pro 1.25/10 ·
+  GPT-5.5 5/30 · GPT-5.6 Terra 2/12 · GPT-5.6 Luna 0.20/1.20 · GPT-5.4 2.5/15
+
+  premium   Opus 5. The field verdict, and reconciling the two scorers when
+            they disagree materially. Two to three calls per field pass.
+  standard  Sonnet 5 at effort "medium" (routing.TASK_EFFORT). All framework
+            writing and the rubric scoring — the workhorse.
+  fast      Haiku 4.5. Research planning, relevance filtering, JSON repair.
   grounded  The only models the Bosch org policy lets search the web:
-            Gemini 3.7 Flash, then Gemini 2.5 Pro, then Haiku 4.5. Sonnet and
-            Opus return HTTP 400 on a grounded call regardless of capability.
-  second    GPT-5.5. The blind second scorer and the critic — deliberately a
-            different model family from the author, so it does not simply
-            agree with itself.
+            Gemini 3.7 Flash, then Gemini 2.5 Pro, then Haiku 4.5.
+  blind     Gemini 3.7 Flash. The independent second scorer: a third model
+            family, so neither the author's nor the critic's family scores
+            twice. Measured on Manufacturing: valid rubric, MGI 0.12 against
+            GPT-5.5's 0.13, at $0.03 a call against $0.20.
+  critic    GPT-5.6 Terra. Measured on the same Manufacturing proposal: found
+            every serious defect GPT-5.5 found plus the TAM double-count GPT-5.5
+            missed, at $0.10 a call against $0.28. Gemini 3.7 Flash and 2.5 Pro
+            both returned PASS with no defects on that proposal — never use
+            them as the critic.
   embed     text-embedding-3-small. Deduplication and matching news to fields.
 
 Each task names a tier; each tier is an ordered fallback chain. Changing the
@@ -48,6 +56,8 @@ GEMINI_37_FLASH = Model("gemini-3.7-flash", GEMINI, web_search=True)
 GEMINI_25_PRO = Model("gemini-2.5-pro", GEMINI, web_search=True)
 GPT_55 = Model("gpt-5.5-2026-04-24", OPENAI)
 GPT_54 = Model("gpt-5.4-2026-03-05", OPENAI)
+GPT_56_TERRA = Model("gpt-5.6-terra-2026-07-09", OPENAI)
+GPT_56_LUNA = Model("gpt-5.6-luna-2026-07-09", OPENAI)
 EMBED_3_SMALL = Model("askbosch-prod-farm-openai-text-embedding-3-small", EMBED)
 
 TIERS: Dict[str, List[Model]] = {
@@ -55,7 +65,8 @@ TIERS: Dict[str, List[Model]] = {
     "standard": [SONNET_5, SONNET_46, HAIKU_45],
     "fast": [HAIKU_45, GPT_54],
     "grounded": [GEMINI_37_FLASH, GEMINI_25_PRO, HAIKU_45],
-    "second": [GPT_55, GPT_54],
+    "blind": [GEMINI_37_FLASH, GPT_56_TERRA],
+    "critic": [GPT_56_TERRA, GPT_55],
     "embed": [EMBED_3_SMALL],
 }
 
@@ -69,8 +80,8 @@ TASKS: Dict[str, str] = {
     "write.framework": "standard",
     "write.subfield": "standard",
     "score.rubric": "standard",
-    "score.blind": "second",
-    "critic": "second",
+    "score.blind": "blind",
+    "critic": "critic",
     "write.verdict": "premium",
     "escalate": "premium",
     "triage.news": "fast",

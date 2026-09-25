@@ -29,7 +29,7 @@ function Boot() {
   if (state.phase === 'ready') return <state.SearchField />
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: '#F7F8FA', fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#0E1A2E' }}>
+                  background: '#F7F8FA', color: '#0E1A2E' }}>
       <div style={{ textAlign: 'center', maxWidth: 440, padding: 24 }}>
         <div style={{ fontWeight: 800, fontSize: 18 }}>Search-Field Intelligence</div>
         {state.phase === 'loading'

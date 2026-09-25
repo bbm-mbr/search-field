@@ -1,20 +1,23 @@
 """One authoring pass over one search field → a proposal.
 
-    frameworks   eight bounded stages on the standard tier (Sonnet 5), in
-                 parallel: pestel, swot, market (blind to the current sizing),
-                 porter, competency, horizons, landscape, suppliers
-    score        rubric inputs only (standard tier), and — independently and in
-                 parallel — the same rubric from a different model family
-                 (second tier, GPT-5.5) that never sees the first scorer's inputs
+    frameworks   eight bounded stages on the standard tier (Sonnet 5, effort
+                 medium), in parallel: pestel, swot, market (blind to the
+                 board's figures, shown its definition), porter, competency,
+                 horizons, landscape, suppliers
+    score        rubric inputs only (Sonnet 5), and — independently, in
+                 parallel — the same rubric from a second model family (Gemini
+                 3.7 Flash) that never sees the first scorer's inputs
     engine       the V9 engine computes both; if they differ materially (band
                  changes or MGI moves ≥ 0.15) the premium tier reconciles them
     verdict      premium tier (Opus 5), shown the computed indices, writes prose
                  only — it cannot move a number
-    critic       second tier: consistency, balance, evidence, depth, and every
-                 open guidance item addressed or not — shown the sources in
-                 the same numbering the sections cite
-    revision     one round: each block/major defect goes back to the stage that
-                 owns it, then scoring, verdict and critic run again
+    critic       a third family (GPT-5.6 Terra): consistency, balance, evidence,
+                 depth, and every open guidance item — shown the sources in the
+                 same numbering the sections cite
+    revision     one round: claims the critic calls unsupported are checked on
+                 the web (Gemini Flash, grounded), then each serious defect goes
+                 back to the stage that owns it with what the check found; then
+                 scoring, verdict and critic run again
 
 Nothing here touches the live board. Sections are written to
 proposal_section; a human publishes them (not built yet — review first).
@@ -34,6 +37,7 @@ from sqlalchemy import delete, insert, select, update
 
 from ..db import get_engine, proposal, proposal_draft, proposal_section
 from ..engine import scoring as E
+from ..evidence import research as evidence_research
 from ..llm import gateway, jsonutil
 from ..repository import assemble_board
 from . import context, guidance, prompts, validate
@@ -258,6 +262,10 @@ def propose(field_id: str, board: Optional[dict] = None, as_of: Optional[str] = 
 
 
 DOWNSTREAM = ["score", "blind", "reconcile", "verdict"]      # depend on every framework stage
+MAX_VERIFY = 5
+UNSUPPORTED = re.compile(r"not (?:adequately |clearly )?(?:supported|sourced|cited|substantiated)|unsupported|"
+                         r"unsourced|uncited|no (?:numbered |matching )?source|without (?:a )?(?:numbered )?source|"
+                         r"does not substantiate|inconsisten|overstated|unconfirmed", re.I)
 DEFINITION_MOVE = 3.0       # SAM moving by more than this factor is a change of definition, not of market
 _NUM = re.compile(r"[$₹€]?\d[\d,.]*\s*(?:%|bn|billion|mn|million|M|B|cr|crore|lakh)?", re.I)
 
@@ -325,7 +333,16 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
          redo: Optional[List[str]] = None, revise: bool = True) -> dict:
     fid = field["id"]
     D, V6, V7, V8 = (board[L][fid] for L in ("DATA", "V6", "V7", "V8"))
-    srcs = context.source_list(fid, board)
+    drafts = _load_drafts(pid)
+    # The numbered source list is frozen for the life of a proposal: every
+    # stage cites these numbers, so a resume must see exactly the same list.
+    # Rebuilding it from the evidence store (which verification and later
+    # research keep growing) shifted the numbering under the reused drafts.
+    if "_sources" in drafts:
+        srcs = drafts.pop("_sources")[0]
+    else:
+        srcs = context.source_list(fid, board)
+        _save_draft(pid, "_sources", srcs, {"status": "ok"})
     ctx = {"id": fid, "name": field["name"], "subs": field["subs"], "ma": D.get("ma") or [],
            "bbm": D.get("bbm") or [], "as_of": as_of or datetime.now(timezone.utc).strftime("%d %B %Y").lstrip("0"),
            "n_sources": len(srcs)}
@@ -333,7 +350,6 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
     system = prompts.PERSONA
     before = E.score_portfolio([f["id"] for f in board["FIELDS"]], board["V8"], board["DATA"])
 
-    drafts = _load_drafts(pid)
     redo = list(redo or [])
     for s in redo:
         drafts.pop(s, None)
@@ -348,6 +364,7 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
 
     def feedback_text(defects: List[dict], previous) -> str:
         lines = "\n".join(f"- [{d.get('severity')}] {d.get('location')}: {d.get('problem')} — fix: {d.get('fix')}"
+                          + (f"\n  Web check of this point: {d['verification']}" if d.get("verification") else "")
                           for d in defects)
         return ("\n\n### Your previous answer\n" + _dump(previous)
                 + "\n\n### A reviewer found these defects in it. Fix every one, keep everything else that is sound, "
@@ -489,7 +506,7 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
                   + "\n\n### Mechanical check results\n" + _dump(checks)
                   + (f"\n\n### Sizing gate\n{gate['problem']}" if gate else "")
                   + "\n\n" + prompts.CRITIC)
-        crit, _ = _ask("critic", "critic", system, prompt, ctx, usage, None, attempts=1)
+        crit, _ = _ask("critic", "critic", prompts.CRITIC_SYSTEM, prompt, ctx, usage, None, attempts=1)
         crit = crit or {"verdict": "BLOCK", "defects": [{"severity": "block", "location": "critic",
                                                          "problem": "critic returned no parseable review",
                                                          "fix": "re-run"}]}
@@ -518,6 +535,26 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
         if by_stage:
             revision = {"round": 1, "critic_before": crit.get("verdict"), "defects_before": len(crit.get("defects") or []),
                         "stages": sorted(by_stage), "fed_back": sum(len(v) for v in by_stage.values())}
+            # Claims the critic says are unsupported are checked on the web first
+            # (Gemini Flash, grounded — cents a claim), so the revision fixes
+            # them from evidence instead of guessing. New sources are appended to
+            # the numbered list; existing numbers never move.
+            questioned = [d for d in serious if UNSUPPORTED.search(d.get("problem") or "")][:MAX_VERIFY]
+            if questioned:
+                v = evidence_research.verify_claims(fid, [d["problem"] for d in questioned],
+                                                    f"{field['name']} in India, mobility lens")
+                numbers = context.append_evidence(srcs, [e for f in v["findings"] for e in f["evidence_ids"]])
+                _save_draft(pid, "_sources", srcs, {"status": "ok"})
+                src_text = context.render_sources(srcs)
+                ctx["n_sources"] = len(srcs)
+                revision["verified"] = []
+                for d, f in zip(questioned, v["findings"]):
+                    cites = [numbers[e] for e in f["evidence_ids"] if e in numbers]
+                    d["verification"] = (f["finding"] + (" (new sources: " + ", ".join(f"[{n}]" for n in cites) + ")"
+                                                         if cites else " (no source found)"))
+                    revision["verified"].append({"claim": d["problem"], "finding": f["finding"], "sources": cites})
+                usage.calls.append({"stage": "verify", "model": "grounded", "in": v["tokens_in"],
+                                    "out": v["tokens_out"], "thinking": 0, "s": 0, "truncated": False})
             fbs = {s: feedback_text(ds, new.get(s)) for s, ds in by_stage.items()}
             if fw:
                 run_frameworks(fw, fbs)
@@ -531,7 +568,12 @@ def _run(pid: int, field: dict, board: dict, as_of: Optional[str], stage_names: 
 
     # ── store ────────────────────────────────────────────────────────────────
     failed = [s for s, m in checks.items() if m["status"] != "ok" and s != "blind"]
-    status = "blocked" if failed or crit.get("verdict") == "BLOCK" else "ready"
+    # Status follows the defects, not the critic's one-word verdict:
+    #   blocked  a stage failed, or a block-level defect remains
+    #   review   major defects remain — a human must look at them, nothing stops it
+    #   ready    only minor notes
+    sev = [d.get("severity") for d in crit.get("defects") or []]
+    status = "blocked" if failed or "block" in sev else ("review" if "major" in sev else "ready")
     before_row, after_row = _flat(before, fid), _flat(after, fid)
     moves = {f["id"]: {"before": before["stats"]["mgi"]["rankOf"].get(f["id"]),
                        "after": after["stats"]["mgi"]["rankOf"].get(f["id"])} for f in board["FIELDS"]}

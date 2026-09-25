@@ -884,9 +884,9 @@ export default function App() {
     : null;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#F7F8FA", fontFamily: "'Segoe UI', system-ui, sans-serif", color: INK }}>
-      {/* ── Bosch BSP chrome: supergraphic + brand header (as in Mobility Intelligence) ── */}
-      <div style={{ height: 6, flexShrink: 0, background: GRAD }} />
+    <div className="min-h-screen flex flex-col font-sans" style={{ background: "#F7F8FA", color: INK }}>
+      {/* ── Bosch FROK chrome: the official supergraphic + brand header ── */}
+      <div className="bosch-supergraphic" aria-hidden="true" />
       <div className="bg-white flex justify-between items-center shrink-0" style={{ padding: "9px 24px", borderBottom: "1px solid #d0d4d8" }}>
         <img src="bosch/bosch-logo.png" alt="Bosch" style={{ height: 22, display: "block" }} />
         <span style={{ fontSize: 11, color: "#2e3033", fontWeight: 600, letterSpacing: "0.02em" }}>BBM Marketing and Business Strategy - Region India (M/MBR-IN)</span>

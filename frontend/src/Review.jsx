@@ -13,8 +13,10 @@ const get = async (p) => { const r = await fetch(`${API}${p}`); if (!r.ok) throw
 const INDEX = [['mgi', 'Master Growth Index'], ['pi', 'PESTEL'], ['spi', 'SWOT posture'], ['mai', 'Market attractiveness'],
   ['iai', 'Industry attractiveness'], ['cgi', 'Competency gap'], ['svi', 'Stakeholder viability'], ['cpi', 'Competitive posture'],
   ['scvi', 'Supply-chain viability'], ['tpi', 'Technology prognosis']]
-const STATUS_TONE = { ready: 'bg-emerald-50 text-emerald-800 border-emerald-200', blocked: 'bg-amber-50 text-amber-800 border-amber-200',
-  failed: 'bg-red-50 text-red-800 border-red-200', drafting: 'bg-slate-50 text-slate-700 border-slate-200' }
+const STATUS_TONE = { ready: 'bg-emerald-50 text-emerald-800 border-emerald-200', review: 'bg-teal-50 text-teal-800 border-teal-200',
+  blocked: 'bg-amber-50 text-amber-800 border-amber-200',
+  failed: 'bg-red-50 text-red-800 border-red-200', drafting: 'bg-slate-50 text-slate-700 border-slate-200',
+  superseded: 'bg-slate-100 text-slate-500 border-slate-200' }
 const SEV_TONE = { block: 'text-red-700', major: 'text-amber-700', minor: 'text-slate-600' }
 const fmt = (v) => (v == null ? '—' : (typeof v === 'number' ? (Math.abs(v) < 10 ? v.toFixed(2) : String(v)) : String(v)))
 const delta = (v) => (v == null || v === 0 ? '' : (v > 0 ? `+${v.toFixed(2)}` : v.toFixed(2)))
@@ -216,7 +218,8 @@ export default function Review() {
   useEffect(() => { get('/api/proposals').then(l => { setList(l); if (!idFromHash() && l.length) setSel(l[0].id) }).catch(e => setErr(String(e.message || e))) }, [])
   useEffect(() => { const h = () => setSel(idFromHash()); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h) }, [])
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900" style={{ fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+      <div className="bosch-supergraphic" aria-hidden="true" />
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
         <div><div className="font-extrabold">Search-Field Intelligence · Proposals</div>
           <div className="text-xs text-slate-500">Read-only. Nothing here changes the live board.</div></div>

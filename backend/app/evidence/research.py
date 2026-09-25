@@ -198,6 +198,7 @@ Return JSON only: {{"off_topic": [{{"i": <index>, "reason": "<short reason>"}}]}
 # ── store ────────────────────────────────────────────────────────────────────
 def _store(entity_id: str, run_id: int, cands: List[dict], rejected: Dict[int, str]) -> Dict[str, int]:
     now, kept, rej, new = _now(), 0, 0, 0
+    ids: Dict[str, int] = {}
     with get_engine().begin() as c:
         for i, cd in enumerate(cands):
             status, reason = "kept", None
@@ -229,11 +230,13 @@ def _store(entity_id: str, run_id: int, cands: List[dict], rejected: Dict[int, s
                     resolved_url=cd["resolved_url"]))
             kept += status == "kept"
             rej += status == "rejected"
+            if status == "kept":
+                ids[cd["canonical_url"]] = eid
             rows = [{"evidence_id": eid, "run_id": run_id, "query": q, "claim": cl, "model": m, "created_at": now}
                     for (q, m, cl) in cd["support"]]
             if rows:
                 c.execute(insert(evidence_support), rows)
-    return {"kept": kept, "rejected": rej, "new": new}
+    return {"kept": kept, "rejected": rej, "new": new, "kept_ids": ids}
 
 
 def retier(entity_id: Optional[str] = None) -> Dict[str, int]:
@@ -258,6 +261,96 @@ def retier(entity_id: Optional[str] = None) -> Dict[str, int]:
                     tier=tier, tier_reason=why[:200], status=status, reject_reason=reason))
                 changed += 1
     return {"changed": changed}
+
+
+def _merge(answers, resolver, stats: dict, errors: List[str]) -> List[dict]:
+    """Grounded answers → one candidate per canonical URL: redirect resolved,
+    tier assigned, and every sentence the source was cited for."""
+    merged: Dict[str, dict] = {}
+    for q, r, err in answers:
+        if err:
+            errors.append(f"{q['q'][:80]}: {err}")
+            continue
+        stats["model_calls"] += 1
+        stats["searches"] += max(1, r.searches)
+        stats["tokens_in"] += r.input_tokens
+        stats["tokens_out"] += r.output_tokens
+        for src in sources_from(r):
+            resolved = resolver.resolve(src["redirect_url"])
+            if resolved:
+                canon, dom = canonical_url(resolved), domain_of(resolved)
+            else:
+                dom = (src["title"] or "unknown").lower().removeprefix("www.")
+                tag = hashlib.sha1("|".join([src["title"] or ""] + src["claims"][:1]).encode()).hexdigest()[:12]
+                canon = f"https://{dom}/#unresolved-{tag}"
+            tier, why = classify(resolved or "", src["title"] or "")
+            cd = merged.setdefault(canon, {"canonical_url": canon, "resolved_url": resolved,
+                                           "redirect_url": src["redirect_url"], "domain": dom,
+                                           "title": src["title"], "tier": tier, "tier_reason": why,
+                                           "claims": [], "support": [], "answers": set()})
+            cd["answers"].add(q["q"])
+            for cl in src["claims"]:
+                cd["support"].append((q["q"], r.model, cl))
+                if cl not in cd["claims"]:
+                    cd["claims"].append(cl)
+    return list(merged.values())
+
+
+# ── verification: targeted checks of claims a reviewer questioned ───────────
+VERIFY_SYSTEM = ("You fact-check claims for a market-intelligence board on India. Use current web sources. "
+                 "Never guess; if the sources do not settle the claim, say exactly that.")
+MAX_VERIFY = 5
+
+
+def verify_claims(entity_id: str, claims: List[str], scope: str,
+                  resolver: Optional[Resolver] = None) -> dict:
+    """One grounded check per questioned claim (cheap: Gemini Flash), stored as
+    evidence like any research. Returns what each check found and which kept
+    evidence rows back it, so a revision can cite them."""
+    claims = [c for c in claims if c][:MAX_VERIFY]
+    eng = get_engine()
+    with eng.begin() as c:
+        run_id = c.execute(insert(research_run).values(
+            entity_id=entity_id, kind="verify", status="running", started_at=_now(),
+            plan=json.dumps({"claims": claims, "scope": scope}, ensure_ascii=False))).inserted_primary_key[0]
+    stats = {"model_calls": 0, "searches": 0, "tokens_in": 0, "tokens_out": 0}
+    errors: List[str] = []
+    own = resolver is None
+    resolver = resolver or Resolver()
+    try:
+        def one(claim):
+            q = {"q": claim}
+            prompt = (f"Check this claim against current, reliable sources: \"{claim}\"\n\nContext: {scope}\n\n"
+                      "Say plainly whether the sources confirm it, contradict it, or do not address it. Where they "
+                      "give the correct figure, date, name or legal status, state it with the publisher and year. "
+                      "Prose only, 80-200 words.")
+            try:
+                return q, gateway.run("verify.claim", prompt, system=VERIFY_SYSTEM, max_tokens=4096,
+                                      temperature=0, run_id=run_id), None
+            except QuotaExceeded as e:
+                return q, None, f"quota: {e}"
+            except Exception as e:
+                return q, None, f"{type(e).__name__}: {e}"
+
+        with ThreadPoolExecutor(PARALLEL_SEARCHES) as pool:
+            answers = list(pool.map(one, claims))
+        cands = _merge(answers, resolver, stats, errors)
+        counts = _store(entity_id, run_id, cands, {})
+        findings = []
+        for q, r, err in answers:
+            backing = [counts["kept_ids"][cd["canonical_url"]] for cd in cands
+                       if q["q"] in cd["answers"] and cd["canonical_url"] in counts["kept_ids"]]
+            findings.append({"claim": q["q"], "finding": (r.text.strip() if r else f"not checked: {err}"),
+                             "evidence_ids": backing})
+        status = "done" if not errors else ("partial" if any(r for _, r, _ in answers) else "failed")
+        with eng.begin() as c:
+            c.execute(update(research_run).where(research_run.c.id == run_id).values(
+                status=status, finished_at=_now(), kept=counts["kept"], rejected=counts["rejected"],
+                error="\n".join(errors) or None, **stats))
+        return {"run_id": run_id, "status": status, "findings": findings, **stats}
+    finally:
+        if own:
+            resolver.close()
 
 
 # ── run ──────────────────────────────────────────────────────────────────────
@@ -290,34 +383,7 @@ def research(entity_id: str, max_queries: int = 6, resolver: Optional[Resolver] 
         with ThreadPoolExecutor(PARALLEL_SEARCHES) as pool:
             answers = list(pool.map(one, the_plan["queries"]))
 
-        merged: Dict[str, dict] = {}
-        for q, r, err in answers:
-            if err:
-                errors.append(f"{q['q'][:80]}: {err}")
-                continue
-            stats["model_calls"] += 1
-            stats["searches"] += max(1, r.searches)
-            stats["tokens_in"] += r.input_tokens
-            stats["tokens_out"] += r.output_tokens
-            for s in sources_from(r):
-                resolved = resolver.resolve(s["redirect_url"])
-                if resolved:
-                    canon, dom = canonical_url(resolved), domain_of(resolved)
-                else:
-                    dom = (s["title"] or "unknown").lower().removeprefix("www.")
-                    tag = hashlib.sha1("|".join([s["title"] or ""] + s["claims"][:1]).encode()).hexdigest()[:12]
-                    canon = f"https://{dom}/#unresolved-{tag}"
-                tier, why = classify(resolved or "", s["title"] or "")
-                cd = merged.setdefault(canon, {"canonical_url": canon, "resolved_url": resolved,
-                                               "redirect_url": s["redirect_url"], "domain": dom,
-                                               "title": s["title"], "tier": tier, "tier_reason": why,
-                                               "claims": [], "support": []})
-                for cl in s["claims"]:
-                    cd["support"].append((q["q"], r.model, cl))
-                    if cl not in cd["claims"]:
-                        cd["claims"].append(cl)
-
-        cands = list(merged.values())
+        cands = _merge(answers, resolver, stats, errors)
         judged = [i for i, cd in enumerate(cands) if cd["tier"] != 9]
         rejected: Dict[int, str] = {}
         if judged:
